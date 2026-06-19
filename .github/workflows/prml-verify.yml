@@ -23,7 +23,7 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Verify all PRML manifests in repo
         uses: ./.github/actions/falsify-verify
@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     name: 'Test action against fixture manifests'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v6
         with:
