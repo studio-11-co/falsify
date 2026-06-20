@@ -4,6 +4,15 @@ All notable changes to Falsification Engine are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com); version
 numbers follow [Semantic Versioning](https://semver.org).
 
+## [v0.3.9] — 2026-06-19
+
+### Fixed
+- `hash` now validates the manifest before hashing (like `lock`/`verify` and the Go/Rust impls). Previously `hash` would print a SHA-256 for a non-portable manifest carrying forbidden control characters — a silent, unverifiable commitment, and the most likely embed entry point. It now exits non-zero on invalid input. (Gap audit A3.)
+- JS reference impl (`impl/js`): integer-valued floats with `|v| ≥ 1e16` (e.g. `1e20`) rendered via `toFixed(1)` instead of Python's exponential form (`1.0e+20`), producing a hash that diverged from the py/go/rust impls. Now routed through the exponential renderer; also added the same validate-before-hash gate to the JS `hash` command. (Gap audit A2 / A3-js. Mirrored to the published `falsify-js` package.)
+
+### Tests
+- `HashCommandRejectsTests` locks all 14 reject vectors through the `hash` path (the conformance harness previously only exercised `lock` for the Python impl).
+
 ## [v0.3.8] — 2026-06-18
 
 ### Added

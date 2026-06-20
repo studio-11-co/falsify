@@ -98,7 +98,7 @@ See [docs/CASE_STUDIES.md](docs/CASE_STUDIES.md) for three concrete adoption sto
 
 ---
 
-**Current version:** falsify 0.3.8 (PRML CLI) · falsify-engine 0.3.8 — `falsify --version`.
+**Current version:** falsify 0.3.9 (PRML CLI) · falsify-engine 0.3.9 — `falsify --version`.
 **Working with Claude Code?** See [CLAUDE.md](CLAUDE.md).
 
 ---
