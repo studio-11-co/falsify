@@ -128,7 +128,13 @@ function renderScalar(v, hint) {
       if (Number.isNaN(v)) return '.nan';
       return v > 0 ? '.inf' : '-.inf';
     }
-    if (hint === 'float' && Number.isInteger(v)) return v.toFixed(1);
+    if (hint === 'float' && Number.isInteger(v)) {
+      // Large integer-valued floats (|v| >= 1e16) must render in Python's
+      // exponential form ("1.0e+20"), not toFixed ("100000000000000000000.0").
+      // pythonRepr already produces the exponential form for that magnitude.
+      if (Math.abs(v) >= 1e16) return pythonRepr(v);
+      return v.toFixed(1);
+    }
     if (Number.isInteger(v)) return v.toString();
     return pythonRepr(v);
   }
@@ -437,6 +443,15 @@ Spec:    https://spec.falsify.dev/v0.1
 
 function cmdHash(filePath) {
   const m = loadManifest(filePath);
+  // Validate before hashing: an invalid or non-portable manifest would
+  // otherwise emit a hash the other reference impls reject — a silent,
+  // non-portable commitment. Matches lock/verify here and the Go/Rust impls.
+  const errors = validateManifest(m);
+  if (errors.length) {
+    console.error('hash: invalid manifest:');
+    errors.forEach(e => console.error('  - ' + e));
+    return EXIT_BAD;
+  }
   console.log(manifestHash(m));
   return EXIT_PASS;
 }
