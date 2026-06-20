@@ -119,5 +119,49 @@ for _v in VECTORS:
     setattr(RejectVectorTests, f"test_reject_{_v['id'].replace('-', '_')}", _make_reject_test(_v))
 
 
+class HashCommandRejectsTests(unittest.TestCase):
+    """The `hash` CLI command MUST reject the same inputs `lock`/`verify` do.
+
+    `hash` is the most likely embed entry point, yet it historically skipped
+    `validate_manifest` (unlike lock/verify and the Go/Rust impls) and would
+    print a hash for a non-portable manifest — a silent, unverifiable
+    commitment. This locks that gap shut.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        if not VECTORS:
+            raise unittest.SkipTest(f"reject vectors not present: {VECTORS_PATH}")
+
+    def _hash_exit(self, manifest) -> int:
+        import contextlib
+        import io
+        import os
+        import tempfile
+
+        fd, path = tempfile.mkstemp(suffix=".prml.json")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as fh:
+                json.dump(manifest, fh)
+            with contextlib.redirect_stderr(io.StringIO()), \
+                 contextlib.redirect_stdout(io.StringIO()):
+                return falsify_prml.main(["hash", path])
+        finally:
+            os.unlink(path)
+
+    def test_clean_manifest_hashes(self):
+        self.assertEqual(self._hash_exit(CLEAN), 0,
+                         "the clean positive-control manifest must hash (exit 0)")
+
+    def test_reject_vectors_are_not_hashed(self):
+        for v in VECTORS:
+            with self.subTest(vector=v["id"]):
+                self.assertNotEqual(
+                    self._hash_exit(v["input"]), 0,
+                    f"{v['id']} ({v['title']}) was HASHED — `hash` must reject it "
+                    f"(reason: {v['reason']})",
+                )
+
+
 if __name__ == "__main__":
     unittest.main()

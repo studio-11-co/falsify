@@ -260,6 +260,14 @@ def cmd_hash(args) -> int:
     except (OSError, ValueError) as e:
         sys.stderr.write(f"hash: cannot read {args.spec}: {e}\n")
         return EXIT_BAD
+    # Validate before hashing: an invalid or non-portable manifest (e.g. one
+    # carrying forbidden control characters) would otherwise yield a hash that
+    # the other reference impls reject — a silent, non-portable commitment.
+    # This matches `lock`/`verify` here and `hash` in the Go/Rust impls.
+    errors = validate_manifest(m)
+    if errors:
+        sys.stderr.write("hash: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
+        return EXIT_BAD
     print(manifest_hash(m))
     return EXIT_PASS
 
