@@ -142,7 +142,7 @@ for a shareable, verifiable permalink.
 ## Where to go next
 
 - [spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1) — the PRML v0.1 spec.
-- [examples/](examples/) — more manifest examples.
+- [examples/first-manifest/](examples/first-manifest/) — this same flow as a committed, reproducible example (real dataset, real hashes).
 - [docs/ENGINE-TUTORIAL.md](docs/ENGINE-TUTORIAL.md) — the optional
   pre-registration workflow engine (`falsify-engine`).
 - [ROADMAP.md](ROADMAP.md) — what ships next.

@@ -1,0 +1,10 @@
+{"id": 1, "prediction": "positive", "gold": "positive"}
+{"id": 2, "prediction": "negative", "gold": "negative"}
+{"id": 3, "prediction": "positive", "gold": "positive"}
+{"id": 4, "prediction": "negative", "gold": "positive"}
+{"id": 5, "prediction": "positive", "gold": "positive"}
+{"id": 6, "prediction": "negative", "gold": "negative"}
+{"id": 7, "prediction": "positive", "gold": "positive"}
+{"id": 8, "prediction": "negative", "gold": "negative"}
+{"id": 9, "prediction": "positive", "gold": "positive"}
+{"id": 10, "prediction": "negative", "gold": "negative"}

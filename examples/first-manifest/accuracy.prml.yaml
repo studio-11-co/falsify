@@ -1,0 +1,12 @@
+version: prml/0.1
+claim_id: 01900000-0000-7000-8000-0000000000c2
+created_at: "2026-06-23T12:00:00Z"
+metric: accuracy
+comparator: ">="
+threshold: 0.85
+dataset:
+  id: sentiment-toy-10
+  hash: 1ff9940aea7d0dc0a97207f2f4f8c4a524e3b5cb83ed273015c80f244cf3e1eb
+seed: 42
+producer:
+  id: falsify.dev/examples/first-manifest

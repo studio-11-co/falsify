@@ -1,6 +1,6 @@
 # Worked Example — Pre-registering a HumanEval `pass@1` claim with PRML
 
-**Status:** procedure-and-output walkthrough. The script in this directory is real and runnable; the model run is documented end-to-end with sample output. Reproduce the output by following the procedure with any code-generation model you have API access to.
+**Status:** procedure-and-output walkthrough. The script is real and runnable, but the model, the `pass@1` figure, and the hashes shown below are **illustrative** — running it for real needs your own API credentials. For a fully committed, self-contained example you can reproduce byte-for-byte with no API keys (real dataset hash, real lock hash, real PASS/TAMPERED), see [`examples/first-manifest/`](../first-manifest/).
 
 **Goal:** demonstrate that PRML works on a real benchmark with a real model — not just on synthetic test vectors. Produce a manifest that can be independently verified by anyone with the dataset, the model checkpoint, and a SHA-256 implementation.
 

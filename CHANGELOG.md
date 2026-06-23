@@ -10,6 +10,7 @@ numbers follow [Semantic Versioning](https://semver.org).
 - Rewrote `TUTORIAL.md` to teach the core PRML path — `lock` → `verify`, demonstrating PASS, FAIL, and TAMPERED. Every command now runs as written.
 - Moved the workflow-engine walkthrough to `docs/ENGINE-TUTORIAL.md`, corrected to drive the `falsify-engine` binary throughout.
 - `README.md`: fixed the broken `falsify init --template` block (templates are a `falsify-engine` feature) and the mislabeled subcommand list.
+- Added `examples/first-manifest/` — a fully real, committed example (real dataset + real SHA-256 + tiny runnable eval) that reproduces the lock → verify → TAMPERED flow byte-for-byte with no API keys. Flagged the `humaneval-walkthrough` figures as illustrative and pointed to it. (Gap audit C2.)
 
 ### Spec — v0.1 clarifying errata (no hash change; documents existing reference behavior)
 - §3.4 Portable Character Set: the forbidden code-point class (C0/C1, U+007F, U+2028/U+2029, U+FEFF) the reference impl already rejects, citing the reject-vector suite. (B5)
