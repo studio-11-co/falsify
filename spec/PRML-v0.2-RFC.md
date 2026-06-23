@@ -49,15 +49,19 @@ This is non-negotiable. If any proposed v0.2 change breaks v0.1 hash-equivalence
 **Example:**
 
 ```yaml
-prml_version: "0.2"
-prml_mode: "streaming"
-metric: "elo_rating"
-value_method: "lmsys_anonymous_chat_arena_v1"
+version: prml/0.2
+prml_mode: streaming
+metric: elo_rating
+value_method: lmsys_anonymous_chat_arena_v1
 threshold: 1300
-threshold_direction: ">="
-dataset: "lmsys-arena-live"
-dataset_hash: "sha256:n/a-streaming"
-model_version: "claude-3.5-sonnet@2025-10-01"
+comparator: ">="
+dataset:
+  id: lmsys-arena-live
+  hash: n/a-streaming
+model:
+  id: claude-3.5-sonnet@2025-10-01
+producer:
+  id: falsify.dev
 sample_size: 1000  # minimum
 seed: null
 pre_registered_from: "2026-05-01T00:00:00Z"
@@ -75,7 +79,7 @@ pre_registered_to: "2026-06-01T00:00:00Z"
 **Example:**
 
 ```yaml
-prml_version: "0.2"
+version: "prml/0.2"
 metric: "refusal_rate"
 # ... v0.1 fields ...
 runner_attestation: "sigstore://rekor.sigstore.dev/api/v1/log/entries/24296fb24b8ad77a..."
@@ -94,7 +98,7 @@ runner_attestation: "sigstore://rekor.sigstore.dev/api/v1/log/entries/24296fb24b
 **Example:**
 
 ```yaml
-prml_version: "0.2"
+version: "prml/0.2"
 # ... original fields ...
 revoked_at: "2026-05-15T10:00:00Z"
 revocation_reason: "dataset_compromised"

@@ -179,7 +179,7 @@ not rhetorical — and CI enforces it on every push.
 
 ## What you get
 
-- A single-file CLI (`falsify`) with **18 subcommands**: `init`,
+- The `falsify-engine` CLI with **18 subcommands**: `init`,
   `lock`, `run`, `verdict`, `guard`, `list`, `stats`, `diff`, `hook`,
   `doctor`, `version`, `export`, `verify`, `replay`, `why`, `trend`,
   `score`, `bench`.
@@ -271,13 +271,15 @@ falsify-engine hook install      # enable the commit-msg guard
 Exit code `0` on PASS, `10` on FAIL. Everything else is documented
 below.
 
-New to pre-registration? Walk through [TUTORIAL.md](TUTORIAL.md) — 15 minutes, zero to first locked claim.
+New to pre-registration? Walk through [TUTORIAL.md](TUTORIAL.md) — 10 minutes, zero to first locked claim (core PRML path).
 
 ### Start from a template
 
+The five templates are a feature of the **workflow engine** (`falsify-engine`):
+
 ```bash
-falsify init --template accuracy
-falsify lock accuracy
+falsify-engine init --template accuracy   # scaffold a ready spec + metric + dataset
+falsify-engine lock accuracy
 falsify-engine run accuracy
 falsify-engine verdict accuracy
 ```

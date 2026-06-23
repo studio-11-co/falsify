@@ -23,32 +23,45 @@ class TutorialTests(unittest.TestCase):
         self.assertGreater(len(self.text), 0)
 
     def test_has_all_sections(self) -> None:
-        for n in range(1, 8):
+        # TUTORIAL.md teaches the core PRML path in six steps
+        # (lock -> verify PASS -> FAIL -> TAMPERED).
+        for n in range(1, 7):
             self.assertRegex(
                 self.text,
                 rf"(?m)^## Step {n}\b",
                 f"missing '## Step {n}' heading",
             )
         for heading in (
-            "Prerequisites",
             "What you will build",
+            "Install",
             "What just happened",
             "Where to go next",
         ):
             self.assertIn(heading, self.text, f"missing section: {heading!r}")
 
     def test_mentions_core_commands(self) -> None:
+        # The PRML manifest path — these are the commands a reader copy-pastes.
         for cmd in (
             "falsify init",
             "falsify lock",
-            "falsify run",
-            "falsify verdict",
-            "falsify list",
-            "falsify stats",
-            "falsify export",
             "falsify verify",
         ):
             self.assertIn(cmd, self.text, f"missing command: {cmd!r}")
+        # The three verdicts the tutorial must demonstrate.
+        for verdict in ("PASS", "FAIL", "TAMPERED"):
+            self.assertIn(verdict, self.text, f"missing verdict: {verdict!r}")
+
+    def test_engine_tutorial_uses_engine_binary(self) -> None:
+        # The workflow-engine walkthrough lives in its own doc and must drive
+        # the `falsify-engine` binary, not the PRML `falsify` CLI.
+        engine = REPO_ROOT / "docs" / "ENGINE-TUTORIAL.md"
+        self.assertTrue(engine.is_file(), f"ENGINE-TUTORIAL.md missing at {engine}")
+        etext = engine.read_text()
+        self.assertIn("falsify-engine run", etext)
+        self.assertNotRegex(
+            etext, r"(?m)^    falsify (run|verdict|lock|init) ",
+            "engine tutorial must use the `falsify-engine` binary for engine commands",
+        )
 
     def test_no_nested_code_fences(self) -> None:
         self.assertEqual(

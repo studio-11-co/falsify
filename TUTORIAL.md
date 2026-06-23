@@ -1,205 +1,148 @@
-# Tutorial — zero to first locked claim in 15 minutes
+# Tutorial — zero to first locked claim in 10 minutes
+
+This walks the **core PRML path**: lock an evaluation claim's bar before
+the run, then verify a result against it — and watch what happens when
+someone tries to move the bar afterward. Every command below is real and
+runs as written.
+
+> Looking for the older pre-registration **workflow engine** (the
+> `init → lock → run → verdict → guard` loop over `.falsify/<name>/`,
+> exposed as the `falsify-engine` command)? That's a separate, optional
+> tool — see [docs/ENGINE-TUTORIAL.md](docs/ENGINE-TUTORIAL.md).
 
 ## Who this is for
 
-You have never used pre-registration before and you want to see
-what Falsification Engine actually does. You have Python 3.11+ and
-a terminal.
+You publish or consume ML evaluation claims ("this model is 93% accurate")
+and you want them to be **tamper-evident** — checkable, not taken on trust.
+You have Python 3.9+ and a terminal.
 
 ## What you will build
 
-- A claim that a string is mostly vowels, locked with a SHA-256 hash.
-- A run that falsifies the claim against input `rhythm`.
-- A fix that makes the claim pass against input `aeiou`, re-locked
-  with a new hash so the history stays honest.
+- An accuracy claim whose bar (metric, threshold, dataset, seed) is locked
+  to a SHA-256 **before** the result is known.
+- A `PASS` and a `FAIL` verdict against that locked bar.
+- A `TAMPERED` verdict — the moved-goalpost case the whole thing exists for.
 
-## Prerequisites
+## Install
 
-- Python 3.11+
-- git
-- 15 minutes
-
-Clone this repo, then install the package into a virtualenv so the
-`falsify` command is on your PATH:
-
-    python3 -m venv .venv
-    source .venv/bin/activate
-    pip install -e .
-
-Check the install:
-
+    pip install falsify
     falsify --version
 
-## Step 1 — Initialize
+## Step 1 — Scaffold a manifest
 
-From the repo root, scaffold a new claim directory:
+    falsify init accuracy.prml.yaml
 
-    falsify init vowels
+That writes a skeleton with placeholders:
 
-This creates `.falsify/vowels/spec.yaml` — a template you will
-fill in next. The `.falsify/` directory is where every locked
-spec, run artifact, and verdict lives. One subdirectory per claim.
+    version: prml/0.1
+    claim_id: REPLACE_WITH_UUIDv7
+    created_at: "2026-01-01T00:00:00Z"
+    metric: accuracy
+    comparator: ">="
+    threshold: 0.90
+    dataset:
+      id: your-dataset-id
+      hash: REPLACE_WITH_64_LOWERCASE_HEX
+    seed: 42
+    producer:
+      id: your-org-or-domain
 
-## Step 2 — Write your first claim
+## Step 2 — Fill in the bar
 
-> **In a hurry?** Run `falsify init --template accuracy` to get a
-> working `claims/accuracy/` (spec + metric + dataset) plus a
-> mirrored `.falsify/accuracy/spec.yaml`, and skip ahead to Step 3.
-> Five templates ship: `accuracy`, `latency`, `brier`, `llm-judge`,
-> `ab`. The walkthrough below builds the same structure by hand so
-> you understand what each piece does.
+Edit `accuracy.prml.yaml` into a real claim. `dataset.hash` is **64
+lowercase hex characters** (the SHA-256 of your eval set), no `sha256:`
+prefix:
 
-You need two files: a Python metric function and a spec. Put the
-metric at `claims/vowels.py`:
+    version: prml/0.1
+    claim_id: 01900000-0000-7000-8000-000000000000
+    created_at: "2026-06-23T09:00:00Z"
+    metric: accuracy
+    comparator: ">="
+    threshold: 0.90
+    dataset:
+      id: imagenet-val-2012
+      hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+    seed: 42
+    producer:
+      id: acme-ai/model-v2
 
-    # claims/vowels.py
-    from pathlib import Path
-
-    def vowel_ratio(run_dir):
-        """Return (ratio, n) where ratio = vowels / characters."""
-        text = (Path(run_dir) / "stdout.txt").read_text().strip()
-        if not text:
-            return (0.0, 0)
-        vowels = sum(1 for ch in text.lower() if ch in "aeiou")
-        return (vowels / len(text), len(text))
-
-Now replace `.falsify/vowels/spec.yaml` with the real claim:
-
-    claim: "Most characters in the sample are vowels (ratio above 0.5)."
-    falsification:
-      failure_criteria:
-        - metric: vowel_ratio
-          direction: above
-          threshold: 0.5
-      minimum_sample_size: 1
-      stopping_rule: "one echo"
-    experiment:
-      command: "echo rhythm"
-      metric_fn: "claims.vowels:vowel_ratio"
-
-No placeholders, no `TODO`, no `<...>` markers — `falsify lock`
-will refuse the spec otherwise.
+This says, on the record: *"I will clear accuracy ≥ 0.90 on this exact
+dataset."* You are committing to it **before** you have the number.
 
 ## Step 3 — Lock it
 
-    falsify lock vowels
+    falsify lock accuracy.prml.yaml
 
-What happened: the CLI canonicalized your YAML (sorted keys,
-stripped comments, normalized whitespace), computed the SHA-256 of
-the canonical text, and wrote `.falsify/vowels/spec.lock.json`
-with `spec_hash`, `locked_at`, and the canonical YAML itself. From
-this moment on, any edit to `spec.yaml` that changes its canonical
-form will break the lock and `falsify run` will refuse to proceed
-unless you re-lock with `--force`.
+    locked: accuracy.prml.yaml
+      canonical bytes: 297
+      sha256:          60318b2380cbf410194e0f1307470e5a32539f6f3a9cffc560040e671483733a
+      sidecar:         accuracy.prml.prml.sha256
 
-## Step 4 — Run and watch it FAIL
+`lock` canonicalizes the manifest (byte-exact form), takes its SHA-256, and
+writes that hash to a sidecar. From here on, any change to a locked field
+breaks the hash — and the next `verify` will say so.
 
-    falsify run vowels
-    falsify verdict vowels
+## Step 4 — Run your eval, then verify a PASS
+
+Run your real evaluation, get the observed accuracy, and check it against
+the locked bar:
+
+    falsify verify accuracy.prml.yaml --observed 0.934
     echo "exit: $?"
 
-Expected output from `verdict`:
-
-    Verdict: FAIL
-      observed vowel_ratio = 0.0
-      threshold: above 0.5
-
-    exit: 10
-
-The input `rhythm` has zero vowels, ratio 0.0, which is not above
-0.5. Exit code 10 means FAIL — mechanical, not rhetorical.
-
-## Step 5 — Fix the claim honestly
-
-You have two options and both require a fresh lock. That is the
-point: the hash is what makes the fix auditable.
-
-Option (a): lower the threshold. Change `threshold: 0.5` to
-`threshold: 0.0` in `.falsify/vowels/spec.yaml`. This is a claim
-change — the goalpost moved — and anyone reading the lock history
-will see it.
-
-Option (b, what this tutorial does): keep the claim, swap the
-data. Change the command line to test a string that actually is
-mostly vowels:
-
-    experiment:
-      command: "echo aeiou"
-      metric_fn: "claims.vowels:vowel_ratio"
-
-Either way, re-lock. The hash changes, so `falsify` forces the
-decision:
-
-    falsify lock vowels --force
-
-`--force` is the required ceremony. You can never *silently* change
-a locked spec; you can only visibly re-lock it.
-
-## Step 6 — PASS
-
-    falsify run vowels
-    falsify verdict vowels
-    echo "exit: $?"
-
-Expected:
-
-    Verdict: PASS
-      observed vowel_ratio = 1.0
-      threshold: above 0.5
-
+    PASS  metric=accuracy  observed=0.934  >=  threshold=0.9
     exit: 0
 
-`aeiou` is 100% vowels. The claim now holds.
+`0.934 ≥ 0.90`, and the manifest is untouched. Exit `0` = PASS — mechanical,
+not rhetorical.
 
-## Step 7 — Inspect
+## Step 5 — A FAIL is an honest result
 
-Three commands to see what the system knows about your claim:
+    falsify verify accuracy.prml.yaml --observed 0.82
+    echo "exit: $?"
 
-    falsify list
-    falsify stats
-    falsify export --output audit.jsonl
-    falsify verify audit.jsonl
-    falsify replay <run-id>
-    falsify why vowels
-    falsify trend vowels
-    falsify bench   # sanity-check the CLI's own responsiveness
+    FAIL  metric=accuracy  observed=0.82  NOT >=  threshold=0.9
+    exit: 10
 
-`replay` re-runs the metric against the same dataset and exits 0
-only if the value matches bit-for-bit; mismatch or stale spec are
-hard errors. `why` is the plain-English companion to `verdict` —
-it always exits 0 and tells you what the next honest move is for
-any state (PASS, FAIL, INCONCLUSIVE, STALE, UNRUN, UNLOCKED).
-`trend` draws an ASCII sparkline of the metric across runs with
-an `improving`/`degrading`/`flat`/`mixed` classifier — useful for
-spotting drift before it becomes a breach.
+`0.82` misses the bar you locked. That's a true negative — exit `10`. Failing
+your own pre-registered bar is exactly the signal PRML is meant to surface.
 
-`list` gives you a table of every claim and its state. `stats`
-aggregates counts (PASS/FAIL/INCONCLUSIVE/STALE/UNRUN). `export`
-dumps an append-only JSONL audit trail of every lock and verdict.
-`verify` walks that JSONL and confirms the hash chain is intact —
-a tampered file would exit 10.
+## Step 6 — The moved goalpost → TAMPERED
+
+Now play the cheater. You scored `0.82`, you don't want a FAIL, so you
+quietly lower the bar: change `threshold: 0.90` to `threshold: 0.80` in
+`accuracy.prml.yaml`. A naive runtime check would now say "0.82 ≥ 0.80,
+passed." PRML doesn't:
+
+    falsify verify accuracy.prml.yaml --observed 0.82
+    echo "exit: $?"
+
+    TAMPERED
+      recorded:    60318b2380cbf410194e0f1307470e5a32539f6f3a9cffc560040e671483733a
+      recomputed:  016ec1a6f2239e85ffae0065d0534b5a351b936448b53ceb51a530dc547b1020
+exit: 3
+
+The recomputed hash no longer matches the one locked at Step 3. Exit `3` =
+TAMPERED. The bar moved, and it's self-evident from the manifest alone —
+anyone can re-check it without trusting you.
 
 ## What just happened
 
-- Your claim was locked with a hash **before** any data was seen.
-  You could not redefine "success" after looking at the run.
-- The canonical hash prevents silent edits. Any change you make to
-  the spec requires a visible `--force` re-lock, which produces a
-  new hash that anyone can audit.
-- The verdict is an exit code. `0` for PASS, `10` for FAIL, `3`
-  for tampering. That makes CI gating trivial — it is a one-line
-  addition to any workflow.
+- The bar was locked with a hash **before** any result was seen. You could
+  not redefine "success" after looking at the number.
+- A real miss reads as `FAIL` (exit 10); a moved bar reads as `TAMPERED`
+  (exit 3). They are not the same thing, and only the second is cheating.
+- Every verdict is an exit code (`0` PASS · `10` FAIL · `3` TAMPERED ·
+  `2` bad input · `11` missing sidecar). CI gating is a one-liner.
+
+No account or server is needed to verify — it's a local hash check. You can
+also paste any manifest at [registry.falsify.dev](https://registry.falsify.dev)
+for a shareable, verifiable permalink.
 
 ## Where to go next
 
-- [DEMO.md](DEMO.md) — the 5-step walkthrough used in the hackathon
-  demo video.
-- [examples/calibration_sample/](examples/calibration_sample/) — a realistic
-  20-row prediction-ledger fixture with a Brier score metric.
-- [docs/EXAMPLES.md](docs/EXAMPLES.md) — four more claim types
-  (accuracy, latency, calibration, LLM agreement, AB).
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the design
-  principles, data flow, and core invariants.
+- [spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1) — the PRML v0.1 spec.
+- [examples/](examples/) — more manifest examples.
+- [docs/ENGINE-TUTORIAL.md](docs/ENGINE-TUTORIAL.md) — the optional
+  pre-registration workflow engine (`falsify-engine`).
 - [ROADMAP.md](ROADMAP.md) — what ships next.
-- Add a live honesty badge to your README with
-  `falsify score --format shields --output .falsify/badge.json`.

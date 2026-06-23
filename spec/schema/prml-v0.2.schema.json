@@ -8,6 +8,7 @@
   "required": [
     "version",
     "claim_id",
+    "created_at",
     "metric",
     "comparator",
     "threshold",

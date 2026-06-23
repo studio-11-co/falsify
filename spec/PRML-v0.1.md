@@ -216,7 +216,7 @@ A PRML manifest **MUST** be expressible in the following YAML subset:
 - Block-style mappings only (no flow-style).
 - Plain scalars, double-quoted scalars, and integers.
 - No anchors, aliases, or tags beyond `!!str`, `!!int`, `!!float`.
-- ASCII-only, except where UTF-8 is explicitly permitted (e.g., `notes`).
+- UTF-8 throughout; string scalars and keys are restricted to the portable character set of §3.4.
 
 ### 3.2 Key Ordering
 
@@ -234,6 +234,38 @@ lexicographic byte order. Nested mappings are ordered recursively.
 
 A reference canonicalizer is provided by the falsify implementation and produces
 output byte-equivalent to the rules above for any conforming input.
+
+### 3.4 Portable Character Set
+
+To guarantee byte-identical canonicalization across implementations, every
+string scalar and every mapping key **MUST NOT** contain any of the following
+code points:
+
+- U+0000–U+001F (C0 control characters)
+- U+007F (DELETE) and U+0080–U+009F (C1 control characters)
+- U+2028 (LINE SEPARATOR) and U+2029 (PARAGRAPH SEPARATOR)
+- U+FEFF (BYTE ORDER MARK / ZERO WIDTH NO-BREAK SPACE)
+
+These code points serialize ambiguously or invisibly and would let two
+visually identical manifests hash differently. A manifest containing any of
+them **MUST** be rejected — it **MUST NOT** be locked or hashed — and the
+implementation **MUST** exit with code `2` (bad input). All other UTF-8 is
+permitted in string values. The control-character vectors in the reject suite
+(Appendix B) enumerate this class normatively.
+
+### 3.5 Numeric Rendering
+
+`threshold` is a float64 (§2.3). An integer-valued threshold **MUST**
+canonicalize as a float — `1` renders as `1.0` — so that `1` and `1.0` produce
+the same hash. `seed` is an integer and renders with no decimal point.
+
+Floating-point values **MUST** be rendered in the canonical decimal form
+produced by the reference emitter: the shortest decimal that round-trips to the
+same float64, with very small or very large magnitudes in normalized scientific
+notation (for example, `0.000001` renders as `1.0e-06`). The reference
+canonicalizer (§3.3, §10) is normative for this rendering, and the per-language
+canonicalization-portability analysis enumerates the exact rules that all four
+reference implementations reproduce byte-for-byte.
 
 ---
 
@@ -498,10 +530,10 @@ producer:
   id: "falsify.dev"
 ```
 
-Canonical bytes hash (illustrative; verify with reference implementation):
+Canonical bytes hash (verify with the reference implementation — `falsify hash`):
 
 ```
-b2c3a1f0d8e7c6b5a4938271605f4e3d2c1b0a9988776655443322110ffeeddc
+47f9956b3b9c495b3bf03b67398f54d0aa2133a2faf9b0522a9efa90bb109466
 ```
 
 ---

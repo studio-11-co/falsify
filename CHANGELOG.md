@@ -4,6 +4,22 @@ All notable changes to Falsification Engine are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com); version
 numbers follow [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+### Docs (gap audit C1)
+- Rewrote `TUTORIAL.md` to teach the core PRML path — `lock` → `verify`, demonstrating PASS, FAIL, and TAMPERED. Every command now runs as written.
+- Moved the workflow-engine walkthrough to `docs/ENGINE-TUTORIAL.md`, corrected to drive the `falsify-engine` binary throughout.
+- `README.md`: fixed the broken `falsify init --template` block (templates are a `falsify-engine` feature) and the mislabeled subcommand list.
+
+### Spec — v0.1 clarifying errata (no hash change; documents existing reference behavior)
+- §3.4 Portable Character Set: the forbidden code-point class (C0/C1, U+007F, U+2028/U+2029, U+FEFF) the reference impl already rejects, citing the reject-vector suite. (B5)
+- §3.5 Numeric Rendering: `threshold` is float64 (integer-valued → `N.0`); canonical float rendering all four impls reproduce. (B2)
+- Appendix A: replaced the placeholder example hash with the real, verifiable SHA-256. (B4)
+
+### Spec — v0.2 RFC / schema
+- v0.2 JSON Schema: restored `created_at` to `required` (a v0.1 MUST). (B1)
+- v0.2 RFC: rewrote proposal examples to the canonical v0.1-superset shape (`version`, `comparator`, nested `dataset`), matching the schema. (B3)
+
 ## [v0.3.9] — 2026-06-19
 
 ### Fixed
