@@ -199,6 +199,17 @@ mechanisms for the authoritative answer. A v0.1-conforming producer
 and document the choice. v0.2 makes this a normative SHOULD; v0.1 leaves
 the choice informative.
 
+**These anchor mechanisms are not equally strong.** Git commit timestamps,
+RFC 3161 timestamping authorities, and Sigstore Rekor entries provide
+*independent non-repudiation*: a third party — not the producer — vouches for
+the time, and the record cannot be silently withdrawn. `registry.falsify.dev`
+is **weaker**: an operator-controlled convenience index (no signature, no
+Merkle inclusion proof, no independent witness). It is useful for in-browser
+verification and as corroboration, but it is **not** a cryptographic
+timestamping authority and **MUST NOT** be relied on as the sole audit-grade
+anchor. For high-risk or regulatory use, select at least one independent
+mechanism from the list above.
+
 This distinction matters for §8.1 threat-model analysis: the
 threat that `created_at` defends against is the producer **retroactively
 editing** a published manifest. The threat that anchoring defends against is

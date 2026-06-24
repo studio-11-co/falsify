@@ -4,6 +4,8 @@
 
 **Status:** Working draft v0.1 under public review. Not a product. Not a service. A specification and a reference implementation, both under permissive licenses.
 
+> **v0.1 scope limit — read before citing this for Annex III.** PRML makes a *committed* evaluation claim tamper-evident. On its own it does **not** prevent the two adversaries most relevant to a high-risk audit: *selective publication* (publish only the claims that passed) and *back-dating* (author a manifest after the fact). A v0.1 deployment used as Article 12 evidence **MUST** add one of three deployment-level mitigations — a publish-before-run anchor, sequential `claim_id` allocation, or an external pre-registration anchor (see [spec §8.1](https://spec.falsify.dev/v0.1#threat-model)). Without one of them, a v0.1 manifest is **not** suitable for standalone Annex III evidence submission, and the producer should declare so.
+
 ---
 
 ## The deadline that started this
@@ -104,6 +106,8 @@ Your post-market monitoring plan requires recurring evaluation against drift. PR
 - **Not a substitute for a notified body.** Notified bodies assess your full conformity package. PRML produces one component of the technical-documentation portion of that package.
 - **Not a substitute for your QMS.** Your quality management system stays where it is. PRML provides the cryptographic substrate for the documents your QMS already produces.
 - **Not a substitute for model cards or datasheets.** Those remain. PRML sits underneath them, providing the verifiable hash that a model card cites when it reports an accuracy number.
+- **Not, on its own, sufficient for Annex III high-risk evidence.** The hash proves a claim was *committed*; it does not prove the producer committed *before* running, or published *every* claim. v0.1 requires a deployment-level anchor (§8.1) to close the selective-publication and back-dating gaps before the record is audit-grade.
+- **Not a measure of dataset adequacy.** `dataset.hash` proves the evaluation ran on exactly those bytes. It does **not** prove the dataset is representative, balanced, or sufficient — the Article 10 data-governance duties are a separate, substantive obligation outside PRML's scope.
 
 ---
 

@@ -50,6 +50,8 @@ PRML does not address:
 
 PRML is a **primitive for record integrity**. It does not assess *whether* a claim is correct, fair, or sufficient — only *that* the claim was committed before it was tested.
 
+> **Scope limit for high-risk use.** v0.1 makes a committed claim tamper-evident; it does **not**, on its own, defend against *selective publication* (publishing only the claims that passed) or *back-dating* (authoring a manifest after the fact). These are the adversaries most relevant to an Annex III audit. v0.1 deployments used as Article 12 evidence **MUST** adopt one of the three deployment-level mitigations in [spec §8.1](https://spec.falsify.dev/v0.1#threat-model) — publish-before-run anchor, sequential `claim_id` allocation, or external pre-registration anchor. A v0.1 deployment that adopts none of them is **not suitable** for standalone Annex III evidence submission. The "Coverage" labels below describe what the format *mechanically supports*, conditional on this discipline — they are not certifications.
+
 ---
 
 ## 2. Article-by-article mapping
@@ -65,7 +67,7 @@ PRML is a **primitive for record integrity**. It does not assess *whether* a cla
 | Facilitating post-market monitoring | forward-only `prior_hash` chain spans system lifetime | `prior_hash`, `chain_hash` |
 | Lifetime preservation | plain text artifact + sidecar; no proprietary runtime needed to read | YAML 1.2 subset |
 
-**Coverage:** **Full** for the evaluation-claim subset of Article 12 events. Article 12 also requires logging of input data references, identification of natural persons reviewing outputs, and reference databases — these are *complementary* to PRML, not alternatives.
+**Coverage:** **Full** for the evaluation-claim subset of Article 12 events — and only conditional on the §8.1 anti-gaming discipline noted above; without it, even this subset is not audit-grade. Article 12 also requires logging of input data references, identification of natural persons reviewing outputs, and reference databases — these are *complementary* to PRML, not alternatives.
 
 **Editor note:** PRML does not log inference-time events (per-request prediction logs). Those belong in a separate logging system. PRML covers only the *evaluation claim* layer.
 
@@ -124,7 +126,7 @@ PRML is a **primitive for record integrity**. It does not assess *whether* a cla
 | Lifetime tracking | `prior_hash` provides total ordering of evaluation events |
 | Documentation of analysis | exit codes (0/10/3/11) provide deterministic, machine-readable verdicts |
 
-**Coverage:** **Full** for accuracy-claim post-market monitoring. PRML is the natural format for the evaluation slice of an Article 72 plan.
+**Coverage:** **Full** for accuracy-claim post-market monitoring — conditional on the §8.1 discipline above. PRML is the natural format for the evaluation slice of an Article 72 plan; it does not cover non-evaluation monitoring signals (field incident reports, deployer feedback, drift telemetry), which are complementary.
 
 ---
 
