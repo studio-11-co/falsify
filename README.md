@@ -362,7 +362,10 @@ caches stabilize before timing (default 1).
 
 ## Claude Code tooling
 
-The repo ships Claude Code skills, subagents, and slash commands that draft
+The repo ships Claude Code **skills** (`hypothesis-author`, `claim-audit`,
+`claim-review`, `falsify-ci-doctor`, and the `falsify` orchestrator), two
+forked-context **subagents** (`claim-auditor`, `verdict-refresher`), and
+**slash commands** (`/new-claim`, `/audit-claims`, `/ship-verdict`) that draft
 falsifiable specs and audit text / PR diffs against the verdict log. See
 [CLAUDE.md](CLAUDE.md) and the `.claude/` directory.
 
