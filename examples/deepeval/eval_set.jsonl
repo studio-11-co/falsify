@@ -1,0 +1,10 @@
+{"input": "What is the capital of France?", "expected_output": "Paris", "actual_output": "Paris"}
+{"input": "What is 7 multiplied by 6?", "expected_output": "42", "actual_output": "42"}
+{"input": "Who wrote the play Hamlet?", "expected_output": "William Shakespeare", "actual_output": "William Shakespeare"}
+{"input": "What is the chemical symbol for gold?", "expected_output": "Au", "actual_output": "Au"}
+{"input": "In what year did the Berlin Wall fall?", "expected_output": "1989", "actual_output": "1989"}
+{"input": "What is the largest planet in the solar system?", "expected_output": "Jupiter", "actual_output": "Jupiter"}
+{"input": "What gas do plants primarily absorb for photosynthesis?", "expected_output": "Carbon dioxide", "actual_output": "Carbon dioxide"}
+{"input": "What is the square root of 144?", "expected_output": "12", "actual_output": "12"}
+{"input": "Who painted the Mona Lisa?", "expected_output": "Leonardo da Vinci", "actual_output": "Leonardo da Vinci"}
+{"input": "What is the boiling point of water in Celsius at sea level?", "expected_output": "100", "actual_output": "About 100 degrees"}
