@@ -39,22 +39,6 @@ No install? Verify any manifest in-browser at [registry.falsify.dev](https://reg
 
 ---
 
-**Open `*.prml.yaml` in your IDE:** as of May 2026 the PRML JSON Schema is in the [SchemaStore](https://github.com/SchemaStore/schemastore/pull/5673) catalog. VS Code, JetBrains IDEs, Helix, Zed, and anything using `yaml-language-server` autocomplete and validate manifest files out of the box. No config.
-
-**Try it without installing:** [`registry.falsify.dev`](https://registry.falsify.dev) — paste a PRML manifest, get a SHA-256 permalink and a README badge. No account, no server-side state beyond the hash.
-
-**Add it to your CI in five lines:** [`studio-11-co/prml-verify-action@v2`](https://github.com/studio-11-co/prml-verify-action) — composite GitHub Action wrapping the falsify CLI ([listed on the GitHub Marketplace](https://github.com/marketplace/actions/prml-verify)). Block merges on tampered or regressed eval claims. Optional public registry receipt (a convenience index, not a cryptographic timestamping authority — see [spec §2.3.4](https://spec.falsify.dev/v0.1#created-at)).
-
-**Already on MLflow?** [`pip install mlflow-falsify`](https://pypi.org/project/mlflow-falsify/) — discoverable plugin that tags every MLflow run with the PRML manifest hash, version, metric, comparator, threshold, and dataset id. Zero code changes to your existing MLflow workflow. Source: [`studio-11-co/mlflow-falsify`](https://github.com/studio-11-co/mlflow-falsify).
-
-**Need it locked for one of your published claims?** [`falsify.dev/sprint`](https://falsify.dev/sprint) — Diagnostic Sprint, fixed-scope engagement for regulated AI teams. PRML manifest authored, verifier deployed in CI, audit report shipped. Pricing scoped per client; single-claim review available as a sub-procurement option.
-
-**Embedding PRML in your platform?** [`docs/EMBED.md`](docs/EMBED.md) — three pure functions (`validate_manifest` / `manifest_hash` / `evaluate_predicate`), a 5-line lock-before-run hook, and an in-toto / ITE-6 attestation bridge (`falsify attest` / `to_intoto_statement`). No CLI required.
-
-**What is PRML?** [`falsify.dev/what-is-prml`](https://falsify.dev/what-is-prml) — plain-English answer page.
-
----
-
 ## The problem
 
 Your team claims the model hits **94% accuracy**. You ship it. Three weeks later a customer proves the real number is **71%**.
@@ -65,11 +49,7 @@ The claim was never *falsifiable*. Nobody wrote down — cryptographically, befo
 
 PRML does not prove an ML result is true. It proves that a specific evaluation claim was committed before it could be silently rewritten. That is a smaller guarantee than reproducibility — and a different one.
 
-**Falsify fixes this with a single idea from science:** you must pre-register the claim *before* you run the experiment. If you change the spec after seeing the data, the hash changes, the audit trail breaks, and CI fails with exit code 3.
-
-    $ falsify-engine lock accuracy_claim        # SHA-256 the spec
-    $ falsify-engine run  accuracy_claim        # reproducible experiment
-    $ falsify-engine verdict accuracy_claim     # exit 0 = PASS, 10 = FAIL, 3 = tampered
+**Falsify fixes this with a single idea from science:** you must pre-register the claim *before* you run the experiment — the `falsify lock` → `falsify verify` flow shown at the top. If you change the spec after seeing the data, the hash changes, the audit trail breaks, and CI fails with exit code 3.
 
 Deterministic exit codes are the API. CI gates on them. Humans read the audit trail. The claim either survives contact with the data or it doesn't.
 
@@ -95,6 +75,26 @@ Every week another paper, blog post, or product launch claims an AI metric that 
 - **Research** — replicate a paper by running its spec.lock.json
 
 See [docs/CASE_STUDIES.md](docs/CASE_STUDIES.md) for three concrete adoption stories.
+
+---
+
+## Integrations & ways in
+
+**Open `*.prml.yaml` in your IDE:** as of May 2026 the PRML JSON Schema is in the [SchemaStore](https://github.com/SchemaStore/schemastore/pull/5673) catalog. VS Code, JetBrains IDEs, Helix, Zed, and anything using `yaml-language-server` autocomplete and validate manifest files out of the box. No config.
+
+**Try it without installing:** [`registry.falsify.dev`](https://registry.falsify.dev) — paste a PRML manifest, get a SHA-256 permalink and a README badge. No account, no server-side state beyond the hash.
+
+**Add it to your CI in five lines:** [`studio-11-co/prml-verify-action@v2`](https://github.com/studio-11-co/prml-verify-action) — composite GitHub Action wrapping the falsify CLI ([listed on the GitHub Marketplace](https://github.com/marketplace/actions/prml-verify)). Block merges on tampered or regressed eval claims. Optional public registry receipt (a convenience index, not a cryptographic timestamping authority — see [spec §2.3.4](https://spec.falsify.dev/v0.1#created-at)).
+
+**Already on MLflow?** [`pip install mlflow-falsify`](https://pypi.org/project/mlflow-falsify/) — discoverable plugin that tags every MLflow run with the PRML manifest hash, version, metric, comparator, threshold, and dataset id. Zero code changes to your existing MLflow workflow. Source: [`studio-11-co/mlflow-falsify`](https://github.com/studio-11-co/mlflow-falsify).
+
+**Already running DeepEval?** [`examples/deepeval/`](examples/deepeval/) — lock a DeepEval metric's threshold to a SHA-256 before the run and verify the score after; a relaxed threshold reads TAMPERED, not PASS. Offline, no LLM/key.
+
+**Need it locked for one of your published claims?** [`falsify.dev/sprint`](https://falsify.dev/sprint) — Diagnostic Sprint, fixed-scope engagement for regulated AI teams. PRML manifest authored, verifier deployed in CI, audit report shipped. Pricing scoped per client; single-claim review available as a sub-procurement option.
+
+**Embedding PRML in your platform?** [`docs/EMBED.md`](docs/EMBED.md) — three pure functions (`validate_manifest` / `manifest_hash` / `evaluate_predicate`), a 5-line lock-before-run hook, and an in-toto / ITE-6 attestation bridge (`falsify attest` / `to_intoto_statement`). No CLI required.
+
+**What is PRML?** [`falsify.dev/what-is-prml`](https://falsify.dev/what-is-prml) — plain-English answer page.
 
 ---
 
@@ -161,36 +161,9 @@ Hosted spec at [spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1). Public re
 
 ---
 
-## Why
+## Beyond the core: the workflow engine
 
-AI agents make empirical claims all day — *"accuracy is up"*, *"the
-new retriever is faster"*, *"this filter catches every edge case"*.
-We rarely pin down the threshold, the metric, or the stopping rule
-before the data arrives.
-
-Without pre-registration, every verdict is post-hoc rationalization:
-the goalposts move a little, the sample is chosen a little, the
-winning explanation is kept.
-
-Falsification Engine forces scientific discipline onto that loop.
-You declare the test, lock the spec with a cryptographic hash, run
-the experiment, and read the exit code. PASS or FAIL is mechanical,
-not rhetorical — and CI enforces it on every push.
-
-## What you get
-
-- The `falsify-engine` CLI with **18 subcommands**: `init`,
-  `lock`, `run`, `verdict`, `guard`, `list`, `stats`, `diff`, `hook`,
-  `doctor`, `version`, `export`, `verify`, `replay`, `why`, `trend`,
-  `score`, `bench`.
-- A `commit-msg` git hook that blocks commits whose messages
-  contradict a locked verdict.
-- A GitHub Actions workflow that re-verdicts every push and PR
-  across Python 3.11 and 3.12.
-- **Five Claude Code skills** and **two forked-context subagents**
-  that draft specs, audit arbitrary text against the verdict log,
-  review PR diffs for honesty violations, and keep the log itself
-  fresh.
+`falsify lock` / `falsify verify` (shown at the top) is the whole PRML core — that is all most teams need. For a managed claim *workflow*, the bundled **`falsify-engine`** CLI adds `init` / `run` / `verdict` / `guard` / `trend` (and more), a `commit-msg` guard that blocks commits contradicting a locked verdict, and optional Claude Code tooling. Full walkthrough: **[docs/ENGINE-TUTORIAL.md](docs/ENGINE-TUTORIAL.md)**.
 
 ## Install
 
@@ -387,49 +360,11 @@ caches stabilize before timing (default 1).
 | 3    | Hash mismatch (spec tampered)                 |
 | 11   | Guard violation (commit blocked)              |
 
-## The Opus 4.7 layers
+## Claude Code tooling
 
-**Skills** (`.claude/skills/`) — in-session helpers that fire on
-trigger phrases.
-- `hypothesis-author` walks the user through a 5-question dialogue
-  and writes a falsifiable `spec.yaml`.
-- `falsify` is the orchestrator: routes any empirical claim to the
-  right place in the init → lock → run → verdict pipeline.
-- `claim-audit` runs a fast keyword+regex audit over pasted text
-  and escalates to the `claim-auditor` subagent when paraphrases or
-  >2 claims show up.
-- `claim-review` reads a PR diff and flags unlocked specs, silent
-  threshold edits, and `metric_fn` references to missing modules —
-  runs in PR CI, exits `1` on any CRITICAL finding. See
-  [`docs/PR_REVIEW.md`](docs/PR_REVIEW.md).
-- `falsify-ci-doctor` ingests `make release-check` output and
-  maps each FAIL gate to a likely cause and an exact fix command
-  — one-shot triage when CI is red.
-
-**Subagents** (`.claude/agents/`) — forked-context agents invoked
-via the `Task` tool for heavier work.
-- `claim-auditor` does the semantic cross-reference that the
-  keyword-pass `claim-audit` skill deliberately skips; used on PR
-  bodies, release notes, and README edits.
-- `verdict-refresher` scans `.falsify/*/` for STALE, INCONCLUSIVE,
-  or UNRUN verdicts and re-runs them through the CLI — keeping
-  `guard` decisions trustworthy.
-
-**Slash commands** (`.claude/commands/`) — in-IDE shortcuts that
-compose the skills and CLI.
-- `/new-claim <template> [name]` — guided scaffold → lock → run →
-  verdict for one of the five templates.
-- `/audit-claims` — repo-wide semantic audit; merges
-  `list`/`stats`/`score` with findings from the `claim-audit`
-  skill into a single markdown report.
-- `/ship-verdict <name>` — four-gate release check (verdict,
-  freshness, replay, audit-chain). Exits non-zero on any gate
-  failure. Does not ship; only verifies.
-
-**CI** (`.github/workflows/falsify.yml`) — on every push and PR,
-the workflow runs the unittest suite, `tests/smoke_test.sh`, the
-calibration end-to-end (`lock` → `run` → `verdict`), a guard self-check,
-and a skill-lint pass over every SKILL.md and agent file.
+The repo ships Claude Code skills, subagents, and slash commands that draft
+falsifiable specs and audit text / PR diffs against the verdict log. See
+[CLAUDE.md](CLAUDE.md) and the `.claude/` directory.
 
 ## Demo
 
