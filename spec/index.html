@@ -296,12 +296,36 @@ footer.colophon a:hover { color: var(--ink); }
     return;
   }
 
-  marked.setOptions({ gfm: true, breaks: false, headerIds: true, mangle: false });
+  marked.setOptions({ gfm: true, breaks: false, mangle: false });
   target.innerHTML = marked.parse(md);
 
-  // Strip the duplicated H1 since the markdown leads with one
-  // (kept for GitHub readability; the page already has masthead)
-  // — leave it; readers expect the title here too.
+  // marked v12 dropped headerIds, so rendered headings carry no `id` and
+  // in-page anchors (e.g. /v0.1#threat-model) don't resolve. Add slug ids
+  // here, with clean explicit anchors for the sections other docs link to.
+  const slug = (s) => s.toLowerCase().trim()
+    .replace(/[`*_]/g, '').replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-').replace(/-+/g, '-');
+  const explicit = [
+    [/threat model/i, 'threat-model'],
+    [/created_at/i, 'created-at'],
+    [/verification semantics/i, 'verification-protocol'],
+  ];
+  const used = new Set();
+  target.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach((h) => {
+    const text = h.textContent || '';
+    let id = slug(text);
+    for (const [re, clean] of explicit) {
+      if (re.test(text) && !used.has(clean)) { id = clean; used.add(clean); break; }
+    }
+    if (id && !document.getElementById(id)) h.id = id;
+  });
+
+  // The spec is injected after page load, so the browser's initial #hash
+  // jump missed it — perform the scroll now that the headings exist.
+  if (location.hash) {
+    const el = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (el) el.scrollIntoView();
+  }
 
   // Rewrite raw README path links to GitHub if any leak in
   document.querySelectorAll('article a[href^="/Users/"]').forEach(a => a.removeAttribute('href'));
