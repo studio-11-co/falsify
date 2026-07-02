@@ -1,0 +1,31 @@
+# Canary: does the LATEST deepeval release still work with our example bridge?
+# Weekly + manual. Failure = DeepEval's SDK (BaseMetric/LLMTestCase surface)
+# moved under examples/deepeval — fix before a user or the maintainers hit it.
+name: canary (latest deepeval)
+
+on:
+  schedule:
+    - cron: "40 5 * * 1"   # Mondays 05:40 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install falsify + LATEST deepeval (unpinned)
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install --upgrade deepeval pyyaml
+          python -c "import deepeval; print('deepeval', deepeval.__version__)"
+      - name: DeepEval x PRML showcase end-to-end (offline, deterministic)
+        run: |
+          cd examples/deepeval
+          python run_with_prml.py
