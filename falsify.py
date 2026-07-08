@@ -1023,9 +1023,13 @@ def cmd_run(args: argparse.Namespace) -> int:
     start = datetime.now(timezone.utc)
     timed_out = False
     try:
+        # The command comes from the user's own spec file and runs on the
+        # user's own machine — the spec author IS the executor (same trust
+        # model as make / npm scripts / tox). shell=True is intentional so
+        # experiment commands can use pipes, redirection and env expansion.
         result = subprocess.run(
             command,
-            shell=True,
+            shell=True,  # nosec B602 — user's own spec command, no trust boundary crossed
             capture_output=True,
             text=True,
             timeout=_RUN_TIMEOUT_S,

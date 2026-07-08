@@ -3,6 +3,20 @@ name: falsify CI
 on: [push, pull_request]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Install linters
+        run: pip install ruff bandit
+      - name: Ruff (critical error set)
+        run: ruff check --select E9,F63,F7,F82 falsify.py falsify_prml.py tests/ mcp_server/
+      - name: Bandit (medium+ security static analysis)
+        run: bandit -ll falsify.py falsify_prml.py
+
   test:
     runs-on: ubuntu-latest
     strategy:
