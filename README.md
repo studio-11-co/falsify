@@ -32,6 +32,7 @@ No install? Verify any manifest in-browser at [registry.falsify.dev](https://reg
 ![honesty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/studio-11-co/falsify/main/.falsify/badge.json)
 ![python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13539/badge)](https://www.bestpractices.dev/projects/13539)
 [![SchemaStore](https://img.shields.io/badge/schema-in%20SchemaStore-blue.svg)](https://github.com/SchemaStore/schemastore/pull/5673)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20177839-blue.svg)](https://doi.org/10.5281/zenodo.20177839)
 
