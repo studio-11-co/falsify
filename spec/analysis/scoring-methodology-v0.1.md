@@ -283,7 +283,7 @@ If the analysis pre-registers a hypothesis ("≤ 15% of recent ML papers reach P
 ### 4.4 Open-source the rubric, open-source the data
 
 - All paper IDs, scores per dimension, and rater identities (with consent) released under CC BY 4.0.
-- A community-maintained continuous-update version of the analysis hosted at `analysis.falsify.dev` *(not yet provisioned)*.
+- A community-maintained continuous-update version of the analysis *(consolidated into `spec.falsify.dev/analysis`, this directory; the separate `analysis.falsify.dev` subdomain was never provisioned; noted 2026-07-11)*.
 
 ---
 

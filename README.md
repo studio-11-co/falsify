@@ -99,7 +99,7 @@ See [docs/CASE_STUDIES.md](docs/CASE_STUDIES.md) for three concrete adoption sto
 
 ---
 
-**Current version:** falsify 0.3.9 (PRML CLI) · falsify-engine 0.3.9 — `falsify --version`.
+**Current version:** falsify 0.3.10 (PRML CLI) · falsify-engine 0.3.10 — `falsify --version`.
 **Working with Claude Code?** See [CLAUDE.md](CLAUDE.md).
 
 ---
@@ -149,7 +149,7 @@ Hosted spec at [spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1). Public re
 - **[`falsify-inspect`](https://github.com/studio-11-co/falsify-inspect)** — Inspect AI adapter: anchor an Inspect AI eval claim's threshold to a SHA-256 hash before the run, verify the post-run log against it. MIT.
 - **[`prml-verify-action`](https://github.com/studio-11-co/prml-verify-action)** — composite GitHub Action ([listed on Marketplace](https://github.com/marketplace/actions/prml-verify)) for CI integration. MIT.
 - **[`mlflow-falsify`](https://github.com/studio-11-co/mlflow-falsify)** — MLflow plugin (`pip install mlflow-falsify`) auto-tags every run with the PRML manifest hash. MIT.
-- **[`falsify-js`](https://github.com/studio-11-co/falsify-js)** — JS reference implementation, [`npm install falsify-js`](https://www.npmjs.com/package/falsify-js). MIT.
+- **[`falsify-js`](https://github.com/studio-11-co/falsify-js)** — separately published npm copy of the JS reference implementation (`impl/js` in this repo), kept in sync, byte-identity verified by a CI drift-diff in the falsify-js repo. [`npm install falsify-js`](https://www.npmjs.com/package/falsify-js). MIT.
 
 **Listed in / referenced by** (independent curation — discoverability and third-party review, not adoption claims):
 
@@ -424,10 +424,10 @@ ln -sf "$(pwd)/hooks/commit-msg" .git/hooks/commit-msg
 ## Repository layout
 
 - `falsify.py` — single-file Python CLI, stdlib + pyyaml only.
-- `impl/js/falsify.js` — Node.js second reference implementation (13/13 v0.1 + 8/8 v0.2 = 21/21 vectors). Also published to npm as [`falsify-js`](https://www.npmjs.com/package/falsify-js).
+- `impl/js/falsify.js` — Node.js second reference implementation (13/13 v0.1 + 8/8 v0.2 = 21/21 vectors). The npm package [`falsify-js`](https://www.npmjs.com/package/falsify-js) is a separately published copy kept in sync with this file; a CI drift-diff in that repo verifies the two files are byte-identical.
 - `impl/go/falsify.go` — Go third reference implementation (21/21 vectors).
 - `impl/rust/` — Rust fourth reference implementation (21/21 vectors).
-- `spec/PRML-v0.1.md` + `spec/test-vectors/v0.1/` (12) + `spec/test-vectors/v0.2/` (8) — spec + conformance suite.
+- `spec/PRML-v0.1.md` + `spec/test-vectors/v0.1/` (13) + `spec/test-vectors/v0.2/` (8) — spec + conformance suite (21 vectors total).
 - `spec/analysis/` — positioning + canonicalization portability findings.
 - `spec/compliance/` — EU AI Act mapping + compliance landing copy.
 - `spec/paper/` — 14-page arXiv preprint (LaTeX).

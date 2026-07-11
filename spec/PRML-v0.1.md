@@ -199,16 +199,24 @@ mechanisms for the authoritative answer. A v0.1-conforming producer
 and document the choice. v0.2 makes this a normative SHOULD; v0.1 leaves
 the choice informative.
 
-**These anchor mechanisms are not equally strong.** Git commit timestamps,
-RFC 3161 timestamping authorities, and Sigstore Rekor entries provide
-*independent non-repudiation*: a third party — not the producer — vouches for
-the time, and the record cannot be silently withdrawn. `registry.falsify.dev`
-is **weaker**: an operator-controlled convenience index (no signature, no
-Merkle inclusion proof, no independent witness). It is useful for in-browser
-verification and as corroboration, but it is **not** a cryptographic
-timestamping authority and **MUST NOT** be relied on as the sole audit-grade
-anchor. For high-risk or regulatory use, select at least one independent
-mechanism from the list above.
+**These anchor mechanisms are not equally strong** *(updated 2026-07-11)*.
+Git commit timestamps, RFC 3161 timestamping authorities, and Sigstore
+Rekor entries provide *independent non-repudiation*: a third party, not the
+producer, vouches for the time, and the record cannot be silently
+withdrawn. `registry.falsify.dev` sits in between. Since June 2026 its
+receipts are Ed25519-signed over the manifest hash and the server-side
+timestamp (public key at `registry.falsify.dev/pubkey`), which gives
+non-repudiation of issuance: the operator cannot later deny having issued a
+receipt. Since 2026-07-11 the registry validates PRML manifests at commit
+time and stores the full manifest rather than a preview. It is still
+**not** independently timestamped: there is no RFC 3161 countersignature
+and no transparency-log inclusion proof yet (that anchoring is planned), so
+the operator remains the only witness to *when* a receipt was issued. It is
+useful for in-browser verification and as corroboration, but it **MUST
+NOT** be relied on as the sole audit-grade anchor. For high-risk or
+regulatory use, select at least one independent mechanism from the list
+above. In every case a registry receipt proves the bar was locked before
+the run; it never proves the result.
 
 This distinction matters for §8.1 threat-model analysis: the
 threat that `created_at` defends against is the producer **retroactively
@@ -595,6 +603,27 @@ Conformance is enforceable via the falsify reference test suite
 - **v0.1 (2026-05-01)** — Initial public draft.
 - **v0.1 (2026-05-01)** — Test vector suite (13 vectors) published in
   `spec/test-vectors/v0.1/`; Appendix B finalized.
+- **v0.1 errata (2026-07-11):** three v0.2 forward-promises corrected
+  below. Documentation only; zero normative changes, no effect on
+  canonicalization or on any published hash.
+
+> **v0.1 erratum (2026-07-11): v0.2 forward-promises.** Three statements in
+> this document promised normative adoption "with v0.2". The v0.2 RFC froze
+> on 2026-05-22 without adopting them. Each item quotes the original
+> wording and states the correction. Nothing else in this document changes.
+>
+> 1. §2.3.1 / §11 promised: "A PRML Metric Registry will be established
+>    with v0.2." Correction: deferred; re-targeted to the v0.3 cycle. Until
+>    then, the URI option in §2.3.1 is the only registered-identifier path.
+>
+> 2. §2.3.3 promised: "v0.2 normatively adopts this sidecar convention"
+>    (the `.prml.sig` signature sidecar). Correction: deferred; re-targeted
+>    to the v0.3 cycle. The sidecar remains a SHOULD-level recommendation.
+>
+> 3. §8.1 promised: "v0.2 will normatively adopt option (3) for the
+>    `producer.tier: high-risk` profile." Correction: deferred; re-targeted
+>    to the v0.3 cycle. The three §8.1 deployment-level mitigations remain
+>    available and recommended; none is normatively required by v0.2.
 
 ---
 
