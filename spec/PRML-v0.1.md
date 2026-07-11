@@ -215,10 +215,12 @@ timestamp authority (timestamp.sigstore.dev): the token, served raw at
 key and verifies offline with OpenSSL against the TSA's published chain,
 so the *time* claim no longer rests on the registry operator alone.
 (Records committed before that date were backfilled; their token time is
-later than their receipt time, and the permalink says so.) Still missing:
-transparency-log inclusion (an append-only public log such as Sigstore
-Rekor), so the registry does not yet prove *non-equivocation* against a
-reader shown a different view. It is useful for in-browser verification
+later than their receipt time, and the permalink says so.) Since the same date,
+records that store their full manifest are also mirrored to Sigstore's
+public Rekor v2 transparency log (the per-record inclusion proof is served
+at `registry.falsify.dev/<hash>.rekor`), which adds append-only,
+non-equivocation evidence for those records; the registry itself remains a
+signed store, not a log. It is useful for in-browser verification
 and as corroboration, but it **SHOULD NOT** be relied on as the sole
 audit-grade anchor for high-risk or regulatory use; select at least one
 additional independent mechanism from the list above. In every case a
