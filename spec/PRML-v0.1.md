@@ -208,15 +208,22 @@ receipts are Ed25519-signed over the manifest hash and the server-side
 timestamp (public key at `registry.falsify.dev/pubkey`), which gives
 non-repudiation of issuance: the operator cannot later deny having issued a
 receipt. Since 2026-07-11 the registry validates PRML manifests at commit
-time and stores the full manifest rather than a preview. It is still
-**not** independently timestamped: there is no RFC 3161 countersignature
-and no transparency-log inclusion proof yet (that anchoring is planned), so
-the operator remains the only witness to *when* a receipt was issued. It is
-useful for in-browser verification and as corroboration, but it **MUST
-NOT** be relied on as the sole audit-grade anchor. For high-risk or
-regulatory use, select at least one independent mechanism from the list
-above. In every case a registry receipt proves the bar was locked before
-the run; it never proves the result.
+time and stores the full manifest rather than a preview. Since 2026-07-12
+every receipt is additionally countersigned by an independent RFC 3161
+timestamp authority (timestamp.sigstore.dev): the token, served raw at
+`registry.falsify.dev/<hash>.tsr`, signs the manifest hash with the TSA's
+key and verifies offline with OpenSSL against the TSA's published chain,
+so the *time* claim no longer rests on the registry operator alone.
+(Records committed before that date were backfilled; their token time is
+later than their receipt time, and the permalink says so.) Still missing:
+transparency-log inclusion (an append-only public log such as Sigstore
+Rekor), so the registry does not yet prove *non-equivocation* against a
+reader shown a different view. It is useful for in-browser verification
+and as corroboration, but it **SHOULD NOT** be relied on as the sole
+audit-grade anchor for high-risk or regulatory use; select at least one
+additional independent mechanism from the list above. In every case a
+registry receipt proves the bar was locked before the run; it never
+proves the result.
 
 This distinction matters for §8.1 threat-model analysis: the
 threat that `created_at` defends against is the producer **retroactively

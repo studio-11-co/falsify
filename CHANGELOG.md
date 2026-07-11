@@ -4,6 +4,12 @@ All notable changes to Falsification Engine are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com); version
 numbers follow [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+### Registry (deployed 2026-07-12, falsify-registry repo)
+- Independent RFC 3161 timestamp anchoring on every receipt: the manifest hash is countersigned by timestamp.sigstore.dev at commit time (a witness, never a gatekeeper: TSA failure does not block the receipt; POST /anchor/<hash> retries). Raw tokens at /<hash>.tsr verify offline with OpenSSL 3 against the TSA's published chain. All 17 pre-existing records were backfilled; a backfilled token's time is later than its receipt time and the permalink labels that. This fulfills the timestamp half of the registry's documented "planned addition" (external anchoring); transparency-log inclusion (Rekor) remains planned, and until it lands the registry is a signed public registry, not a transparency log.
+- Spec section 2.3.4 updated to match (independent time claim now held by a third party; non-equivocation still open).
+
 ## [v0.3.10] — 2026-07-12
 
 ### Corrections (registry + docs truth sweep)
