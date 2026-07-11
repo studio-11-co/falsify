@@ -25,7 +25,7 @@ from typing import Any, Callable
 
 import yaml
 
-__version__ = "0.3.9"
+__version__ = "0.3.10"
 
 EXIT_PASS = 0
 EXIT_FAIL = 10
@@ -583,11 +583,6 @@ def cmd_init(args: argparse.Namespace) -> int:
     print(f"Created {spec_path}")
     print("Next: edit the spec, replace placeholders, then `falsify lock`.")
     return EXIT_PASS
-
-
-def _stub(name: str) -> int:
-    print(f"falsify {name}: not yet implemented", file=sys.stderr)
-    return 1
 
 
 def _load_schema() -> dict:

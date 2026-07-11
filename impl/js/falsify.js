@@ -201,12 +201,12 @@ const REQUIRED_DATASET = ['id', 'hash'];
 const REQUIRED_PRODUCER = ['id'];
 const VALID_COMPARATORS = new Set(['>=', '<=', '>', '<', '==']);
 
-// Control / non-portable chars forbidden in any PRML string field: C0 (U+0000–
-// U+001F), DEL + C1 (U+007F–U+009F), line/paragraph separators (U+2028/U+2029),
-// and BOM (U+FEFF). These survive canonicalisation inconsistently across YAML
-// engines and editors, so a manifest carrying them is non-portable. Rejecting is
-// additive — no conformance vector contains them, so no valid hash changes.
-// Mirrors the Python reference (_FORBIDDEN_CHARS in falsify_prml.py).
+// Control / non-portable chars forbidden in any PRML string field (key or value):
+// C0 (U+0000–U+001F), DEL + C1 (U+007F–U+009F), line/paragraph separators
+// (U+2028/U+2029), and BOM (U+FEFF). They canonicalize inconsistently across YAML
+// engines, so a manifest carrying them is non-portable. Mirrors the Python
+// reference (_FORBIDDEN_CHARS in falsify_prml.py). Additive — no conformance
+// vector contains them, so no valid manifest's hash changes.
 const FORBIDDEN_CHARS = /[\u0000-\u001f\u007f-\u009f\u2028\u2029\ufeff]/;
 
 function badCharFields(obj, path = '') {
@@ -231,7 +231,9 @@ function validateManifest(m) {
   for (const f of REQUIRED_FIELDS) {
     if (!(f in m)) errors.push(`missing required field: ${f}`);
   }
-  if (m.version !== 'prml/0.1' && m.version !== 'prml/0.2') errors.push(`version must be "prml/0.1" or "prml/0.2", got "${m.version}"`);
+  if (m.version !== 'prml/0.1' && m.version !== 'prml/0.2') {
+    errors.push(`version must be "prml/0.1" or "prml/0.2", got "${m.version}"`);
+  }
   if (typeof m.threshold !== 'number' || !Number.isFinite(m.threshold)) {
     errors.push(`threshold must be a finite number`);
   }
@@ -304,6 +306,22 @@ function cmdInit(name) {
   return EXIT_PASS;
 }
 
+// Reject prototype-polluting keys anywhere in a parsed manifest. Returns the
+// object unchanged if clean; throws otherwise. Bounded depth as a DoS guard.
+function assertNoProtoKeys(o, depth) {
+  depth = depth || 0;
+  if (depth > 100) throw new Error('manifest nesting too deep');
+  if (o && typeof o === 'object') {
+    for (const k of Object.keys(o)) {
+      if (k === '__proto__' || k === 'constructor' || k === 'prototype') {
+        throw new Error('manifest contains a disallowed key: ' + k);
+      }
+      assertNoProtoKeys(o[k], depth + 1);
+    }
+  }
+  return o;
+}
+
 function loadManifest(filePath) {
   // Minimal YAML loader for our canonical format only.
   // We intentionally do NOT use a generic YAML parser: round-tripping
@@ -312,15 +330,19 @@ function loadManifest(filePath) {
   // For now we require JSON input to this tool; YAML support requires js-yaml.
   if (filePath.endsWith('.json')) {
     const raw = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(raw);
+    return assertNoProtoKeys(JSON.parse(raw));
   }
-  // Otherwise try js-yaml if available
+  // Otherwise use js-yaml if available (optional dependency).
+  let yaml;
   try {
-    const yaml = require('js-yaml');
-    return yaml.load(fs.readFileSync(filePath, 'utf-8'));
+    yaml = require('js-yaml');
   } catch (e) {
     throw new Error('YAML loading requires js-yaml: npm install js-yaml. Or pass a .json file.');
   }
+  // CORE_SCHEMA: no custom/JS type tags (e.g. !!js/function) can be
+  // instantiated from untrusted manifest content.
+  const parsed = yaml.load(fs.readFileSync(filePath, 'utf-8'), { schema: yaml.CORE_SCHEMA });
+  return assertNoProtoKeys(parsed);
 }
 
 function cmdLock(filePath) {
@@ -476,8 +498,8 @@ function main(argv) {
       default:             return usage();
     }
   } catch (e) {
-    // Unreadable file, malformed JSON/YAML — bad input, matching the Python
-    // reference (EXIT_BAD=2), not an environmental guard.
+    // Unreadable file, malformed JSON/YAML — bad input (EXIT_BAD=2), matching
+    // the Python reference, not an environmental guard.
     console.error(`${cmd}: ${e.message}`);
     return EXIT_BAD;
   }
@@ -494,5 +516,5 @@ module.exports = {
   validateManifest,
   evaluatePredicate,
   needsQuoting,
-  EXIT_PASS, EXIT_TAMPERED, EXIT_FAIL, EXIT_GUARD,
+  EXIT_PASS, EXIT_BAD, EXIT_TAMPERED, EXIT_FAIL, EXIT_GUARD,
 };

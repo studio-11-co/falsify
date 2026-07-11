@@ -1,10 +1,10 @@
 # PRML v0.2 — RFC
 
-**Status:** Frozen — v0.2.0 (2026-05-22). The comment window has closed.
+**Status:** Frozen RFC (comment window closed 2026-05-22). Promotion to final deferred until external reviewers exist; the three open questions (P-01, P-02, P-03) remain open and will NOT be resolved unilaterally.
 **Editor:** Cüneyt Öztürk · hello@falsify.dev
 **Comment window:** 2026-05-08 → 2026-05-22 (14 days)
 **Freeze date:** 2026-05-22, 23:59 UTC
-**Final draft expected:** 2026-05-29
+**Promotion to final:** deferred; no date set (status line re-dated 2026-07-11, superseding the earlier "final draft expected 2026-05-29")
 **Spec home:** spec.falsify.dev/v0.2-rfc (this document)
 **License:** CC BY 4.0 — same as v0.1
 

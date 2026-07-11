@@ -4,7 +4,58 @@ All notable changes to Falsification Engine are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com); version
 numbers follow [Semantic Versioning](https://semver.org).
 
-## [Unreleased]
+## [v0.3.10] — 2026-07-12
+
+### Corrections (registry + docs truth sweep)
+
+Registry (`registry.falsify.dev`), all live as of 2026-07-11:
+
+- The in-browser verifier used a simplified canonicalizer from 2026-05-15
+  to 2026-07-11 and reported NO MATCH on legitimately committed manifests.
+  The page now serves and runs the same `canonical.js` module the server
+  commits with, and the registry runs all 21 frozen conformance vectors
+  plus the 14-vector reject suite in CI on every change.
+- The registry missed the A2 large-float fix (see v0.3.9), so it could
+  mint hashes the four reference implementations reject. Its
+  `canonical.js` is fixed and the A2 case is pinned in its tests.
+- `/commit` performed no PRML validation and issued "PRML locked" badges
+  for arbitrary YAML. It now validates v0.1/v0.2 manifests and labels
+  everything else a raw hash anchor; bare integer tokens above 2^53-1 are
+  rejected with 400.
+- The registry stored a 500-byte preview while its README said it stores
+  the manifest. It now stores and serves the full manifest, and
+  pre-2026-07-11 records are labeled as preview-only on their permalinks.
+
+Tooling:
+
+- The `check-consistency.sh` secret-leak guard sat below an exit statement
+  and never executed (2026-06-10 to 2026-07-11). It is fixed, and the
+  script now also compares `FACTS.env` against the live npm and PyPI
+  published versions.
+
+Documentation:
+
+- `spec/v0.3-backlog/04-identity-levels.md` now exists. The backlog README
+  listed it but the file was missing; it summarizes the identity-levels
+  ladder that three published documents reference (the cookbook
+  `IDENTITY-LEVELS.md` is the full version).
+- `ROADMAP.md` rewritten to current reality: v0.3.10, embedded-primitive
+  strategy with the four adapters, four reference implementations, honest
+  dates instead of invented quarters.
+- `spec/PRML-v0.1.md`: dated errata (2026-07-11) for the three broken v0.2
+  forward-promises (Metric Registry, `.prml.sig` normative adoption,
+  `producer.tier` profile); each is deferred and re-targeted to the v0.3
+  cycle. Section 2.3.4 registry trust note updated to the current truth:
+  Ed25519-signed receipts since June 2026, validation and full-manifest
+  storage since 2026-07-11, still no independent timestamp anchoring.
+- `spec/PRML-v0.2-RFC.md` status line re-dated: frozen RFC, promotion to
+  final deferred until external reviewers exist, P-01/P-02/P-03 stay open.
+- `README.md`: v0.1 vector count corrected to 13 (21 total); the npm
+  package `falsify-js` is now described as what it is, a separately
+  published copy of `impl/js` kept in sync, not the same artifact. A CI
+  drift-diff to verify the sync is being added with this release.
+
+No canonicalization rule changed and no valid existing hash changed.
 
 ### Docs (gap audit C1)
 - Rewrote `TUTORIAL.md` to teach the core PRML path — `lock` → `verify`, demonstrating PASS, FAIL, and TAMPERED. Every command now runs as written.
