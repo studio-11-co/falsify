@@ -40,9 +40,17 @@ the result.
 ## Next
 
 - Ship v0.3.10 and sweep every surface (PyPI, npm, spec site, registry).
-- External timestamp anchoring for the registry: RFC 3161 countersignature
-  plus transparency-log inclusion, so a receipt no longer depends on the
-  operator's word for its timestamp. Planned; not yet scheduled.
+- External timestamp anchoring for the registry: SHIPPED 2026-07-12.
+  Every receipt is RFC 3161 countersigned (timestamp.sigstore.dev, raw token
+  at /<hash>.tsr) and full-manifest records are mirrored to the Rekor v2
+  transparency log (inclusion proof at /<hash>.rekor). Remaining option on
+  this track: eIDAS qualified electronic timestamps (a QTSP-issued RFC 3161
+  token with the Article 41 legal presumption) as a configurable TSA for
+  regulated deployments; the endpoint is already configuration, not code.
+- Suite manifests (claim tree, leaves_total): priority RAISED 2026-07-16
+  after independent external review converged on the same multiplicity gap
+  (pre-register N variants, publish only the winner). Still gated on named
+  external reviewers per the Lock #2 postmortem commitments.
 - Spec v0.2.0 stays a frozen RFC. Promotion to final is deferred until
   external reviewers exist, per the Lock #2 postmortem commitments: named
   reviewers on record, outreach before any lock, and a 90-day window. The
