@@ -25,7 +25,7 @@ from typing import Any, Callable
 
 import yaml
 
-__version__ = "0.3.10"
+__version__ = "0.3.11"
 
 EXIT_PASS = 0
 EXIT_FAIL = 10
@@ -1416,6 +1416,20 @@ def cmd_verdict(args: argparse.Namespace) -> int:
             all_hold = False
 
     verdict = "PASS" if all_hold else "FAIL"
+    # Bind the verdict to the bar it was judged against. Without this, a verdict
+    # judged after the spec drifted from the lock (e.g. threshold edited post-run)
+    # is indistinguishable from an honest one in verdict.json alone. Embed the
+    # live spec hash and the locked hash; if they differ, the verdict is stamped
+    # DRIFTED so the artifact is self-revealing.
+    _live_hash = _canonical_and_hash(spec)[1]
+    _lock_path = claim_dir / "spec.lock.json"
+    _locked_hash = None
+    if _lock_path.exists():
+        try:
+            _locked_hash = json.loads(_lock_path.read_text()).get("spec_hash")
+        except (OSError, ValueError):
+            _locked_hash = None
+    _drifted = bool(_locked_hash) and _locked_hash != _live_hash
     verdict_data = {
         "verdict": verdict,
         "observed_value": value,
@@ -1423,6 +1437,9 @@ def cmd_verdict(args: argparse.Namespace) -> int:
         "direction": head["direction"],
         "metric": head["metric"],
         "run_ref": run_dir.name,
+        "spec_hash": _live_hash,
+        "locked_spec_hash": _locked_hash,
+        "bar_integrity": "DRIFTED" if _drifted else ("LOCKED" if _locked_hash else "UNLOCKED"),
         "checked_at": datetime.now(timezone.utc).isoformat(),
     }
     if sample_size is not None:
@@ -1434,6 +1451,10 @@ def cmd_verdict(args: argparse.Namespace) -> int:
     print(f"Verdict: {verdict}")
     print(f"  observed {head['metric']} = {value}")
     print(f"  threshold: {head['direction']} {head['threshold']}")
+    if _drifted:
+        print(f"  ⚠ bar integrity: DRIFTED — the live spec ({_live_hash[:12]}) "
+              f"differs from the locked bar ({_locked_hash[:12]}); this verdict "
+              f"was NOT judged against the pre-registered threshold.", file=sys.stderr)
     return EXIT_PASS if all_hold else EXIT_FAIL
 
 

@@ -8,7 +8,11 @@ anyone; edit the manifest after locking and the hash no longer matches.
 Canonicalisation (PRML v0.1 §4): keys recursively sorted, block style, LF,
 trailing whitespace stripped, exactly one trailing newline, UTF-8. This is the
 same rule the Go / JS / Rust reference implementations use; all four produce
-byte-identical canonical bytes on the 21 published conformance vectors.
+byte-identical canonical bytes on the 21 published conformance vectors (which
+feed pre-parsed objects). The YAML *parse* layer exists only in this Python
+impl and impl/js (Go and Rust consume JSON vectors); the two are aligned to
+YAML 1.2 core so the same manifest text hashes identically — see _core_loader
+and tests/test_yaml_parse_parity.py.
 
 Commands:
     falsify lock <spec.yaml|spec.json>            canonicalize, hash, write sidecar
@@ -34,7 +38,7 @@ import os
 import re
 import sys
 
-__version__ = "0.3.10"
+__version__ = "0.3.11"
 
 EXIT_PASS = 0
 EXIT_BAD = 2
@@ -131,13 +135,51 @@ def manifest_hash(manifest: dict) -> str:
 # Loading + validation
 # ─────────────────────────────────────────────────────────────────────────
 
+_CORE_LOADER = None
+
+
+def _core_loader():
+    # PyYAML's SafeLoader implements YAML 1.1, where unquoted yes/no/on/off/y/n
+    # (any case) resolve to booleans. The JS reference and the registry parse
+    # with js-yaml CORE_SCHEMA (YAML 1.2), where those tokens stay strings, so
+    # the SAME manifest file could hash differently in Python vs JS. This loader
+    # restricts the bool/null implicit resolvers to the YAML 1.2 core set so the
+    # two YAML-parsing implementations agree byte-for-byte. (Go and Rust parse
+    # only JSON test vectors, so they never see this layer.) Additive: no
+    # conformance vector or valid manifest uses these tokens, so no existing
+    # hash changes; see tests/test_yaml_parse_parity.py.
+    global _CORE_LOADER
+    if _CORE_LOADER is not None:
+        return _CORE_LOADER
+    yaml = _require_yaml()
+
+    class _CoreSafeLoader(yaml.SafeLoader):
+        pass
+
+    # Rebuild implicit resolvers, dropping YAML-1.1-only bool/null spellings.
+    _CoreSafeLoader.yaml_implicit_resolvers = {}
+    for ch, mappings in yaml.SafeLoader.yaml_implicit_resolvers.items():
+        kept = []
+        for tag, regexp in mappings:
+            if tag == "tag:yaml.org,2002:bool":
+                # YAML 1.2 core: only true/false (any case). Drop yes/no/on/off/y/n.
+                regexp = re.compile(r"^(?:true|True|TRUE|false|False|FALSE)$")
+            elif tag == "tag:yaml.org,2002:null":
+                # YAML 1.2 core: null/Null/NULL/~/empty. Drop the 1.1 extras.
+                regexp = re.compile(r"^(?:~|null|Null|NULL|)$")
+            kept.append((tag, regexp))
+        _CoreSafeLoader.yaml_implicit_resolvers[ch] = kept
+    _CORE_LOADER = _CoreSafeLoader
+    return _CoreSafeLoader
+
+
 def load_manifest(path: str) -> dict:
     with open(path, "r", encoding="utf-8") as fh:
         text = fh.read()
     if path.endswith(".json"):
         return json.loads(text)
     yaml = _require_yaml()
-    return yaml.safe_load(text)
+    return yaml.load(text, Loader=_core_loader())
 
 
 def validate_manifest(m: dict) -> list[str]:
@@ -171,7 +213,8 @@ def validate_manifest(m: dict) -> list[str]:
     return errors
 
 
-def evaluate_predicate(observed: float, comparator: str, threshold: float) -> bool:
+def evaluate_predicate(observed: float, comparator: str, threshold: float,
+                       tolerance: float = 1e-9) -> bool:
     if comparator == ">=":
         return observed >= threshold
     if comparator == "<=":
@@ -181,7 +224,10 @@ def evaluate_predicate(observed: float, comparator: str, threshold: float) -> bo
     if comparator == "<":
         return observed < threshold
     if comparator == "==":
-        return observed == threshold
+        # Spec §5.1: equality is within a tolerance (default 1e-9, overridable
+        # via metric_args.tolerance). Exact float equality was a footgun and did
+        # not match the spec; this honors it.
+        return abs(observed - threshold) < tolerance
     raise ValueError(f"invalid comparator: {comparator}")
 
 
@@ -302,6 +348,31 @@ def cmd_verify(args) -> int:
         print(f"  recomputed:  {recomputed}")
         return EXIT_TAMPERED
 
+    # Optional dataset-content check (spec §5.2 step 2). PRML does not
+    # standardize a dataset preimage — dataset.hash is a producer-declared
+    # content digest — so this is only meaningful when the verifier has the
+    # exact bytes the producer hashed. For the common single-file case we
+    # recompute a plain SHA-256 and refuse on mismatch. This makes step 2 real
+    # for at least the Python reference instead of a spec MUST no impl honors.
+    dpath = getattr(args, "dataset", None)
+    if dpath:
+        if not os.path.isfile(dpath):
+            sys.stderr.write(f"verify: --dataset not a file: {dpath}\n")
+            return EXIT_GUARD
+        h = hashlib.sha256()
+        with open(dpath, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1 << 20), b""):
+                h.update(chunk)
+        got = h.hexdigest()
+        declared = m.get("dataset", {}).get("hash", "")
+        if got != declared:
+            print("DATASET MISMATCH")
+            print(f"  declared:    {declared}")
+            print(f"  recomputed:  {got}")
+            print(f"  file:        {dpath}")
+            return EXIT_GUARD
+        print(f"dataset content verified: sha256:{got}")
+
     if args.observed is None:
         print(f"OK  hash verified  sha256:{recomputed}")
         print("(no --observed value given; predicate not evaluated)")
@@ -312,7 +383,11 @@ def cmd_verify(args) -> int:
     except ValueError:
         sys.stderr.write("verify: --observed must be a finite number\n")
         return EXIT_BAD
-    if evaluate_predicate(observed, m["comparator"], m["threshold"]):
+    _tol = 1e-9
+    _ma = m.get("metric_args")
+    if isinstance(_ma, dict) and isinstance(_ma.get("tolerance"), (int, float)):
+        _tol = float(_ma["tolerance"])
+    if evaluate_predicate(observed, m["comparator"], m["threshold"], _tol):
         print(f"PASS  metric={m['metric']}  observed={observed}  {m['comparator']}  threshold={m['threshold']}")
         return EXIT_PASS
     print(f"FAIL  metric={m['metric']}  observed={observed}  NOT {m['comparator']}  threshold={m['threshold']}")
@@ -406,6 +481,9 @@ def main(argv=None) -> int:
     sp.add_argument("spec")
     sp.add_argument("--observed", default=None)
     sp.add_argument("--expected-hash", dest="expected_hash", default=None)
+    sp.add_argument("--dataset", default=None,
+                    help="path to the single-file dataset; recompute its SHA-256 and check it "
+                         "matches dataset.hash (spec §5.2 step 2). Exit 11 on mismatch.")
     sp.set_defaults(func=cmd_verify)
 
     sp = sub.add_parser("hash", help="print the canonical SHA-256 only")
