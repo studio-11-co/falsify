@@ -10,6 +10,14 @@ numbers follow [Semantic Versioning](https://semver.org).
 - Independent RFC 3161 timestamp anchoring on every receipt: the manifest hash is countersigned by timestamp.sigstore.dev at commit time (a witness, never a gatekeeper: TSA failure does not block the receipt; POST /anchor/<hash> retries). Raw tokens at /<hash>.tsr verify offline with OpenSSL 3 against the TSA's published chain. All 17 pre-existing records were backfilled; a backfilled token's time is later than its receipt time and the permalink labels that. This fulfills the timestamp half of the registry's documented "planned addition" (external anchoring); transparency-log inclusion (Rekor) remains planned, and until it lands the registry is a signed public registry, not a transparency log.
 - Spec section 2.3.4 updated to match (independent time claim now held by a third party; non-equivocation still open).
 
+## [v0.3.11] — 2026-07-17
+
+### Fixed (integrity hardening from an 8-agent external audit)
+- **YAML parse parity.** The Python reference parsed with PyYAML (YAML 1.1), where unquoted `yes`/`no`/`on`/`off`/`y`/`n` resolve to booleans, while impl/js and the registry use js-yaml CORE_SCHEMA (YAML 1.2), where they stay strings. The same manifest text could therefore hash differently in Python vs JS. `load_manifest` now uses a YAML-1.2-core loader so the two YAML-parsing implementations agree byte-for-byte. Additive: no conformance vector or valid manifest uses these tokens, so no existing hash changes. New `tests/test_yaml_parse_parity.py` feeds identical YAML *text* through Python and impl/js and asserts identical hashes (the conformance suite only ever fed pre-parsed objects, so this layer was untested).
+- **`==` comparator tolerance (spec §5.1) is now implemented.** All impls did exact float equality; the spec defines `==` as `abs(observed - threshold) < tolerance` (default 1e-9, overridable via `metric_args.tolerance`). Python reference and impl/js (and the npm `falsify-js` copy) now honor it, fixing the `0.1 + 0.2 == 0.3` footgun.
+- **`verify --dataset <path>`** recomputes a single-file dataset's SHA-256 and checks it against `dataset.hash` (exit 11 on mismatch), making spec §5.2 step 2 real for the common case instead of a MUST no implementation honored. Spec §5.2 step 2 reworded to reflect that PRML does not standardize a dataset preimage — `dataset.hash` is a producer-declared content digest.
+- **Engine verdict is now bound to the lock.** `falsify verdict` embeds `spec_hash`, `locked_spec_hash`, and `bar_integrity` (LOCKED / DRIFTED / UNLOCKED) in verdict.json and prints a DRIFTED warning when the live spec has moved from the locked bar, so a verdict judged against a moved goalpost is self-revealing rather than indistinguishable from an honest one.
+
 ## [v0.3.10] — 2026-07-12
 
 ### Corrections (registry + docs truth sweep)

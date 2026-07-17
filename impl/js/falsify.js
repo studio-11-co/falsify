@@ -270,13 +270,15 @@ const EXIT_TAMPERED = 3;
 const EXIT_FAIL = 10;
 const EXIT_GUARD = 11;    // environmental guard: missing sidecar / missing lib
 
-function evaluatePredicate(observed, comparator, threshold) {
+function evaluatePredicate(observed, comparator, threshold, tolerance = 1e-9) {
   switch (comparator) {
     case '>=': return observed >= threshold;
     case '<=': return observed <= threshold;
     case '>':  return observed >  threshold;
     case '<':  return observed <  threshold;
-    case '==': return observed === threshold;
+    // Spec 5.1: equality is within a tolerance (default 1e-9, overridable via
+    // metric_args.tolerance). Exact === was a footgun and did not match spec.
+    case '==': return Math.abs(observed - threshold) < tolerance;
     default: throw new Error('invalid comparator: ' + comparator);
   }
 }
@@ -396,7 +398,8 @@ function cmdVerify(filePath, observedStr) {
     console.error('verify: --observed must be a finite number');
     return EXIT_BAD;
   }
-  const ok = evaluatePredicate(observed, m.comparator, m.threshold);
+  const _tol = (m.metric_args && typeof m.metric_args.tolerance === 'number') ? m.metric_args.tolerance : 1e-9;
+  const ok = evaluatePredicate(observed, m.comparator, m.threshold, _tol);
   if (ok) {
     console.log(`PASS  metric=${m.metric}  observed=${observed}  ${m.comparator}  threshold=${m.threshold}`);
     return EXIT_PASS;

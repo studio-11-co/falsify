@@ -334,8 +334,13 @@ A verifier **MUST**:
 
 1. Recompute the manifest hash from `canonical_bytes` and verify it matches the
    published hash.
-2. Recompute the dataset hash from the dataset content and verify it matches
-   `dataset.hash`.
+2. If the verifier holds the dataset content the producer hashed, recompute
+   its digest and verify it matches `dataset.hash`. PRML v0.1 does not
+   standardize a dataset preimage or hashing procedure, so `dataset.hash` is a
+   producer-declared content digest; a verifier without the exact bytes (or
+   without the producer's documented procedure) cannot recompute it, and for
+   dynamically generated eval data it may not be recomputable at all. The
+   reference CLI implements the single-file case via `verify --dataset <path>`.
 3. Execute the evaluation using the manifest's `metric`, `metric_args`, `seed`,
    and dataset.
 4. Apply the comparator from §5.1.
