@@ -179,7 +179,10 @@ def load_manifest(path: str) -> dict:
     if path.endswith(".json"):
         return json.loads(text)
     yaml = _require_yaml()
-    return yaml.load(text, Loader=_core_loader())
+    # nosec B506 — _core_loader() returns a yaml.SafeLoader subclass (only its
+    # bool/null implicit resolvers are narrowed to YAML 1.2 core); it cannot
+    # instantiate arbitrary objects, so this is a safe load.
+    return yaml.load(text, Loader=_core_loader())  # nosec B506
 
 
 def validate_manifest(m: dict) -> list[str]:
