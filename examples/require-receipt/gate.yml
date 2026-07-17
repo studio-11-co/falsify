@@ -1,0 +1,48 @@
+# Submission gate: no locked claim, no entry.
+#
+# Drop this into the repository that RECEIVES submissions (a leaderboard,
+# benchmark, model marketplace, or review process). Every PR must carry a
+# PRML manifest whose bar was locked — and publicly receipted — BEFORE the
+# submitted results existed. Post-hoc goalpost edits exit 3 and block merge.
+#
+# What each step proves:
+#   verify   — the manifest is valid PRML and matches its committed hash
+#              (exit 0 PASS · 3 TAMPERED · 10 FAIL when observed is checked)
+#   receipt  — the hash exists in the public registry: locked, Ed25519-signed,
+#              RFC 3161 countersigned, mirrored to the Rekor transparency log.
+#              The submitter cannot backdate it; neither can the registry.
+
+name: require-prml-receipt
+on:
+  pull_request:
+    paths: ["submissions/**"]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Locate the submission manifest
+        id: find
+        run: |
+          M=$(git diff --name-only origin/${{ github.base_ref }}... -- 'submissions/**/*.prml.yaml' | head -1)
+          [ -n "$M" ] || { echo "::error::Submission must include a *.prml.yaml manifest (see SUBMISSION.md)"; exit 1; }
+          echo "manifest=$M" >> "$GITHUB_OUTPUT"
+
+      - name: Verify the locked claim
+        id: prml
+        uses: studio-11-co/prml-verify-action@v2
+        with:
+          mode: manifest
+          manifest-path: ${{ steps.find.outputs.manifest }}
+
+      - name: Require a public receipt
+        run: |
+          HASH="${{ steps.prml.outputs.hash }}"
+          if curl -sf "https://registry.falsify.dev/$HASH" > /dev/null; then
+            echo "receipt ok: https://registry.falsify.dev/$HASH"
+          else
+            echo "::error::No public receipt for $HASH. Lock the claim BEFORE running: commit the manifest at https://registry.falsify.dev (or POST /commit), then resubmit."
+            exit 1
+          fi
