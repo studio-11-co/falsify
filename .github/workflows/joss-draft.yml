@@ -1,0 +1,22 @@
+# Compiles paper/joss/paper.md with the official Open Journals toolchain.
+# JOSS's submit checklist requires the paper to compile with this action;
+# run it manually (workflow_dispatch) before any (re)submission.
+name: JOSS draft PDF
+on:
+  workflow_dispatch:
+  push:
+    paths: ['paper/joss/**']
+jobs:
+  paper:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build draft PDF
+        uses: openjournals/openjournals-draft-action@master
+        with:
+          journal: joss
+          paper-path: paper/joss/paper.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: joss-paper
+          path: paper/joss/paper.pdf
