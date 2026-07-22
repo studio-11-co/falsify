@@ -1,0 +1,14 @@
+# Locked BEFORE the eval runs. Change anything after locking and the
+# canonical SHA-256 no longer matches: verification exits 3 (TAMPERED).
+version: prml/0.1
+claim_id: 01988f2e-4c1a-7000-8000-b7a1c3d5e7f9
+created_at: '2026-07-21T12:00:00Z'
+metric: levenshtein_mean
+comparator: '>='
+threshold: 0.85
+dataset:
+  id: braintrust-demo-qa-v1
+  hash: 008f7bacdbf421a475e3f4765d87c93b88140f00838b76d4009631cd256212eb
+seed: 42
+producer:
+  id: falsify.dev/examples

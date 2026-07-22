@@ -1,0 +1,8 @@
+{"input": "What is the capital of France?", "expected": "Paris"}
+{"input": "What is 6 times 7?", "expected": "42"}
+{"input": "Which planet is known as the Red Planet?", "expected": "Mars"}
+{"input": "What is the chemical symbol for gold?", "expected": "Au"}
+{"input": "In which year did the Berlin Wall fall?", "expected": "1989"}
+{"input": "What is the largest ocean on Earth?", "expected": "Pacific Ocean"}
+{"input": "Who wrote the play Hamlet?", "expected": "William Shakespeare"}
+{"input": "What is the boiling point of water in Celsius?", "expected": "100"}
