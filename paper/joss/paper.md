@@ -17,7 +17,7 @@ authors:
 affiliations:
   - name: Independent researcher
     index: 1
-date: 18 May 2026
+date: 21 July 2026
 bibliography: paper.bib
 ---
 
@@ -34,16 +34,21 @@ retroactive edit of the manifest breaks the hash, so post-hoc tampering with
 a threshold or dataset is detectable by any third party with the manifest
 text and a SHA-256 implementation, without producer trust or vendor runtime.
 
-The reference implementation is a single-file Python 3.10+ CLI in
-approximately 1,300 lines of code with one runtime dependency (PyYAML).
+The PRML reference implementation is a single-file Python 3.10+ CLI
+(`falsify_prml.py`, ~500 lines) with one runtime dependency (PyYAML); the
+same package ships `falsify-engine`, a workflow CLI that locks, runs and
+guards claims end to end.
 Three companion implementations in JavaScript [@falsify_js], Go and Rust
 reproduce byte-equivalent output across a suite of 21 conformance vectors
-(13 v0.1 normative plus 8 v0.2 candidate), so a reader of any claim can
+(13 v0.1 normative plus 8 v0.2 candidate) and reject a shared suite of 14
+negative vectors (control characters and non-portable scalars), so a reader of any claim can
 re-derive the SHA-256 offline using the language of their choice. A
 content-addressed public registry, three regulatory crosswalks (EU AI Act
-Article 12, NIST AI Risk Management Framework 1.0, ISO/IEC 42001:2023), a
+technical documentation under Art. 11 / Annex IV, NIST AI Risk Management
+Framework 1.0, ISO/IEC 42001:2023), a
 GitHub Action for continuous-integration enforcement, and adapters for
-MLflow and Inspect AI complete the ecosystem.
+MLflow and Inspect AI complete the ecosystem; the Inspect adapter is
+listed on the UK AI Safety Institute's Inspect extensions page.
 
 # Statement of need
 
@@ -71,7 +76,7 @@ addresses the threshold-commitment problem directly.
 
 `falsify` and the PRML format aim at that specific gap. A locked manifest
 is a small, tamper-evident artefact that an auditor, reviewer or regulator
-can verify offline. The format is intentionally minimal — eight fields,
+can verify offline. The format is intentionally minimal — nine fields,
 8 KB at most, plain UTF-8 — so it can be archived for the decade-scale
 retention horizons that emerging AI regulation requires (notably Article
 18 of Regulation (EU) 2024/1689). The format is also intentionally not
@@ -81,8 +86,9 @@ how to pair PRML with Sigstore for execution integrity.
 
 `falsify` has been used in three independent contexts: as the
 reference verifier for the 21 published conformance vectors, as the
-content-addressing layer behind a public registry that has accepted
-manifests from external producers, and as the underlying primitive cited
+content-addressing layer behind a public registry whose receipts are
+Ed25519-signed, countersigned by an RFC 3161 timestamp authority and
+mirrored to the Rekor transparency log, and as the underlying primitive cited
 in subcategory-level crosswalks to the EU AI Act, the NIST AI RMF and
 ISO/IEC 42001 that practitioners can hand to compliance reviewers as
 documented evidence.
@@ -95,9 +101,10 @@ The repository hosts:
   ~18 pages covering the canonicalization rules, manifest field semantics,
   exit-code contract (0/PASS, 10/FAIL, 3/TAMPER, 11/GUARD), amendment chain
   via `prior_hash`, and integration guidance.
-- **Reference implementation** (`falsify.py`): the Python CLI, ~1,300 LOC
-  including the canonicalizer, the verifier, the registry-anchor flow, and
-  diagnostic subcommands.
+- **Reference implementation** (`falsify_prml.py`): the PRML CLI, ~500 LOC
+  including the canonicalizer, validator, verifier (with dataset content
+  check) and in-toto attestation output; `falsify.py` adds the workflow
+  engine (lock/run/verdict/guard) that binds verdicts to the locked bar.
 - **Test vectors** (`spec/test-vectors/v0.1/`): 13 conformance vectors with
   locked SHA-256 digests; the multi-language CI runs these against four
   reference implementations on every push.
@@ -106,7 +113,7 @@ The repository hosts:
   `mlflow-falsify` (MLflow run-context plugin), `prml-verify-action` (GitHub
   Marketplace composite action for CI gating), `falsify-cookbook` (11
   patterns plus 4 anti-patterns), and `falsify-integrity-index` (public
-  scorecard of how 25+ well-known ML eval claims meet the nine PRML
+  scorecard of how 27 well-known ML eval claims meet the nine PRML
   falsifiability criteria).
 
 The PRML JSON Schema is in the SchemaStore catalog [@schemastore], so
