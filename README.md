@@ -35,6 +35,7 @@ No install? Verify any manifest in-browser at [registry.falsify.dev](https://reg
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13539/badge)](https://www.bestpractices.dev/projects/13539)
 [![SchemaStore](https://img.shields.io/badge/schema-in%20SchemaStore-blue.svg)](https://github.com/SchemaStore/schemastore/pull/5673)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20177839-blue.svg)](https://doi.org/10.5281/zenodo.20177839)
+[![UK AISI Inspect](https://img.shields.io/badge/listed-UK%20AISI%20Inspect%20extensions-2ea44f.svg)](https://github.com/UKGovernmentBEIS/inspect_ai/pull/4440)
 
 > Code: MIT. "FALSIFY" name and chevron logo: ™ reserved. See [NOTICE](NOTICE) · [docs/COMMERCIAL.md](docs/COMMERCIAL.md).
 
