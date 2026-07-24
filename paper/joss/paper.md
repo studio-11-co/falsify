@@ -63,17 +63,6 @@ reproduce claimed results, and benchmark over-fitting and selective
 reporting are widely recognised failure modes [@hooker_2020;
 @bowman_2022; @raji_2021].
 
-Pre-registration is the standard methodological response in scientific
-disciplines facing the same problem. Clinical trial registries [@dickersin_2003],
-the Open Science Framework [@nosek_2018] and the AsPredicted platform have
-made commitment-before-observation a normal practice in psychology,
-biomedicine and the social sciences. Machine learning has had effectively
-no equivalent infrastructure. Existing reproducibility tools focus on
-*re-running* an experiment (containers, environment specification, data
-versioning) or on *documenting* a model after it ships (Model Cards
-[@mitchell_2019], Datasheets for Datasets [@gebru_2021]). Neither of these
-addresses the threshold-commitment problem directly.
-
 `falsify` and the PRML format aim at that specific gap. A locked manifest
 is a small, tamper-evident artefact that an auditor, reviewer or regulator
 can verify offline. The format is intentionally minimal — nine fields,
@@ -84,18 +73,34 @@ a complete publication-integrity system: §8.1 of the specification names
 selective non-publication as out of scope, and the cookbook documents
 how to pair PRML with Sigstore for execution integrity.
 
-`falsify` has been used in three independent contexts: as the
-reference verifier for the 21 published conformance vectors, as the
-content-addressing layer behind a public registry whose receipts are
-Ed25519-signed, countersigned by an RFC 3161 timestamp authority and
-mirrored to the Rekor transparency log, and as the underlying primitive cited
-in subcategory-level crosswalks to the EU AI Act, the NIST AI RMF and
-ISO/IEC 42001 that practitioners can hand to compliance reviewers as
-documented evidence.
+# State of the field
 
-# Software description
+Pre-registration is the standard methodological response in scientific
+disciplines facing the same problem. Clinical trial registries [@dickersin_2003],
+the Open Science Framework [@nosek_2018] and the AsPredicted platform have
+made commitment-before-observation a normal practice in psychology,
+biomedicine and the social sciences. Machine learning has had effectively
+no equivalent infrastructure. Existing reproducibility tools focus on
+*re-running* an experiment (containers, environment specification, data
+versioning) or on *documenting* a model after it ships (Model Cards
+[@mitchell_2019], Datasheets for Datasets [@gebru_2021]). Experiment
+trackers and evaluation harnesses (MLflow, Weights & Biases, Inspect AI)
+log observed results, but the success criteria they record remain editable
+after the fact. Supply-chain provenance frameworks (in-toto, SLSA,
+Sigstore) attest to *artefacts and execution*, not to the prior commitment
+of an evaluation bar. None of these addresses the threshold-commitment
+problem directly; PRML is complementary to all of them and the cookbook
+documents pairings.
 
-The repository hosts:
+# Software design
+
+The design goal is that verification must need nothing but the manifest
+text and a SHA-256 implementation: canonical bytes are fully specified,
+the reference CLI is a single file with one runtime dependency, and the
+exit-code contract (0/PASS, 10/FAIL, 3/TAMPER, 11/GUARD) is the stable
+machine interface that CI gates and adapters build on. Byte-equivalence
+across four independent language implementations is enforced in CI rather
+than assumed. The repository hosts:
 
 - **Specification text** (`spec/PRML-v0.1.md`): RFC-style, CC BY 4.0 licensed,
   ~18 pages covering the canonicalization rules, manifest field semantics,
@@ -121,6 +126,31 @@ The PRML JSON Schema is in the SchemaStore catalog [@schemastore], so
 (VS Code, JetBrains, Helix, Zed, Cursor). Spec, conformance vectors and
 all four reference implementations are content-addressed in Zenodo
 [@prml_zenodo] and archived in Software Heritage.
+
+# Research impact statement
+
+`falsify` has been used in three independent contexts: as the reference
+verifier for the 21 published conformance vectors, as the
+content-addressing layer behind a public registry whose receipts are
+Ed25519-signed, countersigned by an RFC 3161 timestamp authority and
+mirrored to the Rekor transparency log, and as the underlying primitive
+cited in subcategory-level crosswalks to the EU AI Act, the NIST AI RMF
+and ISO/IEC 42001. The Inspect adapter is listed on the UK AI Safety
+Institute's Inspect extensions page, and the PRML JSON Schema ships in
+SchemaStore. These are early adoption signals, not usage claims: the
+software is young, and its impact case is that it makes a previously
+unverifiable class of claims checkable by anyone, offline, at near-zero
+cost.
+
+# AI usage disclosure
+
+AI assistants (Anthropic Claude) were used throughout development as a
+coding and editing aid: drafting implementation code, tests,
+documentation and portions of this text under the author's direction.
+All normative specification content, design decisions and published
+conformance vectors were authored, reviewed and verified by the human
+author; AI-drafted code is exercised by the test suite and the
+cross-language conformance gate in CI rather than trusted on inspection.
 
 # Acknowledgements
 
