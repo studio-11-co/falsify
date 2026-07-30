@@ -485,6 +485,15 @@ func forbiddenCharFields(v interface{}, path string) []string {
 }
 
 var hex64 = regexp.MustCompile("^[0-9a-f]{64}$")
+var uuidv7Re = regexp.MustCompile(`^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$`)
+var rfc3339Re = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?([Zz]|[+-]\d{2}:\d{2})$`)
+var hexAny64 = regexp.MustCompile(`^[0-9a-fA-F]{64}$`)
+var topLevelKeys = map[string]bool{
+	"version": true, "claim_id": true, "created_at": true, "metric": true,
+	"comparator": true, "threshold": true, "dataset": true, "seed": true,
+	"producer": true, "model": true, "compute_envelope": true,
+	"prior_hash": true, "notes": true, "metric_args": true,
+}
 
 var validComparators = map[string]bool{">=": true, "<=": true, ">": true, "<": true, "==": true}
 
@@ -527,6 +536,71 @@ func validateManifest(m map[string]interface{}) []string {
 	for _, fld := range forbiddenCharFields(m, "") {
 		errs = append(errs, fld+": contains a control / non-portable character "+
 			"(C0/C1, U+007F, U+2028/U+2029, or U+FEFF) — not allowed in a PRML string field")
+	}
+	errs = append(errs, schemaConformanceErrors(m)...)
+	return errs
+}
+
+// Full published-schema conformance (spec/schema/prml-v0.1.schema.json).
+// Added in v0.3.12: validators must agree with the published JSON Schema
+// (Andes interoperability assessment, finding 1).
+func schemaConformanceErrors(m map[string]interface{}) []string {
+	var errs []string
+	if cid, ok := m["claim_id"].(string); ok && !uuidv7Re.MatchString(cid) {
+		errs = append(errs, "claim_id must be a UUIDv7 (schema pattern: version nibble 7, variant 8/9/a/b)")
+	}
+	if ca, ok := m["created_at"].(string); ok && !rfc3339Re.MatchString(ca) {
+		errs = append(errs, "created_at must be an RFC 3339 date-time")
+	}
+	if met, ok := m["metric"].(string); ok && (len(met) < 1 || len(met) > 256) {
+		errs = append(errs, "metric must be 1..256 characters")
+	}
+	if seed, present := m["seed"]; present && seed != nil {
+		if n, ok := seed.(json.Number); !ok {
+			errs = append(errs, "seed must be an integer or null")
+		} else if _, err := n.Int64(); err != nil {
+			// arbitrary-precision uint64 seeds still parse via big int path in hashing;
+			// accept anything without a decimal point / exponent
+			sTok := n.String()
+			if strings.ContainsAny(sTok, ".eE") {
+				errs = append(errs, "seed must be an integer or null")
+			}
+		}
+	}
+	if ds, ok := m["dataset"].(map[string]interface{}); ok {
+		if id, ok := ds["id"].(string); ok && len(id) < 1 {
+			errs = append(errs, "dataset.id must be non-empty")
+		}
+		for k := range ds {
+			if k != "id" && k != "hash" && k != "uri" {
+				errs = append(errs, "dataset."+k+": unknown field (schema additionalProperties: false)")
+			}
+		}
+	}
+	if prod, ok := m["producer"].(map[string]interface{}); ok {
+		if id, ok := prod["id"].(string); ok && len(id) < 1 {
+			errs = append(errs, "producer.id must be non-empty")
+		}
+		for k := range prod {
+			if k != "id" && k != "signature" {
+				errs = append(errs, "producer."+k+": unknown field (schema additionalProperties: false)")
+			}
+		}
+	}
+	if ph, present := m["prior_hash"]; present {
+		if s, ok := ph.(string); !ok || !hexAny64.MatchString(s) {
+			errs = append(errs, "prior_hash must be 64 hex characters")
+		}
+	}
+	if nt, present := m["notes"]; present {
+		if s, ok := nt.(string); !ok || len([]rune(s)) > 4096 {
+			errs = append(errs, "notes must be a string of at most 4096 characters")
+		}
+	}
+	for k := range m {
+		if !topLevelKeys[k] {
+			errs = append(errs, k+": unknown top-level field (schema additionalProperties: false)")
+		}
 	}
 	return errs
 }

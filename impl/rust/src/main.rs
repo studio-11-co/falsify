@@ -585,6 +585,112 @@ fn validate_manifest(parsed: &Value) -> Vec<String> {
         errs.push(format!("{}: contains a control / non-portable character \
             (C0/C1, U+007F, U+2028/U+2029, or U+FEFF) — not allowed in a PRML string field", fld));
     }
+    errs.extend(schema_conformance_errors(map));
+    errs
+}
+
+// Full published-schema conformance (spec/schema/prml-v0.1.schema.json).
+// Added in v0.3.12: validators must agree with the published JSON Schema
+// (Andes interoperability assessment, finding 1). Hand-rolled checks keep
+// this implementation stdlib-only.
+fn is_hex_n(s: &str, n: usize) -> bool {
+    s.len() == n && s.chars().all(|c| c.is_ascii_hexdigit())
+}
+
+fn is_uuidv7(s: &str) -> bool {
+    let parts: Vec<&str> = s.split('-').collect();
+    if parts.len() != 5 { return false; }
+    if !(is_hex_n(parts[0], 8) && is_hex_n(parts[1], 4) && is_hex_n(parts[2], 4)
+        && is_hex_n(parts[3], 4) && is_hex_n(parts[4], 12)) { return false; }
+    if !parts[2].starts_with('7') { return false; }
+    matches!(parts[3].chars().next(), Some('8') | Some('9') | Some('a') | Some('b') | Some('A') | Some('B'))
+}
+
+fn is_rfc3339(s: &str) -> bool {
+    // YYYY-MM-DDThh:mm:ss(.frac)?(Z|±hh:mm)
+    let b: Vec<char> = s.chars().collect();
+    if b.len() < 20 { return false; }
+    let d = |i: usize| b.get(i).map(|c| c.is_ascii_digit()).unwrap_or(false);
+    if !(d(0) && d(1) && d(2) && d(3) && b[4] == '-' && d(5) && d(6) && b[7] == '-'
+        && d(8) && d(9) && (b[10] == 'T' || b[10] == 't') && d(11) && d(12) && b[13] == ':'
+        && d(14) && d(15) && b[16] == ':' && d(17) && d(18)) { return false; }
+    let mut i = 19;
+    if b.get(i) == Some(&'.') {
+        i += 1;
+        let start = i;
+        while i < b.len() && b[i].is_ascii_digit() { i += 1; }
+        if i == start { return false; }
+    }
+    match b.get(i) {
+        Some('Z') | Some('z') => i + 1 == b.len(),
+        Some('+') | Some('-') => {
+            b.len() == i + 6 && d(i + 1) && d(i + 2) && b[i + 3] == ':' && d(i + 4) && d(i + 5)
+        }
+        _ => false,
+    }
+}
+
+fn schema_conformance_errors(map: &serde_json::Map<String, Value>) -> Vec<String> {
+    let mut errs = Vec::new();
+    if let Some(cid) = map.get("claim_id").and_then(|v| v.as_str()) {
+        if !is_uuidv7(cid) {
+            errs.push("claim_id must be a UUIDv7 (schema pattern: version nibble 7, variant 8/9/a/b)".to_string());
+        }
+    }
+    if let Some(ca) = map.get("created_at").and_then(|v| v.as_str()) {
+        if !is_rfc3339(ca) {
+            errs.push("created_at must be an RFC 3339 date-time".to_string());
+        }
+    }
+    if let Some(met) = map.get("metric").and_then(|v| v.as_str()) {
+        let n = met.chars().count();
+        if n < 1 || n > 256 {
+            errs.push("metric must be 1..256 characters".to_string());
+        }
+    }
+    if let Some(seed) = map.get("seed") {
+        if !seed.is_null() && seed.as_i64().is_none() && seed.as_u64().is_none() {
+            errs.push("seed must be an integer or null".to_string());
+        }
+    }
+    if let Some(ds) = map.get("dataset").and_then(|v| v.as_object()) {
+        if let Some(id) = ds.get("id").and_then(|v| v.as_str()) {
+            if id.is_empty() { errs.push("dataset.id must be non-empty".to_string()); }
+        }
+        for k in ds.keys() {
+            if k != "id" && k != "hash" && k != "uri" {
+                errs.push(format!("dataset.{}: unknown field (schema additionalProperties: false)", k));
+            }
+        }
+    }
+    if let Some(prod) = map.get("producer").and_then(|v| v.as_object()) {
+        if let Some(id) = prod.get("id").and_then(|v| v.as_str()) {
+            if id.is_empty() { errs.push("producer.id must be non-empty".to_string()); }
+        }
+        for k in prod.keys() {
+            if k != "id" && k != "signature" {
+                errs.push(format!("producer.{}: unknown field (schema additionalProperties: false)", k));
+            }
+        }
+    }
+    if let Some(ph) = map.get("prior_hash") {
+        if !ph.as_str().map(|s| is_hex_n(s, 64)).unwrap_or(false) {
+            errs.push("prior_hash must be 64 hex characters".to_string());
+        }
+    }
+    if let Some(nt) = map.get("notes") {
+        if !nt.as_str().map(|s| s.chars().count() <= 4096).unwrap_or(false) {
+            errs.push("notes must be a string of at most 4096 characters".to_string());
+        }
+    }
+    const TOP: [&str; 14] = ["version", "claim_id", "created_at", "metric", "comparator",
+        "threshold", "dataset", "seed", "producer", "model", "compute_envelope",
+        "prior_hash", "notes", "metric_args"];
+    for k in map.keys() {
+        if !TOP.contains(&k.as_str()) {
+            errs.push(format!("{}: unknown top-level field (schema additionalProperties: false)", k));
+        }
+    }
     errs
 }
 
