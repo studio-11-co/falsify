@@ -38,9 +38,19 @@
       "maxLength": 256,
       "description": "Name of the metric being evaluated. Free-form string but should follow community conventions (e.g. 'accuracy', 'pass_at_1', 'refusal_rate', 'mean_episode_reward')."
     },
+    "metric_args": {
+      "type": "object",
+      "description": "Optional free-form mapping parameterizing the metric (spec §5 field table), e.g. tolerance for the == comparator. Counts toward the canonical bytes; tampering invalidates the hash."
+    },
     "comparator": {
       "type": "string",
-      "enum": [">=", "<=", ">", "<", "=="],
+      "enum": [
+        ">=",
+        "<=",
+        ">",
+        "<",
+        "=="
+      ],
       "description": "Direction of the threshold comparison. Required to make the claim falsifiable."
     },
     "threshold": {
@@ -50,7 +60,10 @@
     "dataset": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "hash"],
+      "required": [
+        "id",
+        "hash"
+      ],
       "properties": {
         "id": {
           "type": "string",
@@ -71,16 +84,28 @@
     },
     "seed": {
       "oneOf": [
-        {"type": "integer", "minimum": 0, "maximum": 18446744073709551615},
-        {"type": "integer", "minimum": -9223372036854775808, "maximum": -1},
-        {"type": "null"}
+        {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 18446744073709551615
+        },
+        {
+          "type": "integer",
+          "minimum": -9223372036854775808,
+          "maximum": -1
+        },
+        {
+          "type": "null"
+        }
       ],
       "description": "RNG seed used in the evaluation. Accepts uint64 (most common, e.g. NumPy/PyTorch) or int64 (negative seeds in some C/Go runtimes). May be null for non-deterministic systems (live streams, online RLHF)."
     },
     "producer": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id"],
+      "required": [
+        "id"
+      ],
       "properties": {
         "id": {
           "type": "string",
@@ -130,7 +155,6 @@
       "description": "Optional free-text rationale. Counts toward the canonical bytes; tampering with notes invalidates the hash."
     }
   },
-
   "examples": [
     {
       "version": "prml/0.1",
@@ -154,23 +178,32 @@
       "created_at": "2026-05-08T20:00:00Z",
       "metric": "pass_at_1",
       "comparator": ">=",
-      "threshold": 0.40,
+      "threshold": 0.4,
       "dataset": {
         "id": "openai/openai_humaneval",
         "hash": "huggingface:revision-d8f3e1a2",
         "uri": "https://huggingface.co/datasets/openai/openai_humaneval"
       },
       "seed": 42,
-      "producer": {"id": "falsify.dev"},
-      "model": {"id": "meta-llama/Llama-3.1-8B-Instruct"},
+      "producer": {
+        "id": "falsify.dev"
+      },
+      "model": {
+        "id": "meta-llama/Llama-3.1-8B-Instruct"
+      },
       "notes": "HumanEval pass@1, n=164 problems, temperature 0.0, single completion per problem."
     }
   ],
-
   "$defs": {
     "comparator": {
       "type": "string",
-      "enum": [">=", "<=", ">", "<", "=="]
+      "enum": [
+        ">=",
+        "<=",
+        ">",
+        "<",
+        "=="
+      ]
     }
   }
 }
