@@ -57,7 +57,7 @@ def main() -> int:
     metric = ExactMatchMetric(threshold=0.85)
     lock = lock_metric(
         metric,
-        claim_id="01900000-0000-7000-8000-0000deeeva10",
+        claim_id="01900000-0000-7000-8000-0000deeea010",
         metric_id="accuracy",
         created_at="2026-06-24T12:00:00Z",
         dataset_path=DATASET,
@@ -78,7 +78,7 @@ def main() -> int:
     strict = ExactMatchMetric(threshold=0.95)
     lock_b = lock_metric(
         strict,
-        claim_id="01900000-0000-7000-8000-0000deeeva20",
+        claim_id="01900000-0000-7000-8000-0000deeea020",
         metric_id="accuracy",
         created_at="2026-06-24T12:00:00Z",
         dataset_path=DATASET,
