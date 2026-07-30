@@ -257,8 +257,42 @@ function validateManifest(m) {
     errors.push(`${fld}: contains a control / non-portable character `
       + `(C0/C1, U+007F, U+2028/U+2029, or U+FEFF) — not allowed in a PRML string field`);
   }
+  // Full published-schema conformance (spec/schema/prml-v0.1.schema.json).
+  // Added in v0.3.12 (Andes assessment, finding 1): validators must agree
+  // with the published JSON Schema, or "validated PRML" is ambiguous.
+  const UUIDV7 = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+  const RFC3339 = /^\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?([Zz]|[+-]\d{2}:\d{2})$/;
+  const TOP_KEYS = new Set(['version','claim_id','created_at','metric','comparator','threshold','dataset','seed','producer','model','compute_envelope','prior_hash','notes','metric_args']);
+  if (typeof m.claim_id === 'string' && !UUIDV7.test(m.claim_id)) {
+    errors.push('claim_id must be a UUIDv7 (schema pattern: version nibble 7, variant 8/9/a/b)');
+  }
+  if (typeof m.created_at === 'string' && !RFC3339.test(m.created_at)) {
+    errors.push('created_at must be an RFC 3339 date-time');
+  }
+  if (typeof m.metric === 'string' && (m.metric.length < 1 || m.metric.length > 256)) {
+    errors.push('metric must be 1..256 characters');
+  }
+  if (m.seed !== null && m.seed !== undefined && typeof m.seed !== 'bigint' && (typeof m.seed !== 'number' || !Number.isInteger(m.seed))) {
+    errors.push('seed must be an integer or null');
+  }
+  if (m.dataset && typeof m.dataset === 'object') {
+    if (typeof m.dataset.id === 'string' && m.dataset.id.length < 1) errors.push('dataset.id must be non-empty');
+    for (const k of Object.keys(m.dataset)) if (!['id','hash','uri'].includes(k)) errors.push(`dataset.${k}: unknown field (schema additionalProperties: false)`);
+  }
+  if (m.producer && typeof m.producer === 'object') {
+    if (typeof m.producer.id === 'string' && m.producer.id.length < 1) errors.push('producer.id must be non-empty');
+    for (const k of Object.keys(m.producer)) if (!['id','signature'].includes(k)) errors.push(`producer.${k}: unknown field (schema additionalProperties: false)`);
+  }
+  if (m.prior_hash !== undefined && !(typeof m.prior_hash === 'string' && /^[0-9a-fA-F]{64}$/.test(m.prior_hash))) {
+    errors.push('prior_hash must be 64 hex characters');
+  }
+  if (m.notes !== undefined && !(typeof m.notes === 'string' && m.notes.length <= 4096)) {
+    errors.push('notes must be a string of at most 4096 characters');
+  }
+  for (const k of Object.keys(m)) if (!TOP_KEYS.has(k)) errors.push(`${k}: unknown top-level field (schema additionalProperties: false)`);
   return errors;
 }
+
 
 // ─────────────────────────────────────────────────────────────────────────
 // Verifier

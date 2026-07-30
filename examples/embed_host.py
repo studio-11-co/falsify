@@ -33,7 +33,7 @@ except ImportError:
 # ── 1. the claim the customer pre-registers (a plain dict; 9 required fields) ──
 CLAIM = {
     "version": "prml/0.1",
-    "claim_id": "acme-run-42-accuracy",
+    "claim_id": "019212aa-4b00-7c00-8000-00000000ac2e",  # UUIDv7 (schema requirement as of v0.3.12)
     "created_at": "2026-06-18T00:00:00Z",
     "metric": "accuracy",
     "comparator": ">=",

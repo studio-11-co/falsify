@@ -10,6 +10,26 @@ numbers follow [Semantic Versioning](https://semver.org).
 - Independent RFC 3161 timestamp anchoring on every receipt: the manifest hash is countersigned by timestamp.sigstore.dev at commit time (a witness, never a gatekeeper: TSA failure does not block the receipt; POST /anchor/<hash> retries). Raw tokens at /<hash>.tsr verify offline with OpenSSL 3 against the TSA's published chain. All 17 pre-existing records were backfilled; a backfilled token's time is later than its receipt time and the permalink labels that. This fulfills the timestamp half of the registry's documented "planned addition" (external anchoring); transparency-log inclusion (Rekor) remains planned, and until it lands the registry is a signed public registry, not a transparency log.
 - Spec section 2.3.4 updated to match (independent time claim now held by a third party; non-equivocation still open).
 
+## [v0.3.12] — 2026-07-31
+
+### Changed
+- **Validators now enforce the full published JSON Schema** (Python reference,
+  `impl/js`, and the `falsify-js` package): UUIDv7 `claim_id` (version nibble
+  7, RFC 4122 variant), RFC 3339 `created_at`, `metric` length 1..256,
+  integer-or-null `seed` (bigint accepted in JS), sub-object and top-level
+  `additionalProperties: false`, `prior_hash` and `notes` constraints.
+  Previously the validators were looser than the schema, so "validated PRML"
+  meant different things depending on which artifact a verifier used.
+  Prompted by finding 1 of the independent Andes interoperability assessment
+  (2026-07-28). **Breaking** for manifests that relied on the looser
+  behaviour (most commonly non-UUIDv7 claim identifiers); all 21 published
+  conformance vectors and the 14 reject vectors pass unchanged.
+
+### Added
+- `docs/execution-linkage-draft.md`: non-normative draft for linking a
+  separately evidenced execution start/result to a prior receipt
+  (assessment finding 3); input welcome.
+
 ## [v0.3.11] — 2026-07-17
 
 ### Fixed (integrity hardening from an 8-agent external audit)

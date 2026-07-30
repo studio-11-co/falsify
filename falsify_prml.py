@@ -38,7 +38,7 @@ import os
 import re
 import sys
 
-__version__ = "0.3.11"
+__version__ = "0.3.12"
 
 EXIT_PASS = 0
 EXIT_BAD = 2
@@ -213,6 +213,62 @@ def validate_manifest(m: dict) -> list[str]:
     for fld in _bad_char_fields(m):
         errors.append(f"{fld}: contains a control / non-portable character "
                       f"(C0/C1, U+007F, U+2028/U+2029, or U+FEFF) — not allowed in a PRML string field")
+    errors.extend(_schema_conformance_errors(m))
+    return errors
+
+
+# Full published-schema conformance (spec/schema/prml-v0.1.schema.json).
+# Added in v0.3.12 after Andes' independent interoperability assessment
+# (finding 1): the reference validator accepted manifests the published
+# JSON Schema rejects (UUIDv4 claim_ids, unknown fields, over-long values).
+# The validators and the schema must agree, or "validated PRML" means two
+# different things depending on which artifact a verifier picked up.
+_UUIDV7 = re.compile(r"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$")
+_RFC3339 = re.compile(r"^\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?([Zz]|[+-]\d{2}:\d{2})$")
+_TOP_LEVEL_KEYS = {
+    "version", "claim_id", "created_at", "metric", "comparator", "threshold",
+    "dataset", "seed", "producer", "model", "compute_envelope", "prior_hash",
+    "notes", "metric_args",
+}
+
+
+def _schema_conformance_errors(m: dict) -> list[str]:
+    errors: list[str] = []
+    cid = m.get("claim_id")
+    if isinstance(cid, str) and not _UUIDV7.match(cid):
+        errors.append("claim_id must be a UUIDv7 (schema pattern: version nibble 7, variant 8/9/a/b)")
+    ca = m.get("created_at")
+    if isinstance(ca, str) and not _RFC3339.match(ca):
+        errors.append("created_at must be an RFC 3339 date-time")
+    metric = m.get("metric")
+    if isinstance(metric, str) and not (1 <= len(metric) <= 256):
+        errors.append("metric must be 1..256 characters")
+    seed = m.get("seed")
+    if seed is not None and (isinstance(seed, bool) or not isinstance(seed, int)):
+        errors.append("seed must be an integer or null")
+    ds = m.get("dataset")
+    if isinstance(ds, dict):
+        if isinstance(ds.get("id"), str) and len(ds["id"]) < 1:
+            errors.append("dataset.id must be non-empty")
+        for k in ds:
+            if k not in ("id", "hash", "uri"):
+                errors.append(f"dataset.{k}: unknown field (schema additionalProperties: false)")
+    prod = m.get("producer")
+    if isinstance(prod, dict):
+        if isinstance(prod.get("id"), str) and len(prod["id"]) < 1:
+            errors.append("producer.id must be non-empty")
+        for k in prod:
+            if k not in ("id", "signature"):
+                errors.append(f"producer.{k}: unknown field (schema additionalProperties: false)")
+    ph = m.get("prior_hash")
+    if ph is not None and not (isinstance(ph, str) and re.fullmatch(r"[0-9a-fA-F]{64}", ph)):
+        errors.append("prior_hash must be 64 hex characters")
+    notes = m.get("notes")
+    if notes is not None and not (isinstance(notes, str) and len(notes) <= 4096):
+        errors.append("notes must be a string of at most 4096 characters")
+    for k in m:
+        if k not in _TOP_LEVEL_KEYS:
+            errors.append(f"{k}: unknown top-level field (schema additionalProperties: false)")
     return errors
 
 
