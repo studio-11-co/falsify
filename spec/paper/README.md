@@ -71,7 +71,7 @@ arXiv requires endorsement for first-time submissions in cs.* categories.
 If the anonymous identity fails moderation:
 
 1. Re-edit `\author[1]{Cüneyt Öztürk}` → `\author[1]{Cüneyt Öztürk}`
-2. `\affil[1]{Independent...` → `\affil[1]{Cüneyt Öztürk, Independent. Correspondence: cuneytozturk84@gmail.com`
+2. `\affil[1]{Independent...` → `\affil[1]{Cüneyt Öztürk, Independent. Correspondence: hello@falsify.dev`
 3. Re-upload to same arXiv submission (use "replace" before moderation, "v2" after)
 
 ---
