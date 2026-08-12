@@ -92,7 +92,7 @@ See [docs/CASE_STUDIES.md](docs/CASE_STUDIES.md) for three concrete adoption sto
 
 **Already running DeepEval?** [`examples/deepeval/`](examples/deepeval/) — lock a DeepEval metric's threshold to a SHA-256 before the run and verify the score after; a relaxed threshold reads TAMPERED, not PASS. Offline, no LLM/key.
 
-**Need it locked for one of your published claims?** [`falsify.dev/sprint`](https://falsify.dev/sprint) — Diagnostic Sprint, fixed-scope engagement for regulated AI teams. PRML manifest authored, verifier deployed in CI, audit report shipped. Pricing scoped per client; single-claim review available as a sub-procurement option.
+**Need it locked for one of your published claims?** [`falsify.dev/sprint`](https://falsify.dev/sprint) — Diagnostic Sprint, fixed-scope engagement for regulated AI teams. PRML manifest authored, verifier deployed in CI, audit report shipped. Pricing scoped per client; single-claim review available as a sub-procurement option. Commercial engagements are contracted through Falsify OÜ (reg. 17574308, Tallinn, Estonia).
 
 **Embedding PRML in your platform?** [`docs/EMBED.md`](docs/EMBED.md) — three pure functions (`validate_manifest` / `manifest_hash` / `evaluate_predicate`), a 5-line lock-before-run hook, and an in-toto / ITE-6 attestation bridge (`falsify attest` / `to_intoto_statement`). No CLI required.
 
