@@ -27,6 +27,8 @@ you are:
 Please include:
 
 1. Your company and use case (one paragraph).
+
+All commercial engagements are contracted with and invoiced by **Falsify OÜ** (registry code 17574308, Narva mnt 5, 10117 Tallinn, Estonia).
 2. Deployment scale (users, requests/day, internal vs external).
 3. What you'd want from a commercial engagement (support, features,
    branding, etc.).
