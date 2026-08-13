@@ -3697,6 +3697,99 @@ def _bench_format_table(
     return "\n".join(out_lines) + "\n"
 
 
+def _conform_load_vectors(path: Path) -> list[dict]:
+    """Load conformance vectors from either format.
+
+    JSON file  → the v0.1 test-vectors.json array.
+    Directory  → RFC v0.2 P-04 layout: <id>/manifest.yaml + <id>/expected_hash.txt.
+    """
+    if path.is_file():
+        vectors = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(vectors, list):
+            raise ValueError(f"{path} is not a JSON array of vectors")
+        return vectors
+    if not path.is_dir():
+        raise ValueError(f"vectors path does not exist: {path}")
+    vectors = []
+    for d in sorted(p for p in path.iterdir() if p.is_dir()):
+        manifest_path = d / "manifest.yaml"
+        hash_path = d / "expected_hash.txt"
+        if not (manifest_path.exists() and hash_path.exists()):
+            continue
+        canonical = manifest_path.read_text(encoding="utf-8")
+        vectors.append(
+            {
+                "id": d.name,
+                "title": d.name,
+                "input": yaml.safe_load(canonical),
+                "canonical": canonical,
+                "hash": hash_path.read_text(encoding="utf-8").strip(),
+            }
+        )
+    if not vectors:
+        raise ValueError(f"no vector directories found under {path}")
+    return vectors
+
+
+def cmd_conform(args: argparse.Namespace) -> int:
+    """Run the conformance vectors against a target implementation (RFC v0.2 P-04).
+
+    Target protocol (same as spec/test-vectors/v0.1/conform.py): the target is
+    spawned per vector, receives the vector input as JSON on stdin, and must
+    print {"canonical": "...", "hash": "..."} on stdout.
+    """
+    import shlex
+    import subprocess
+
+    vectors_path = Path(args.vectors) if args.vectors else (
+        Path(__file__).parent / "spec" / "test-vectors" / "v0.1" / "vectors"
+    )
+    if not vectors_path.exists():
+        # fall back to the JSON file when the directory export is absent
+        fallback = Path(__file__).parent / "spec" / "test-vectors" / "v0.1" / "test-vectors.json"
+        if fallback.exists():
+            vectors_path = fallback
+        else:
+            print(f"falsify conform: vectors not found at {vectors_path}", file=sys.stderr)
+            return EXIT_BAD_SPEC
+    try:
+        vectors = _conform_load_vectors(vectors_path)
+    except ValueError as exc:
+        print(f"falsify conform: {exc}", file=sys.stderr)
+        return EXIT_BAD_SPEC
+
+    argv = shlex.split(args.target)
+    passed = 0
+    failures: list[tuple[str, str]] = []
+    for v in vectors:
+        try:
+            proc = subprocess.run(
+                argv,
+                input=json.dumps(v["input"]),
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            if proc.returncode != 0:
+                raise RuntimeError(f"target exit {proc.returncode}: {proc.stderr.strip()[:200]}")
+            out = json.loads(proc.stdout)
+            if out.get("canonical") != v["canonical"]:
+                raise RuntimeError("canonical bytes differ")
+            if out.get("hash") != v["hash"]:
+                raise RuntimeError(f"hash differs (expected {v['hash'][:12]}…, got {str(out.get('hash'))[:12]}…)")
+        except Exception as exc:  # noqa: BLE001
+            failures.append((v["id"], str(exc)))
+            print(f"  FAIL  {v['id']}  {v.get('title', '')}")
+            continue
+        passed += 1
+        print(f"  ok    {v['id']}  {v.get('title', '')}")
+
+    print(f"\n{passed}/{len(vectors)} vectors passed")
+    for vid, why in failures:
+        print(f"  {vid}: {why}")
+    return EXIT_PASS if not failures else EXIT_FAIL
+
+
 def cmd_bench(args: argparse.Namespace) -> int:
     runs = max(1, min(int(args.runs), _BENCH_MAX_RUNS))
     warmup = max(0, int(args.warmup))
@@ -4133,6 +4226,22 @@ def build_parser() -> argparse.ArgumentParser:
         help="Emit machine-readable JSON output",
     )
     p_bench.set_defaults(func=cmd_bench)
+
+    p_conform = sub.add_parser(
+        "conform",
+        help="Run the PRML conformance vectors against a target implementation (RFC v0.2 P-04)",
+    )
+    p_conform.add_argument(
+        "target",
+        help="Target command, quoted if it has arguments "
+             "(e.g. 'node impl/js/conform.js' or 'go run ./impl/go/cmd/conform')",
+    )
+    p_conform.add_argument(
+        "--vectors", default=None,
+        help="Path to a vectors directory (P-04 layout) or a test-vectors.json file "
+             "(default: spec/test-vectors/v0.1/vectors)",
+    )
+    p_conform.set_defaults(func=cmd_conform)
 
     return parser
 

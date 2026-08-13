@@ -6,6 +6,26 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added (2026-08-13)
+- **`prml-linkage/0` draft spec** at `spec/linkage/prml-linkage-0.md`:
+  adapter-independent execution linkage. Start/final record chaining under
+  manifest canonicalization rules, strength tiers L1 (declared) / L2
+  (chained) / L3 (anchored), offline-first verification algorithm. Reference
+  implementation `falsify_linkage.py` (build_start / finalize / verify) with
+  11 unit tests, including canonicalization parity with `falsify.py`.
+  Supersedes `docs/execution-linkage-draft.md`.
+- **`falsify conform <target>` command** (RFC v0.2 P-04, informative): runs
+  the conformance vectors against a target implementation via the stdin/stdout
+  protocol and reports byte/hash equivalence. Accepts the new per-vector
+  directory layout or the legacy `test-vectors.json`.
+- **P-04 vector directory export**: `spec/test-vectors/v0.1/vectors/<id>/`
+  with `manifest.yaml` (canonical bytes) + `expected_hash.txt` for all 13
+  v0.1 vectors; generator at `spec/test-vectors/v0.1/export_dirs.py`.
+- **`spec.falsify.dev/v0.2-comments`**: the comment-disposition record the
+  frozen RFC promised. One external commenter (Ceri John), two accepted
+  contributions, P-01/P-02/P-03 remain open, P-04 implemented, P-05 applies
+  at promotion.
+
 ### Registry (deployed 2026-07-12, falsify-registry repo)
 - Independent RFC 3161 timestamp anchoring on every receipt: the manifest hash is countersigned by timestamp.sigstore.dev at commit time (a witness, never a gatekeeper: TSA failure does not block the receipt; POST /anchor/<hash> retries). Raw tokens at /<hash>.tsr verify offline with OpenSSL 3 against the TSA's published chain. All 17 pre-existing records were backfilled; a backfilled token's time is later than its receipt time and the permalink labels that. This fulfills the timestamp half of the registry's documented "planned addition" (external anchoring); transparency-log inclusion (Rekor) remains planned, and until it lands the registry is a signed public registry, not a transparency log.
 - Spec section 2.3.4 updated to match (independent time claim now held by a third party; non-equivocation still open).

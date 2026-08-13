@@ -1,0 +1,14 @@
+claim_id: 01900000-0000-7000-8000-000000000006
+comparator: '>='
+created_at: '2026-05-15T14:00:00Z'
+dataset:
+  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  id: imagenet-val-2012
+metric: accuracy
+notes: Threshold raised after dataset re-curation found 12 mislabeled examples.
+prior_hash: 1a3466cc08ee7fb60a726ea1c4db6ecf48a9f847b9b7523bfb54b2ffaefee546
+producer:
+  id: studio-11.co
+seed: 42
+threshold: 0.87
+version: prml/0.1

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PRML v0.2 RFC — comments received and disposition</title>
+<meta name="description" content="Disposition record of every comment received during the PRML v0.2 RFC window (2026-05-08 to 2026-05-22): what was accepted, what remains open, and what promotion still requires.">
+<meta name="author" content="Cüneyt Öztürk">
+<link rel="canonical" href="https://spec.falsify.dev/v0.2-comments/">
+<meta property="og:title" content="PRML v0.2 RFC — comment disposition record">
+<meta property="og:description" content="One external commenter, two accepted contributions, three questions still open. The honest freeze record. CC BY 4.0.">
+<meta property="og:url" content="https://spec.falsify.dev/v0.2-comments/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "PRML v0.2 RFC — comment disposition record",
+  "description": "Disposition of comments received during the PRML v0.2 RFC window, published per the freeze-record commitment.",
+  "author": {"@type":"Person","name":"Cüneyt Öztürk","url":"https://www.linkedin.com/in/cuneyt-ozturk-39812963/"},
+  "publisher": {"@type":"Organization","name":"Cüneyt Öztürk","url":"https://falsify.dev"},
+  "datePublished": "2026-08-13",
+  "dateModified": "2026-08-13",
+  "url": "https://spec.falsify.dev/v0.2-comments",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "inLanguage": "en",
+  "keywords": "PRML, RFC, v0.2, pre-registered ML manifest, ML evaluation, streaming, runner attestation, revocation"
+}
+</script>
+
+<style>
+:root {
+  --bg: #fdfdfb;
+  --ink: #0b0f14;
+  --ink-2: #2b3340;
+  --ink-3: #5a6677;
+  --rule: #d6d9de;
+  --accent: #39d98a;
+  --code-bg: #f4f4f0;
+  --code-ink: #1a1f29;
+  --max: 720px;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Source Serif 4", Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  line-height: 1.65;
+  font-feature-settings: "kern", "liga", "onum";
+}
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 64px 28px 120px;
+}
+header.masthead {
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 18px;
+  margin-bottom: 36px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+header.masthead a { color: var(--ink-3); text-decoration: none; border-bottom: 1px dotted var(--ink-3); }
+header.masthead a:hover { color: var(--ink); border-color: var(--ink); }
+header.masthead .brand { font-weight: 700; color: var(--ink); }
+header.masthead .brand .chev { color: var(--accent); }
+
+article h1 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 32px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+article h2 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 56px 0 14px;
+  letter-spacing: -0.005em;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 6px;
+}
+article h3 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin: 36px 0 10px;
+  color: var(--ink-2);
+}
+article h4 {
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  margin: 24px 0 8px;
+  color: var(--ink-2);
+}
+article p { margin: 0 0 16px; }
+article ul, article ol { margin: 0 0 16px; padding-left: 26px; }
+article li { margin-bottom: 6px; }
+article a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 3px; }
+article a:hover { text-decoration-color: var(--accent); }
+article strong { font-weight: 600; }
+article em { font-style: italic; color: var(--ink-2); }
+article hr { border: 0; border-top: 1px solid var(--rule); margin: 40px 0; }
+
+article code {
+  font-family: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
+  font-size: 0.9em;
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+article pre {
+  background: var(--code-bg);
+  color: var(--code-ink);
+  padding: 16px 18px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-size: 13.5px;
+  line-height: 1.55;
+  margin: 0 0 20px;
+  border-left: 2px solid var(--accent);
+}
+article pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+article table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 22px;
+  font-size: 15px;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+}
+article th, article td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+article th { font-weight: 600; background: var(--code-bg); }
+article td code { font-size: 0.92em; }
+
+article blockquote {
+  border-left: 2px solid var(--accent);
+  margin: 0 0 18px;
+  padding: 4px 0 4px 16px;
+  color: var(--ink-2);
+  font-style: italic;
+}
+
+footer.colophon {
+  margin-top: 96px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 12px;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+footer.colophon a { color: var(--ink-3); text-decoration: none; border-bottom: 1px dotted var(--ink-3); }
+footer.colophon a:hover { color: var(--ink); }
+
+.loading {
+  font-family: "JetBrains Mono", monospace;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.rfc-sticky {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #0b0f14;
+  color: #fdfdfb;
+  border-bottom: 1px solid #39d98a;
+  font-family: "Space Grotesk", system-ui, sans-serif;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  padding: 8px 16px;
+  line-height: 1.45;
+}
+.rfc-sticky strong { color: #39d98a; font-weight: 600; }
+.rfc-sticky a { color: #fdfdfb; text-decoration: underline; text-decoration-color: #39d98a; text-underline-offset: 3px; }
+.rfc-sticky a:hover { color: #39d98a; }
+.rfc-sticky code { font-family: "JetBrains Mono", monospace; font-size: 0.9em; background: rgba(57,217,138,0.12); color: #39d98a; padding: 1px 5px; border-radius: 3px; }
+@media print { .rfc-sticky { display: none; } }
+
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .wrap { padding: 40px 18px 80px; }
+  article h1 { font-size: 26px; }
+  article h2 { font-size: 19px; }
+}
+
+@media print {
+  body { background: white; font-size: 11pt; line-height: 1.45; }
+  .wrap { max-width: none; padding: 0; }
+  header.masthead, footer.colophon { display: none; }
+  article h1, article h2, article h3 { page-break-after: avoid; }
+  article pre, article table { page-break-inside: avoid; }
+  article a { color: var(--ink); text-decoration: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="rfc-sticky" role="region" aria-label="Comment disposition record">
+  <strong>v0.2 comment record</strong> — the disposition of every comment from the frozen RFC window.
+  The RFC itself: <a href="https://spec.falsify.dev/v0.2-rfc/">/v0.2-rfc</a>.
+  Late input still welcome via issues labeled <a href="https://github.com/studio-11-co/falsify/issues"><code>rfc-v0.2</code></a> (rolls into v0.3 unless security-relevant).
+</div>
+
+<div class="wrap">
+
+<header class="masthead">
+  <span class="brand"><span class="chev">›</span> falsify · spec</span>
+  <span>
+    <a href="https://falsify.dev">Home</a> ·
+    <a href="https://spec.falsify.dev/v0.1">Spec v0.1</a> ·
+    <a href="https://spec.falsify.dev/v0.2-rfc/">RFC v0.2</a> · <span style="color:var(--ink);border-bottom:1px dotted var(--ink)" aria-current="page">Comments</span> ·
+    <a href="https://registry.falsify.dev">Registry</a> ·
+    <a href="https://github.com/studio-11-co/falsify">GitHub</a>
+  </span>
+</header>
+
+<aside class="livenote" style="margin: 0 0 36px; padding: 14px 18px; border-left: 3px solid var(--accent); background: #f4f4f0; font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 14px; color: var(--ink-2); line-height: 1.55;">
+  <strong style="color: var(--ink); font-weight: 600;">This page fulfils a freeze-record commitment.</strong> The frozen RFC promised that "a list of comments received and their disposition will be published as spec.falsify.dev/v0.2-comments after the freeze." Published 2026-08-13. The frozen RFC text is unchanged at <a href="https://spec.falsify.dev/v0.2-rfc/" style="color: var(--ink);">spec.falsify.dev/v0.2-rfc</a>.
+</aside>
+
+<article id="content">
+<p class="loading">Loading specification…</p>
+</article>
+
+<aside class="related" style="margin: 60px 0 24px; padding: 24px 0; border-top: 1px solid #e5e3dc; border-bottom: 1px solid #e5e3dc;">
+  <h2 style="font-size: 16px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-2); margin: 0 0 14px;">Related documents</h2>
+  <ul style="list-style: none; padding: 0; margin: 0; display: grid; gap: 10px;">
+    <li><a href="https://spec.falsify.dev/v0.2-rfc/"><strong>RFC v0.2 (frozen)</strong></a> — the five proposals this page dispositions</li>
+    <li><a href="https://spec.falsify.dev/v0.1"><strong>Spec v0.1</strong></a> — the current stable spec</li>
+    <li><a href="https://github.com/studio-11-co/falsify/blob/main/spec/linkage/prml-linkage-0.md"><strong>prml-linkage/0 draft</strong></a> — execution linkage: start/final chaining, tiers L1–L3</li>
+    <li><a href="https://github.com/studio-11-co/falsify/tree/main/spec/test-vectors"><strong>Conformance test vectors</strong></a> — incl. the P-04 directory format under <code>v0.1/vectors/</code></li>
+    <li><a href="https://github.com/studio-11-co/falsify/discussions/11"><strong>Discussion #11</strong></a> — the primary comment thread, verbatim</li>
+    <li><a href="https://github.com/studio-11-co/falsify-cookbook"><strong>Cookbook</strong></a> — incl. co-authored Pattern 13 (blind commit-reveal validation)</li>
+  </ul>
+</aside>
+
+<footer class="colophon">
+  <p>PRML is a working draft published for public review under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Editor: Cüneyt Öztürk · <a href="mailto:hello@falsify.dev">hello@falsify.dev</a></p>
+  <p>Reference implementation <a href="https://github.com/studio-11-co/falsify">falsify</a> is MIT licensed.</p>
+</footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" crossorigin="anonymous"></script>
+<script>
+(async function () {
+  const target = document.getElementById('content');
+  const sources = [
+    'COMMENTS.md',
+    'https://raw.githubusercontent.com/studio-11-co/falsify/main/spec/v0.2-comments/COMMENTS.md'
+  ];
+
+  let md = null;
+  for (const src of sources) {
+    try {
+      const r = await fetch(src, { cache: 'no-store' });
+      if (r.ok) { md = await r.text(); break; }
+    } catch (e) { /* try next */ }
+  }
+
+  if (!md) {
+    target.innerHTML = '<p class="loading">Could not load spec. <a href="https://github.com/studio-11-co/falsify/blob/main/spec/PRML-v0.1.md">View on GitHub</a>.</p>';
+    return;
+  }
+
+  marked.setOptions({ gfm: true, breaks: false, headerIds: true, mangle: false });
+  target.innerHTML = marked.parse(md);
+
+  // Strip the duplicated H1 since the markdown leads with one
+  // (kept for GitHub readability; the page already has masthead)
+  // — leave it; readers expect the title here too.
+
+  // Rewrite raw README path links to GitHub if any leak in
+  document.querySelectorAll('article a[href^="/Users/"]').forEach(a => a.removeAttribute('href'));
+})();
+</script>
+<script>(function(){try{var i=new Image();i.src="https://registry.falsify.dev/_t?h="+encodeURIComponent(location.host)+"&p="+encodeURIComponent(location.pathname)+"&r="+encodeURIComponent(document.referrer||"")}catch(e){}})();</script></body>
+</html>

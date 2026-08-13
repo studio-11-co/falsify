@@ -1,0 +1,12 @@
+claim_id: 01900000-0000-7000-8000-000000000005
+comparator: ==
+created_at: '2026-05-01T12:00:00Z'
+dataset:
+  hash: abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789
+  id: synth-100
+metric: exact_match
+producer:
+  id: studio-11.co
+seed: 7
+threshold: 1.0
+version: prml/0.1

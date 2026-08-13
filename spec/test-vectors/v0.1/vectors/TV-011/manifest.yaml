@@ -1,0 +1,12 @@
+claim_id: 01900000-0000-7000-8000-000000000008
+comparator: '>'
+created_at: '2026-08-12T10:00:00Z'
+dataset:
+  hash: '1010101010101010101010101010101010101010101010101010101010101010'
+  id: chestx-ray-14
+metric: auroc
+producer:
+  id: research-hospital.example
+seed: 2718
+threshold: 0.55
+version: prml/0.1

@@ -1,0 +1,12 @@
+claim_id: 01900000-0000-7000-8000-00000000000a
+comparator: '>='
+created_at: '2026-06-01T12:00:00Z'
+dataset:
+  hash: abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234
+  id: eval-2k
+metric: accuracy_pct
+producer:
+  id: falsify.dev
+seed: 42
+threshold: 90.0
+version: prml/0.1

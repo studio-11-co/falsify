@@ -1,0 +1,12 @@
+claim_id: 01900000-0000-7000-8000-000000000002
+comparator: '>='
+created_at: '2026-05-01T12:00:00Z'
+dataset:
+  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  id: imagenet-val-2012
+metric: accuracy
+producer:
+  id: üniversite.edu.tr
+seed: 42
+threshold: 0.85
+version: prml/0.1

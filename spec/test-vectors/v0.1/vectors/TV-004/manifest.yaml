@@ -1,0 +1,16 @@
+claim_id: 01900000-0000-7000-8000-000000000001
+comparator: '>='
+created_at: '2026-06-15T09:30:00Z'
+dataset:
+  hash: 9b9a7c5e7d6c5f4e3d2c1b0a9f8e7d6c5b4a3928171615141312111009080706
+  id: glue-mrpc
+  uri: https://gluebenchmark.com/tasks/mrpc
+metric: f1
+model:
+  hash: 1f3c8a9d2b4e5c6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f
+  id: bert-base-uncased
+producer:
+  id: studio-11.co
+seed: 1337
+threshold: 0.78
+version: prml/0.1

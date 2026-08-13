@@ -1,6 +1,6 @@
 # Execution Linkage — draft v0 (2026-07-31)
 
-**Status:** non-normative draft, open for input. Prompted by the Andes
+**Status:** SUPERSEDED 2026-08-13 by `spec/linkage/prml-linkage-0.md` (formal draft 0 with reference implementation `falsify_linkage.py`). Kept for history. Originally: non-normative draft, open for input. Prompted by the Andes
 interoperability assessment (finding 3): a PRML receipt proves no-later-than
 existence of the evaluation bar; it does not prove the evaluation had not
 already run. Closing that gap requires linking a separately evidenced

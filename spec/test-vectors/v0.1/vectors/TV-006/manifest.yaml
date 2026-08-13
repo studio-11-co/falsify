@@ -1,0 +1,12 @@
+claim_id: 01900000-0000-7000-8000-000000000003
+comparator: '>='
+created_at: '2026-05-01T12:00:00Z'
+dataset:
+  hash: '0000000000000000000000000000000000000000000000000000000000000000'
+  id: test-dataset
+metric: accuracy
+producer:
+  id: edge.example
+seed: 18446744073709551615
+threshold: 0.5
+version: prml/0.1
