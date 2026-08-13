@@ -130,7 +130,7 @@ jobs:
       - name: Build
         run: |
           cd impl/go
-          go build -o falsify-go ./falsify.go
+          go build -o falsify-go .
 
       - name: Conformance — v0.1 normative suite (13 vectors)
         run: ./impl/go/falsify-go test-vectors spec/test-vectors/v0.1/test-vectors.json
