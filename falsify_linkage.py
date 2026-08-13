@@ -110,7 +110,8 @@ def finalize(
     final["run"] = dict(start_record["run"])
     final["start_hash"] = linkage_hash(start_record)
     final["result"] = {
-        "observed": observed,
+        # Spec float rule: observed is float64; integer values render as "x.0"
+        "observed": float(observed),
         "digest": result_digest,
         "exit_code": exit_code,
         "finished_at": finished_at,

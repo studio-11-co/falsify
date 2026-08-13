@@ -44,9 +44,17 @@ const PLAIN_BOOL_NULL = new Set([
 // int|float (integer-valued thresholds render as plain integers).
 const FLOAT_FIELDS_V01 = new Set(['threshold']);
 const FLOAT_FIELDS_V02 = new Set();
+// prml-linkage/0 spec §3.2 float rule: observed is float64, integer values
+// render with an explicit ".0" suffix (same convention as v0.1 threshold).
+const FLOAT_FIELDS_LINKAGE = new Set(['observed']);
 
 function floatFieldsFor(version) {
   return version === 'prml/0.1' ? FLOAT_FIELDS_V01 : FLOAT_FIELDS_V02;
+}
+
+function floatFieldsForRecord(obj) {
+  if (obj && obj.linkage_version === 'prml-linkage/0') return FLOAT_FIELDS_LINKAGE;
+  return floatFieldsFor(obj && obj.version);
 }
 
 function looksLikeNumber(s) {
@@ -180,7 +188,7 @@ function renderMapping(obj, indent, floatFields) {
 }
 
 function canonicalize(obj) {
-  const floatFields = floatFieldsFor(obj && obj.version);
+  const floatFields = floatFieldsForRecord(obj);
   return renderMapping(obj, 0, floatFields) + '\n';
 }
 

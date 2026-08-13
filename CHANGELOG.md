@@ -7,6 +7,14 @@ numbers follow [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added (2026-08-13)
+- **`prml-linkage/0` JavaScript port**: `impl/js/linkage.js` mirrors
+  `falsify_linkage.py`; the shared canonicalizer gained the linkage
+  float-field rule (`observed` renders as float64, `x.0` for integer
+  values — spec §3.2). Cross-language parity locked by
+  `tests/test_linkage_parity.py` (canonical bytes, hashes, finalize
+  output, and verify verdicts across a 6-case matrix). Shipped to the
+  npm package as `falsify-js@0.1.11` experimental `linkage` export
+  (publish pending — maintainer 2FA).
 - **`prml-linkage/0` draft spec** at `spec/linkage/prml-linkage-0.md`:
   adapter-independent execution linkage. Start/final record chaining under
   manifest canonicalization rules, strength tiers L1 (declared) / L2

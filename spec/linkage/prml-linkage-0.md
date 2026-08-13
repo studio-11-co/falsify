@@ -75,6 +75,12 @@ result:
 `exit_code` reuses the falsify CLI convention: `0` pass, `10` fail,
 `3` hash mismatch, `11` guard violation.
 
+**Float rule.** `result.observed` is a float64 field, with the same
+cross-language rendering rule as v0.1 `threshold`: an integer-valued
+`observed` canonicalizes with an explicit `.0` suffix (`1.0`, never `1`).
+Implementations MUST coerce `observed` to float before canonicalization so
+that Python, JavaScript, Go and Rust produce identical bytes.
+
 ## 4. Verification algorithm
 
 Given a final record `F`, optionally the start record `S` and the locked

@@ -109,6 +109,12 @@ class TestLinkage(unittest.TestCase):
         with self.assertRaises(ValueError):
             fl.finalize({"linkage_version": "nope"}, 0.9, DIGEST, 0)
 
+    def test_integer_observed_canonicalizes_as_float(self):
+        # Spec float rule: observed is float64; integer values render as "x.0"
+        final = _final(observed=1)
+        self.assertIsInstance(final["result"]["observed"], float)
+        self.assertIn("observed: 1.0", fl.canonicalize(final))
+
     def test_start_rejects_bad_hashes(self):
         with self.assertRaises(ValueError):
             _start(manifest_hash="xyz")
