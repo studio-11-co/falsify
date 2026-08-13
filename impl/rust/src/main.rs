@@ -26,6 +26,8 @@ use std::env;
 use std::fs;
 use std::process;
 
+mod linkage;
+
 // ─────────────────────────────────────────────────────────────────────────
 // Canonicalization
 // ─────────────────────────────────────────────────────────────────────────
@@ -277,6 +279,10 @@ fn render_number_for_float_field(raw: &str) -> String {
 fn is_float_field(field: &str, version: &str) -> bool {
     if version == "prml/0.1" {
         field == "threshold"
+    } else if version == "prml-linkage/0" {
+        // prml-linkage/0 spec 3.2 float rule: observed is float64, integer
+        // values render with an explicit ".0" suffix (same as v0.1 threshold).
+        field == "observed"
     } else {
         false
     }
@@ -355,10 +361,13 @@ fn render_mapping(map: &serde_json::Map<String, Value>, indent: usize, version: 
 }
 
 fn canonicalize(map: &serde_json::Map<String, Value>) -> String {
-    let version = map
+    let mut version = map
         .get("version")
         .and_then(|v| v.as_str())
         .unwrap_or("");
+    if map.get("linkage_version").and_then(|v| v.as_str()) == Some("prml-linkage/0") {
+        version = "prml-linkage/0";
+    }
     format!("{}\n", render_mapping(map, 0, version))
 }
 
@@ -851,6 +860,7 @@ fn main() {
     } else {
         match args[1].as_str() {
             "test-vectors" if args.len() >= 3 => run_vectors(&args[2]),
+            "linkage-parity" => linkage::cmd_linkage_parity(),
             "hash" if args.len() >= 3 => cmd_hash(&args[2]),
             "verify" if args.len() >= 3 => {
                 let mut observed: Option<&str> = None;

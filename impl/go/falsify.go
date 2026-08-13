@@ -138,6 +138,10 @@ func quoteSingle(s string) string {
 var floatFieldsV01 = map[string]bool{"threshold": true}
 var floatFieldsV02 = map[string]bool{}
 
+// prml-linkage/0 spec §3.2 float rule: observed is float64, integer values
+// render with an explicit ".0" suffix (same convention as v0.1 threshold).
+var floatFieldsLinkage = map[string]bool{"observed": true}
+
 func floatFieldsFor(version string) map[string]bool {
 	if version == "prml/0.1" {
 		return floatFieldsV01
@@ -263,6 +267,9 @@ func renderMapping(m map[string]interface{}, indent int, floatFields map[string]
 func Canonicalize(m map[string]interface{}) (string, error) {
 	version, _ := m["version"].(string)
 	floatFields := floatFieldsFor(version)
+	if lv, _ := m["linkage_version"].(string); lv == "prml-linkage/0" {
+		floatFields = floatFieldsLinkage
+	}
 	body, err := renderMapping(m, 0, floatFields)
 	if err != nil {
 		return "", err
@@ -746,6 +753,8 @@ func main() {
 			os.Exit(usage())
 		}
 		os.Exit(runVectors(args[1]))
+	case "linkage-parity":
+		os.Exit(cmdLinkageParity())
 	case "hash":
 		if len(args) < 2 {
 			os.Exit(usage())

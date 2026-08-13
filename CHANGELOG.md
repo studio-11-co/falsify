@@ -7,6 +7,14 @@ numbers follow [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added (2026-08-13)
+- **`prml-linkage/0` Go and Rust ports**: `impl/go/linkage.go` and
+  `impl/rust/src/linkage.rs`, completing linkage across all four reference
+  implementations. Both canonicalizers gained the linkage float-field rule
+  (manifest behavior unchanged — 21/21 vectors in each). The cross-language
+  parity suite now exercises JS, Go and Rust targets through one
+  stdin/stdout protocol (`linkage-parity` subcommands), comparing canonical
+  bytes, hashes, finalize output and verify verdicts against the Python
+  reference; targets missing a toolchain skip individually.
 - **`prml-linkage/0` JavaScript port**: `impl/js/linkage.js` mirrors
   `falsify_linkage.py`; the shared canonicalizer gained the linkage
   float-field rule (`observed` renders as float64, `x.0` for integer
