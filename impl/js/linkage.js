@@ -42,14 +42,16 @@ function parseRfc3339(value) {
   return ms;
 }
 
-function nowUtcSeconds() {
-  return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+function nowUtc() {
+  // Millisecond precision: sub-second runs must still satisfy the spec's
+  // strict started_at < finished_at chronology.
+  return new Date().toISOString();
 }
 
 function buildStart(manifestHashHex, runId, environment, datasetHash, opts = {}) {
   if (!SHA256_RE.test(manifestHashHex)) throw new Error('manifest_hash must be 64 lowercase hex chars');
   if (!SHA256_RE.test(datasetHash)) throw new Error('dataset_hash must be 64 lowercase hex chars');
-  const startedAt = opts.startedAt || nowUtcSeconds();
+  const startedAt = opts.startedAt || nowUtc();
   parseRfc3339(startedAt);
   return {
     linkage_version: LINKAGE_VERSION,
@@ -70,7 +72,7 @@ function finalize(startRecord, observed, resultDigest, exitCode, opts = {}) {
   if (problems.length) throw new Error(`invalid start record: ${problems.join('; ')}`);
   if (!VALID_EXIT_CODES.has(exitCode)) throw new Error(`exit_code must be one of ${[...VALID_EXIT_CODES].join(',')}`);
   if (!SHA256_RE.test(resultDigest)) throw new Error('result digest must be 64 lowercase hex chars');
-  const finishedAt = opts.finishedAt || nowUtcSeconds();
+  const finishedAt = opts.finishedAt || nowUtc();
   parseRfc3339(finishedAt);
   return {
     linkage_version: startRecord.linkage_version,

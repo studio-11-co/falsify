@@ -67,9 +67,9 @@ def build_start(
     if not _SHA256_RE.match(dataset_hash):
         raise ValueError("dataset_hash must be 64 lowercase hex chars")
     if started_at is None:
-        started_at = (
-            datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-        )
+        # Full microsecond precision: sub-second runs must still satisfy
+        # the spec's strict started_at < finished_at chronology.
+        started_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     _parse_rfc3339(started_at)
     return {
         "linkage_version": LINKAGE_VERSION,
@@ -102,9 +102,7 @@ def finalize(
     if not _SHA256_RE.match(result_digest):
         raise ValueError("result digest must be 64 lowercase hex chars")
     if finished_at is None:
-        finished_at = (
-            datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-        )
+        finished_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     _parse_rfc3339(finished_at)
     final = {k: start_record[k] for k in START_FIELDS}
     final["run"] = dict(start_record["run"])

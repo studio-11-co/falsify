@@ -7,6 +7,13 @@ numbers follow [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added (2026-08-13)
+- **`falsify linkage start|finish|verify` CLI** wrapping the linkage
+  reference module: start builds the run-start record from a locked
+  manifest (file bytes = canonical bytes, so the file hash IS the record
+  hash), finish computes the verdict from the manifest when --exit-code
+  is omitted, verify reports tier + failures. Default timestamps carry
+  sub-second precision so sub-second runs satisfy the strict chronology
+  check (spec §3.2 precision note added).
 - **Registry linkage recognition** (registry.falsify.dev, deployed):
   `/commit` labels valid `prml-linkage/0` records kind `"linkage"`
   (form start/final) with a dedicated permalink line and badge; the

@@ -75,6 +75,13 @@ result:
 `exit_code` reuses the falsify CLI convention: `0` pass, `10` fail,
 `3` hash mismatch, `11` guard violation.
 
+**Chronology precision.** Timestamps SHOULD carry sub-second precision
+(the reference implementations default to microseconds in Python,
+milliseconds in JS), and verifiers MUST compare chronology at no coarser
+than millisecond precision. Producers SHOULD ensure
+`finished_at − started_at ≥ 1 ms`; a run that starts and finishes within
+the same millisecond fails the strict `<` check by design.
+
 **Float rule.** `result.observed` is a float64 field, with the same
 cross-language rendering rule as v0.1 `threshold`: an integer-valued
 `observed` canonicalizes with an explicit `.0` suffix (`1.0`, never `1`).

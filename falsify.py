@@ -3697,6 +3697,117 @@ def _bench_format_table(
     return "\n".join(out_lines) + "\n"
 
 
+def cmd_linkage(args: argparse.Namespace) -> int:
+    """prml-linkage/0 (draft): start / finish / verify execution-linkage records.
+
+    Records are written in canonical form, so the SHA-256 of the file's bytes
+    IS the record hash — committable to the registry as-is for tier L3.
+    """
+    import falsify_linkage as fl
+
+    def _load_yaml(path_str: str, what: str):
+        p = Path(path_str)
+        if not p.exists():
+            print(f"falsify linkage: {what} not found: {p}", file=sys.stderr)
+            return None
+        try:
+            data = yaml.safe_load(p.read_text())
+        except yaml.YAMLError as e:
+            print(f"falsify linkage: cannot parse {p}: {e}", file=sys.stderr)
+            return None
+        if not isinstance(data, dict):
+            print(f"falsify linkage: {p} must be a YAML mapping", file=sys.stderr)
+            return None
+        return data
+
+    def _write_record(record: dict, out_path: str, label: str) -> None:
+        canonical = fl.canonicalize(record)
+        Path(out_path).write_text(canonical)
+        print(f"{label}: {out_path}")
+        print(f"  record hash: {fl.linkage_hash(record)}")
+        print(f"  tier L3: POST the file to https://registry.falsify.dev/commit before the run completes")
+
+    if args.linkage_cmd == "start":
+        manifest = _load_yaml(args.manifest, "manifest")
+        if manifest is None:
+            return EXIT_BAD_SPEC
+        dataset_hash = (manifest.get("dataset") or {}).get("hash")
+        if not isinstance(dataset_hash, str):
+            print("falsify linkage: manifest has no dataset.hash", file=sys.stderr)
+            return EXIT_BAD_SPEC
+        _, manifest_hash = _canonical_and_hash(manifest)
+        model = manifest.get("model") or {}
+        try:
+            record = fl.build_start(
+                manifest_hash=manifest_hash,
+                run_id=args.run_id,
+                environment=args.environment,
+                dataset_hash=dataset_hash,
+                receipt=args.receipt,
+                model_version=model.get("id") if isinstance(model, dict) else None,
+            )
+        except ValueError as e:
+            print(f"falsify linkage: {e}", file=sys.stderr)
+            return EXIT_BAD_SPEC
+        _write_record(record, args.out, "start record")
+        return EXIT_PASS
+
+    if args.linkage_cmd == "finish":
+        start = _load_yaml(args.start, "start record")
+        if start is None:
+            return EXIT_BAD_SPEC
+        if args.result_file:
+            data = Path(args.result_file).read_bytes()
+            digest = hashlib.sha256(data).hexdigest()
+        elif args.digest:
+            digest = args.digest
+        else:
+            print("falsify linkage finish: provide --result-file or --digest", file=sys.stderr)
+            return EXIT_BAD_SPEC
+        exit_code = args.exit_code
+        if exit_code is None:
+            if not args.manifest:
+                print("falsify linkage finish: provide --exit-code, or --manifest to compute the verdict", file=sys.stderr)
+                return EXIT_BAD_SPEC
+            manifest = _load_yaml(args.manifest, "manifest")
+            if manifest is None:
+                return EXIT_BAD_SPEC
+            comparator, threshold = manifest.get("comparator"), manifest.get("threshold")
+            ok = fl._COMPARATORS.get(comparator, lambda a, b: None)(args.observed, threshold) \
+                if isinstance(threshold, (int, float)) else None
+            if ok is None:
+                print("falsify linkage finish: manifest comparator/threshold unusable for verdict", file=sys.stderr)
+                return EXIT_BAD_SPEC
+            exit_code = EXIT_PASS if ok else EXIT_FAIL
+        try:
+            record = fl.finalize(start, args.observed, digest, exit_code)
+        except ValueError as e:
+            print(f"falsify linkage: {e}", file=sys.stderr)
+            return EXIT_BAD_SPEC
+        _write_record(record, args.out, "final record")
+        print(f"  verdict exit_code: {exit_code}")
+        return EXIT_PASS
+
+    # verify
+    final = _load_yaml(args.final, "final record")
+    if final is None:
+        return EXIT_BAD_SPEC
+    start = _load_yaml(args.start, "start record") if args.start else None
+    if args.start and start is None:
+        return EXIT_BAD_SPEC
+    manifest = _load_yaml(args.manifest, "manifest") if args.manifest else None
+    if args.manifest and manifest is None:
+        return EXIT_BAD_SPEC
+    report = fl.verify(final, start_record=start, manifest=manifest)
+    tier = report["tier"] or "-"
+    print(f"linkage verify: {'OK' if report['ok'] else 'FAILED'} (tier {tier})")
+    for f in report["failures"]:
+        print(f"  ✗ {f['check']}: {f['detail']}")
+    for s in report["skipped"]:
+        print(f"  – skipped: {s}")
+    return EXIT_PASS if report["ok"] else EXIT_FAIL
+
+
 def _conform_load_vectors(path: Path) -> list[dict]:
     """Load conformance vectors from either format.
 
@@ -4242,6 +4353,36 @@ def build_parser() -> argparse.ArgumentParser:
              "(default: spec/test-vectors/v0.1/vectors)",
     )
     p_conform.set_defaults(func=cmd_conform)
+
+    p_linkage = sub.add_parser(
+        "linkage",
+        help="prml-linkage/0 (draft): evidence the lock → run → result order",
+    )
+    linkage_sub = p_linkage.add_subparsers(dest="linkage_cmd", required=True)
+
+    p_lk_start = linkage_sub.add_parser("start", help="Create a run-start record from a locked manifest")
+    p_lk_start.add_argument("manifest", help="Path to the locked PRML manifest (YAML)")
+    p_lk_start.add_argument("--run-id", required=True, help="Runner-native run identifier")
+    p_lk_start.add_argument("--environment", required=True, help="Free-form runner fingerprint (os/framework/accelerator)")
+    p_lk_start.add_argument("--receipt", default=None, help="Registry receipt URL for the manifest, if committed")
+    p_lk_start.add_argument("-o", "--out", default="linkage-start.yaml", help="Output path (default: linkage-start.yaml)")
+    p_lk_start.set_defaults(func=cmd_linkage)
+
+    p_lk_finish = linkage_sub.add_parser("finish", help="Create the final record from a start record + result")
+    p_lk_finish.add_argument("start", help="Path to the start record (YAML)")
+    p_lk_finish.add_argument("--observed", type=float, required=True, help="Observed metric value")
+    p_lk_finish.add_argument("--result-file", default=None, help="Raw result artifact; its SHA-256 becomes result.digest")
+    p_lk_finish.add_argument("--digest", default=None, help="Precomputed SHA-256 of the result artifact (64 hex)")
+    p_lk_finish.add_argument("--exit-code", type=int, default=None, choices=[0, 3, 10, 11], help="Verdict exit code; omit with --manifest to compute")
+    p_lk_finish.add_argument("--manifest", default=None, help="Manifest to compute the verdict from (when --exit-code omitted)")
+    p_lk_finish.add_argument("-o", "--out", default="linkage-final.yaml", help="Output path (default: linkage-final.yaml)")
+    p_lk_finish.set_defaults(func=cmd_linkage)
+
+    p_lk_verify = linkage_sub.add_parser("verify", help="Verify a final record (chain, chronology, verdict)")
+    p_lk_verify.add_argument("final", help="Path to the final record (YAML)")
+    p_lk_verify.add_argument("--start", default=None, help="Start record for tier L2 chain verification")
+    p_lk_verify.add_argument("--manifest", default=None, help="Manifest for dataset + verdict checks")
+    p_lk_verify.set_defaults(func=cmd_linkage)
 
     return parser
 
