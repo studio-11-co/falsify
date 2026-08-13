@@ -7,6 +7,13 @@ numbers follow [Semantic Versioning](https://semver.org).
 ## [Unreleased]
 
 ### Added (2026-08-13)
+- **Registry linkage recognition** (registry.falsify.dev, deployed):
+  `/commit` labels valid `prml-linkage/0` records kind `"linkage"`
+  (form start/final) with a dedicated permalink line and badge; the
+  registry's existing RFC 3161 + Rekor anchors over a committed start
+  record provide the spec's tier L3. Canonical parity with the reference
+  implementations pinned in the registry's test suite. Verified live
+  end-to-end (commit → kind label → .tsr/.rekor 200s).
 - **`prml-linkage/0` Go and Rust ports**: `impl/go/linkage.go` and
   `impl/rust/src/linkage.rs`, completing linkage across all four reference
   implementations. Both canonicalizers gained the linkage float-field rule

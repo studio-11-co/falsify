@@ -139,9 +139,12 @@ impossible.
    SHOULD-level recommended vocabulary (os, accelerator, framework
    versions) is a candidate for draft 1 once two independent runners
    exist.
-3. Registry residence: `kind=linkage` records in the falsify registry vs
-   adapter-local storage. Draft 0 defines the format only; registry
-   semantics follow implementation experience.
+3. ~~Registry residence~~ — first implementation exists (2026-08-13):
+   registry.falsify.dev `/commit` recognizes valid linkage records and
+   labels them `kind: "linkage"` (form `start`/`final`), with its existing
+   RFC 3161 + Rekor anchors providing tier L3 for committed start records.
+   Whether this becomes normative registry behavior (vs adapter-local
+   storage) stays open until a second registry exists.
 
 ## 8. Relationship to RFC v0.2 P-02
 
