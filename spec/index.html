@@ -41,7 +41,7 @@
   --ink-2: #2b3340;
   --ink-3: #5a6677;
   --rule: #d6d9de;
-  --accent: #39d98a;
+  --accent: #39d98a; --accent-text: #187E4C;
   --code-bg: #f4f4f0;
   --code-ink: #1a1f29;
   --max: 720px;
@@ -79,7 +79,7 @@ header.masthead {
 header.masthead a { color: var(--ink-3); text-decoration: none; border-bottom: 1px dotted var(--ink-3); }
 header.masthead a:hover { color: var(--ink); border-color: var(--ink); }
 header.masthead .brand { font-weight: 700; color: var(--ink); }
-header.masthead .brand .chev { color: var(--accent); }
+header.masthead .brand .chev { color: var(--accent-text); }
 
 article h1 {
   font-family: "Space Grotesk", system-ui, sans-serif;
@@ -214,7 +214,7 @@ footer.colophon a:hover { color: var(--ink); }
   <span>
     <a href="https://falsify.dev">Home</a> ·
     <span style="color:var(--ink);border-bottom:1px dotted var(--ink)" aria-current="page">Spec v0.1</span> ·
-    <a href="https://spec.falsify.dev/v0.2-rfc">RFC v0.2 <span style="color:var(--accent);font-size:0.85em">(open)</span></a> ·
+    <a href="https://spec.falsify.dev/v0.2-rfc">RFC v0.2 <span style="color:var(--accent-text);font-size:0.85em">(open)</span></a> ·
     <a href="https://registry.falsify.dev">Registry</a> ·
     <a href="https://github.com/studio-11-co/falsify">GitHub</a>
   </span>
@@ -229,7 +229,7 @@ footer.colophon a:hover { color: var(--ink); }
 </aside>
 
 <figure style="margin: 0 0 36px; padding: 0;">
-  <a href="https://spec.falsify.dev/demo/" style="display: block; line-height: 0;">
+  <a href="https://spec.falsify.dev/demo/" aria-label="Open the 60-second PRML walkthrough demo" style="display: block; line-height: 0;">
     <video src="https://spec.falsify.dev/demo/demo.mp4" autoplay loop muted playsinline poster="https://spec.falsify.dev/demo/demo.gif" style="width: 100%; max-width: 720px; border-radius: 6px; box-shadow: 0 12px 40px rgba(0,0,0,0.12); display: block;"></video>
   </a>
   <figcaption style="margin-top: 10px; font-size: 13px; color: var(--ink-3, #5a6677); font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: 0.02em;">60-second walkthrough &mdash; lock the threshold, get a SHA-256 receipt, drop a badge. Live demo at <a href="https://spec.falsify.dev/demo/" style="color: var(--ink-2);">/demo</a>.</figcaption>

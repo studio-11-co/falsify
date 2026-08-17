@@ -21,7 +21,7 @@
   --silver: #5a6677;
   --rule: #d6d9de;
   --code-bg: #f4f4f0;
-  --accent: #39d98a;
+  --accent: #39d98a; --accent-text: #187E4C;
   --max: 720px;
 }
 * { box-sizing: border-box; }
@@ -50,7 +50,7 @@ header.masthead {
 header.masthead a { color: var(--silver); text-decoration: none; border-bottom: 1px dotted var(--silver); }
 header.masthead a:hover { color: var(--ink); border-color: var(--ink); }
 header.masthead .brand { font-weight: 700; color: var(--ink); }
-header.masthead .brand .chev { color: var(--accent); }
+header.masthead .brand .chev { color: var(--accent-text); }
 
 h1 {
   font-family: "Space Grotesk", system-ui, sans-serif;
@@ -85,7 +85,7 @@ p { margin: 0 0 18px; }
   color: var(--ink); letter-spacing: -0.005em;
   word-break: break-word;
 }
-.tier .label .accent { color: var(--accent); }
+.tier .label .accent { color: var(--accent-text); }
 .tier .body { color: var(--ink-2); }
 .tier .body .lat {
   display: block; margin-top: 8px;
@@ -167,7 +167,7 @@ footer.colophon a:hover { color: var(--ink); }
   <span>
     <a href="https://falsify.dev">Home</a> ·
     <a href="https://spec.falsify.dev/v0.1">Spec v0.1</a> ·
-    <a href="https://spec.falsify.dev/v0.2-rfc">RFC v0.2 <span style="color:var(--accent);font-size:0.85em">(open)</span></a> ·
+    <a href="https://spec.falsify.dev/v0.2-rfc">RFC v0.2 <span style="color:var(--accent-text);font-size:0.85em">(open)</span></a> ·
     <a href="https://registry.falsify.dev">Registry</a> ·
     <a href="https://github.com/studio-11-co/falsify">GitHub</a>
   </span>
