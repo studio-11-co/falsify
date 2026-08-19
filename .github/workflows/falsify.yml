@@ -56,7 +56,9 @@ jobs:
 
   mcp-test:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    # No continue-on-error. It was set here once and let this job fail silently
+    # for a week while the workflow reported success; a broken optional surface
+    # is still a broken surface.
     steps:
       - uses: actions/checkout@v7
 
