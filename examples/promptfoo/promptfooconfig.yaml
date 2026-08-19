@@ -1,0 +1,28 @@
+# The bar, as promptfoo natively expresses it. This file IS the success
+# criteria — which is exactly why it needs a lock: nothing stops it being
+# edited after the scores are known.
+description: PRML gate demo — deterministic, no API key (echo provider)
+
+providers:
+  - echo
+
+prompts:
+  - '{{answer}}'
+
+tests:
+  - vars: { answer: 'Paris' }
+    assert:
+      - type: equals
+        value: 'Paris'
+  - vars: { answer: '4' }
+    assert:
+      - type: equals
+        value: '4'
+  - vars: { answer: 'Tallinn' }
+    assert:
+      - type: equals
+        value: 'Tallinn'
+  - vars: { answer: '1' }
+    assert:
+      - type: equals
+        value: '2'   # wrong on purpose: 3/4 pass = 0.75
