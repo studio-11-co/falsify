@@ -74,7 +74,12 @@ jobs:
 
   dogfood:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    # Blocking on purpose. These are falsify's own locked claims, and a tool whose
+    # pitch is "a locked bar produces a verdict you cannot quietly ignore" cannot
+    # mark its own verdicts optional. Measured on this runner before removing the
+    # flag: startup 112.8ms against a 500ms bar (median of 5), 569 tests against
+    # 400, 10 Claude artifacts against 8 - the tightest margin is 1.25x and the
+    # timing one, the only plausibly flaky claim, has 4.4x.
     steps:
       - uses: actions/checkout@v7
 
