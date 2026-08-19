@@ -90,7 +90,18 @@ See [docs/CASE_STUDIES.md](docs/CASE_STUDIES.md) for three concrete adoption sto
 
 **Already on MLflow?** [`pip install mlflow-falsify`](https://pypi.org/project/mlflow-falsify/) — discoverable plugin that tags every MLflow run with the PRML manifest hash, version, metric, comparator, threshold, and dataset id. Zero code changes to your existing MLflow workflow. Source: [`studio-11-co/mlflow-falsify`](https://github.com/studio-11-co/mlflow-falsify).
 
-**Already running DeepEval?** [`examples/deepeval/`](examples/deepeval/) — lock a DeepEval metric's threshold to a SHA-256 before the run and verify the score after; a relaxed threshold reads TAMPERED, not PASS. Offline, no LLM/key.
+**Already running an eval harness?** There is a runnable bridge for ten of them, each using that harness's own scoring machinery rather than a mock, each locking the bar to a SHA-256 before the run and checking the result against it afterwards — PASS, FAIL, or TAMPERED when the threshold moved:
+[`deepeval`](examples/deepeval/) ·
+[`lm-eval-harness`](examples/lm-eval-harness/) ·
+[`promptfoo`](examples/promptfoo/) ·
+[`opik`](examples/opik/) ·
+[`langfuse`](examples/langfuse/) ·
+[`laminar`](examples/laminar/) ·
+[`mastra`](examples/mastra/) ·
+[`hud`](examples/hud/) ·
+[`braintrust`](examples/braintrust/) ·
+[`lighteval`](examples/lighteval/).
+Each README states exactly what is real and what is not: the Langfuse and Laminar demos stop at the boundary where results would leave the process, because both need a backend; the rest run end to end offline, no key required. All ten are examples, not packages — copy the twenty lines you need.
 
 **Need it locked for one of your published claims?** [`falsify.dev/sprint`](https://falsify.dev/sprint) — Diagnostic Sprint, fixed-scope engagement for regulated AI teams. PRML manifest authored, verifier deployed in CI, audit report shipped. Pricing scoped per client; single-claim review available as a sub-procurement option. Commercial engagements are contracted through Falsify OÜ (reg. 17574308, Tallinn, Estonia).
 
