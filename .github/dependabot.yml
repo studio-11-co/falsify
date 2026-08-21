@@ -20,3 +20,11 @@ updates:
     groups:
       python-deps:
         patterns: ["*"]
+    ignore:
+      # mcp 2.0 removed the decorator registration API that mcp_server/server.py
+      # is built on, so widening the pin past <2 breaks the MCP surface. The
+      # mcp-test job catches it, but the PR comes back every week; this stops
+      # the noise without hiding patch and minor releases. Drop this entry once
+      # the server is ported to the MCPServer class.
+      - dependency-name: "mcp"
+        update-types: ["version-update:semver-major"]
