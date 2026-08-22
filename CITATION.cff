@@ -13,7 +13,8 @@ abstract: >-
 authors:
   - family-names: "Öztürk"
     given-names: "Cüneyt"
-    affiliation: "Independent"
+    orcid: "https://orcid.org/0009-0003-8536-3491"
+    affiliation: "Falsify OÜ"
     email: "hello@falsify.dev"
 type: software
 license: MIT
