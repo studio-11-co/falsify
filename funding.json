@@ -1,0 +1,81 @@
+{
+  "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+  "version": "v1.1.0",
+  "entity": {
+    "type": "organisation",
+    "role": "owner",
+    "name": "Falsify OÜ",
+    "email": "hello@falsify.dev",
+    "description": "Falsify OÜ (registry code 17574308, Tallinn, Estonia) maintains PRML — an open specification (CC BY 4.0) for locking the success criteria of an AI/ML evaluation (metric, comparator, threshold, dataset hash, seed) to a SHA-256 digest before the evaluation runs, so any third party can later verify the pass bar predated the result. The company maintains the specification, four byte-equivalent reference implementations, a published conformance suite, and a public commitment registry with Ed25519-signed receipts, RFC 3161 timestamps, and mirroring to the Rekor transparency log. Sole maintainer: Cüneyt Öztürk.",
+    "webpageUrl": {
+      "url": "https://falsify.dev"
+    }
+  },
+  "projects": [
+    {
+      "guid": "falsify-prml",
+      "name": "falsify / PRML",
+      "description": "PRML (Pre-Registered ML Manifest) makes AI evaluation claims tamper-evident: nine YAML fields serialized to canonical bytes and committed to a SHA-256 before the run. Verification is offline and deterministic — PASS / FAIL / TAMPERED as CI exit codes — and requires no server to exist. Four reference implementations (Python, JavaScript, Go, Rust) reproduce 21 conformance vectors byte-for-byte, checked daily in CI. The schema is in SchemaStore; the tool is listed in the UK AI Security Institute's Inspect extensions catalog; OpenSSF Best Practices 100%. Relevant to EU AI Act Art. 9(8), which requires testing high-risk AI against prior defined metrics and thresholds.",
+      "webpageUrl": {
+        "url": "https://falsify.dev"
+      },
+      "repositoryUrl": {
+        "url": "https://github.com/studio-11-co/falsify"
+      },
+      "licenses": ["spdx:MIT", "spdx:CC-BY-4.0"],
+      "tags": ["ai-evaluation", "reproducibility", "pre-registration", "cryptography", "supply-chain-security", "compliance", "eu-ai-act", "transparency-log", "developer-tools", "python"]
+    }
+  ],
+  "funding": {
+    "channels": [
+      {
+        "guid": "bank-transfer",
+        "type": "bank",
+        "address": "",
+        "description": "SEPA bank transfer to Falsify OÜ (Estonia). Account details provided on contact — invoicing available."
+      }
+    ],
+    "plans": [
+      {
+        "guid": "maintenance-year",
+        "status": "active",
+        "name": "Specification and implementations maintenance (12 months)",
+        "description": "Maintainer time on the integrity core: spec v0.2 → v1.0 candidate, conformance-suite hardening, key rotation and decade-scale archival verification, and keeping the four implementations, registry and adapters (MLflow, Inspect, Giskard, DeepEval) maintained and free.",
+        "amount": 39000,
+        "currency": "EUR",
+        "frequency": "yearly",
+        "channels": ["bank-transfer"]
+      },
+      {
+        "guid": "security-review",
+        "status": "active",
+        "name": "Independent security review of the registry and canonicalization",
+        "description": "External cryptographic review of canonicalization and commitment correctness, the registry worker (the only privileged component), and the honesty of the published threat model.",
+        "amount": 5000,
+        "currency": "EUR",
+        "frequency": "one-time",
+        "channels": ["bank-transfer"]
+      },
+      {
+        "guid": "measurement-series",
+        "status": "active",
+        "name": "Threshold-disclosure measurement series",
+        "description": "Annual re-measurement of pass-criteria disclosure in published AI-assurance case studies (2026 baseline: a reader can recover the decision rule in 3 of 29 published case studies — falsify.dev/notes/threshold-disclosure). Published openly, CC BY 4.0.",
+        "amount": 4000,
+        "currency": "EUR",
+        "frequency": "yearly",
+        "channels": ["bank-transfer"]
+      }
+    ],
+    "history": [
+      {
+        "year": 2026,
+        "income": 0,
+        "expenses": 0,
+        "taxes": 0,
+        "currency": "EUR",
+        "description": "No external funding received to date; self-funded. Applications pending: StandICT.eu fellowship, Emergent Ventures, GitHub Secure Open Source Fund."
+      }
+    ]
+  }
+}
