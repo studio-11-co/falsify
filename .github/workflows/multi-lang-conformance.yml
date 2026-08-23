@@ -2,10 +2,13 @@ name: Multi-language conformance
 
 # Asserts that every reference implementation (Python, Node.js, Go, Rust)
 # reproduces the v0.1 normative suite (13 vectors) AND the v0.2 candidate
-# suite (8 vectors) byte-for-byte, AND rejects the negative suite (14
-# reject-vectors: control/non-portable chars + structural invalids). Verification
-# surface per run: 4 impls × 21 positive vectors = 84 byte-for-byte
-# agreements, plus 4 impls × 14 reject-vectors = 56 rejection checks.
+# suite (8 vectors) byte-for-byte, AND rejects the negative suite (20
+# reject-vectors: control/non-portable chars, structural invalids, vacuous
+# bars, duplicate keys, non-NFC strings). Verification surface per run: 4 impls
+# × 21 positive vectors = 84 byte-for-byte agreements, plus 40 rejection checks
+# from Python and JS (20 each) and 32 from Go and Rust (16 each — they read
+# JSON only, so the four YAML-only vectors are declared SKIP rather than
+# counted as refusals they never made).
 #
 # A positive-suite failure is a portability regression; a reject-suite failure
 # means an impl silently hashed a non-portable manifest (the control-char rule
@@ -19,6 +22,7 @@ on:
     branches: [main]
     paths:
       - 'falsify.py'
+      - 'falsify_prml.py'
       - 'impl/**'
       - 'spec/test-vectors/**'
       - 'spec/v0.2/generate-candidates.py'
@@ -26,6 +30,7 @@ on:
   pull_request:
     paths:
       - 'falsify.py'
+      - 'falsify_prml.py'
       - 'impl/**'
       - 'spec/test-vectors/**'
       - 'spec/v0.2/generate-candidates.py'
