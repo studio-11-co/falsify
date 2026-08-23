@@ -4,7 +4,7 @@ A single-file Node.js implementation of PRML v0.1 and v0.2, demonstrating that t
 
 **Status:** working draft, intended as portability evidence rather than a production tool. The Python reference implementation (`falsify_prml.py`, in the repo root) remains the recommended runtime.
 
-**Result:** 13 / 13 v0.1 vectors and 8 / 8 v0.2 vectors pass byte-for-byte; all 14 reject-vectors are correctly rejected.
+**Result:** 13 / 13 v0.1 vectors and 8 / 8 v0.2 vectors pass byte-for-byte; all 20 reject-vectors are correctly rejected.
 
 ---
 

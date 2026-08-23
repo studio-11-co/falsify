@@ -8,8 +8,8 @@
 
 - Python reference: [`falsify.py`](../../falsify.py) — uses PyYAML `safe_dump`.
 - Second implementation: [`impl/js/falsify.js`](../../impl/js/falsify.js) — Node.js, hand-rolled, zero runtime deps.
-- Third implementation: [`impl/go/falsify.go`](../../impl/go/falsify.go) — Go, hand-rolled, stdlib only.
-- Fourth implementation: [`impl/rust/src/main.rs`](../../impl/rust/src/main.rs) — Rust, hand-rolled, two crate deps (`serde_json`, `sha2`).
+- Third implementation: [`impl/go/falsify.go`](../../impl/go/falsify.go) — Go, hand-rolled, stdlib plus `golang.org/x/text` (NFC check only).
+- Fourth implementation: [`impl/rust/src/main.rs`](../../impl/rust/src/main.rs) — Rust, hand-rolled, three crate deps (`serde_json`, `sha2`, `unicode-normalization`).
 
 **Result:** 12 / 12 v0.1 normative vectors pass byte-for-byte in **all four implementations**, and 6 / 6 v0.2 candidate vectors pass byte-for-byte in all four implementations after the Finding 4 patches.
 

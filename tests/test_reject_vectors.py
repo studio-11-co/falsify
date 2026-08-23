@@ -17,7 +17,9 @@ CI failure here is a specification-level event, not a code-quality nit.
 from __future__ import annotations
 
 import json
+import os
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -89,26 +91,53 @@ class RejectVectorTests(unittest.TestCase):
                 return any(has_forbidden(x) for x in obj)
             return False
         for v in VECTORS:
-            if v["category"] != "control-char":
+            if v["category"] != "control-char" or "input" not in v:
                 continue
             self.assertTrue(has_forbidden(v["input"]),
                             f"{v['id']} is control-char but its input has no forbidden char")
 
 
+def _expected_phrasings(vector):
+    """`expect` may be a list when conformant impls word one refusal differently."""
+    e = vector["expect"]
+    return [e] if isinstance(e, str) else list(e)
+
+
+def _reject_reasons(vector):
+    """Return the refusal messages for a vector, whichever layer catches it.
+
+    Two defect classes cannot be expressed as a parsed dict at all: a duplicate
+    key has already collapsed to last-wins by the time a dict exists, and `.inf`
+    has no JSON literal. Those vectors carry `raw` manifest text and must be
+    refused at the LOAD layer, so they are driven through load_manifest.
+    """
+    if "raw" not in vector:
+        return falsify_prml.validate_manifest(vector["input"])
+    with tempfile.TemporaryDirectory() as d:
+        path = os.path.join(d, f"{vector['id']}.{vector.get('ext', 'yaml')}")
+        with open(path, "w", encoding="utf-8") as fh:
+            fh.write(vector["raw"])
+        try:
+            loaded = falsify_prml.load_manifest(path)
+        except (ValueError, OSError) as e:
+            return [str(e)]
+        return falsify_prml.validate_manifest(loaded)
+
+
 def _make_reject_test(vector):
     def test(self):
-        errors = falsify_prml.validate_manifest(vector["input"])
+        errors = _reject_reasons(vector)
         self.assertTrue(
             errors,
             f"{vector['id']} ({vector['title']}) was ACCEPTED — it must be rejected.\n"
             f"  reason: {vector['reason']}",
         )
         # The rejection must cite the SPECIFIC rule, not some unrelated error.
-        expect = vector["expect"]
+        wanted = _expected_phrasings(vector)
         self.assertTrue(
-            any(expect in e for e in errors),
+            any(w in e for w in wanted for e in errors),
             f"{vector['id']} was rejected, but not for the expected reason "
-            f"{expect!r}; errors={errors}",
+            f"{wanted!r}; errors={errors}",
         )
 
     test.__doc__ = f"{vector['id']}: {vector['title']} is rejected ({vector['category']})"
@@ -133,16 +162,19 @@ class HashCommandRejectsTests(unittest.TestCase):
         if not VECTORS:
             raise unittest.SkipTest(f"reject vectors not present: {VECTORS_PATH}")
 
-    def _hash_exit(self, manifest) -> int:
+    def _hash_exit(self, manifest=None, raw=None, ext="json") -> int:
+        """Exit code of `hash` for a manifest given either as a dict or as raw text.
+
+        Raw text is needed for the defects a dict cannot carry — a duplicate key
+        collapses before a dict exists, and `.inf` has no JSON literal.
+        """
         import contextlib
         import io
-        import os
-        import tempfile
 
-        fd, path = tempfile.mkstemp(suffix=".prml.json")
+        fd, path = tempfile.mkstemp(suffix=f".prml.{ext}")
         try:
             with os.fdopen(fd, "w", encoding="utf-8") as fh:
-                json.dump(manifest, fh)
+                fh.write(raw) if raw is not None else json.dump(manifest, fh)
             with contextlib.redirect_stderr(io.StringIO()), \
                  contextlib.redirect_stdout(io.StringIO()):
                 return falsify_prml.main(["hash", path])
@@ -156,8 +188,10 @@ class HashCommandRejectsTests(unittest.TestCase):
     def test_reject_vectors_are_not_hashed(self):
         for v in VECTORS:
             with self.subTest(vector=v["id"]):
+                code = (self._hash_exit(raw=v["raw"], ext=v.get("ext", "yaml"))
+                        if "raw" in v else self._hash_exit(v["input"]))
                 self.assertNotEqual(
-                    self._hash_exit(v["input"]), 0,
+                    code, 0,
                     f"{v['id']} ({v['title']}) was HASHED — `hash` must reject it "
                     f"(reason: {v['reason']})",
                 )

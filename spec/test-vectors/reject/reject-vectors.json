@@ -10,7 +10,7 @@
       "version": "prml/0.1",
       "claim_id": "01900000-0000-7000-8000-000000000000",
       "created_at": "2026-05-01T12:00:00Z",
-      "metric": "accu\u0085racy",
+      "metric": "accuracy",
       "comparator": ">=",
       "threshold": 0.85,
       "dataset": {
@@ -32,7 +32,7 @@
     "expect": "control / non-portable character",
     "input": {
       "version": "prml/0.1",
-      "claim_id": "demo\u2028claim",
+      "claim_id": "demo claim",
       "created_at": "2026-05-01T12:00:00Z",
       "metric": "accuracy",
       "comparator": ">=",
@@ -67,7 +67,7 @@
       },
       "seed": 42,
       "producer": {
-        "id": "studio-11\u2029co"
+        "id": "studio-11 co"
       }
     }
   },
@@ -86,7 +86,7 @@
       "comparator": ">=",
       "threshold": 0.85,
       "dataset": {
-        "id": "imagenet\ufeffval",
+        "id": "imagenet﻿val",
         "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
       },
       "seed": 42,
@@ -106,7 +106,7 @@
       "version": "prml/0.1",
       "claim_id": "01900000-0000-7000-8000-000000000000",
       "created_at": "2026-05-01T12:00:00Z",
-      "metric": "accu\u007fracy",
+      "metric": "accuracy",
       "comparator": ">=",
       "threshold": 0.85,
       "dataset": {
@@ -163,7 +163,7 @@
       },
       "seed": 42,
       "producer": {
-        "id": "studio\u009f11"
+        "id": "studio11"
       }
     }
   },
@@ -291,7 +291,7 @@
     "title": "Line Separator (U+2028) in a top-level KEY name",
     "category": "control-char",
     "reason": "A forbidden char in a key canonicalizes non-portably exactly as in a value; MUST be rejected, not silently hashed.",
-    "field": "(key) meta\u2026note",
+    "field": "(key) meta…note",
     "expect": "control / non-portable character",
     "input": {
       "version": "prml/0.1",
@@ -308,7 +308,7 @@
       "producer": {
         "id": "studio-11.co"
       },
-      "meta\u2028note": "x"
+      "meta note": "x"
     }
   },
   {
@@ -316,7 +316,7 @@
     "title": "Line Separator (U+2028) in a nested KEY name (dataset)",
     "category": "control-char",
     "reason": "Nested keys are scanned too; a forbidden char in dataset.<key> MUST be rejected.",
-    "field": "(key) dataset.sub\u2026key",
+    "field": "(key) dataset.sub…key",
     "expect": "control / non-portable character",
     "input": {
       "version": "prml/0.1",
@@ -328,12 +328,78 @@
       "dataset": {
         "id": "imagenet-val-2012",
         "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-        "sub\u2028key": "x"
+        "sub key": "x"
       },
       "seed": 42,
       "producer": {
         "id": "studio-11.co"
       }
     }
+  },
+  {
+    "id": "RJ-015",
+    "title": "Non-finite threshold (.inf) — a bar no observation can fail",
+    "category": "vacuous-bar",
+    "reason": "An infinite threshold locks and verifies cleanly while asserting nothing: `<= .inf` passes for every observation. The manifest is cryptographically sound and epistemically empty, so it MUST be rejected at lock time.",
+    "field": "threshold",
+    "expect": "threshold must be a finite number",
+    "ext": "yaml",
+    "raw": "version: prml/0.1\nclaim_id: 01900000-0000-7000-8000-000000000000\ncreated_at: '2026-05-01T12:00:00Z'\nmetric: accuracy\ncomparator: '<='\nthreshold: .inf\ndataset:\n  id: imagenet-val-2012\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\nseed: 42\nproducer:\n  id: studio-11.co\n"
+  },
+  {
+    "id": "RJ-016",
+    "title": "Non-finite threshold (.nan)",
+    "category": "vacuous-bar",
+    "reason": "Any comparison against NaN is false, so a NaN threshold fails for every observation. Same defect as RJ-015 with the opposite sign.",
+    "field": "threshold",
+    "expect": "threshold must be a finite number",
+    "ext": "yaml",
+    "raw": "version: prml/0.1\nclaim_id: 01900000-0000-7000-8000-000000000000\ncreated_at: '2026-05-01T12:00:00Z'\nmetric: accuracy\ncomparator: '>='\nthreshold: .nan\ndataset:\n  id: imagenet-val-2012\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\nseed: 42\nproducer:\n  id: studio-11.co\n"
+  },
+  {
+    "id": "RJ-017",
+    "title": "Duplicate key — the read manifest and the hashed manifest differ",
+    "category": "duplicate-key",
+    "reason": "Mainstream YAML and JSON loaders resolve a repeated key last-wins with no diagnostic, so a reader and the hash can bind different values. RFC 7493 (I-JSON) 2.3 prohibits duplicate names for this reason; PRML MUST reject.",
+    "field": "metric",
+    "expect": [
+      "duplicate key",
+      "duplicated mapping key"
+    ],
+    "ext": "yaml",
+    "raw": "version: prml/0.1\nclaim_id: 01900000-0000-7000-8000-000000000000\ncreated_at: '2026-05-01T12:00:00Z'\nmetric: accuracy\ncomparator: '>='\nthreshold: 0.85\ndataset:\n  id: imagenet-val-2012\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\nseed: 42\nproducer:\n  id: studio-11.co\nmetric: f1\n"
+  },
+  {
+    "id": "RJ-018",
+    "title": "String not in Unicode NFC (NFD spelling of the same text)",
+    "category": "normalization",
+    "reason": "NFC and NFD spellings of the same name are identical to a reader and different bytes to SHA-256, so the same claim would lock to two hashes depending on the authoring platform. Non-NFC input MUST be rejected, not silently normalized: rewriting it would change the bytes the author believes they locked.",
+    "field": "producer.id",
+    "expect": "not in Unicode NFC",
+    "ext": "yaml",
+    "raw": "version: prml/0.1\nclaim_id: 01900000-0000-7000-8000-000000000000\ncreated_at: '2026-05-01T12:00:00Z'\nmetric: accuracy\ncomparator: '>='\nthreshold: 0.85\ndataset:\n  id: imagenet-val-2012\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\nseed: 42\nproducer:\n  id: Öztürk\n"
+  },
+  {
+    "id": "RJ-019",
+    "title": "Duplicate name in JSON input (RFC 7493 §2.3)",
+    "category": "duplicate-key",
+    "reason": "Same defect as RJ-017 through the JSON door. Most JSON parsers are silently last-wins, so an impl that only reads JSON must reject duplicates explicitly.",
+    "field": "metric",
+    "expect": [
+      "duplicate key",
+      "duplicate name"
+    ],
+    "ext": "json",
+    "raw": "{\n  \"version\": \"prml/0.1\",\n  \"claim_id\": \"01900000-0000-7000-8000-000000000000\",\n  \"created_at\": \"2026-05-01T12:00:00Z\",\n  \"metric\": \"accuracy\",\n  \"comparator\": \">=\",\n  \"threshold\": 0.85,\n  \"dataset\": {\n    \"id\": \"imagenet-val-2012\",\n    \"hash\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n  },\n  \"seed\": 42,\n  \"producer\": {\n    \"id\": \"studio-11.co\"\n  },\n  \"metric\": \"f1\"\n}\n"
+  },
+  {
+    "id": "RJ-020",
+    "title": "String not in Unicode NFC, JSON input",
+    "category": "normalization",
+    "reason": "Same defect as RJ-018 through the JSON door, so JSON-only impls are covered.",
+    "field": "producer.id",
+    "expect": "not in Unicode NFC",
+    "ext": "json",
+    "raw": "{\n  \"version\": \"prml/0.1\",\n  \"claim_id\": \"01900000-0000-7000-8000-000000000000\",\n  \"created_at\": \"2026-05-01T12:00:00Z\",\n  \"metric\": \"accuracy\",\n  \"comparator\": \">=\",\n  \"threshold\": 0.85,\n  \"dataset\": {\n    \"id\": \"imagenet-val-2012\",\n    \"hash\": \"e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\"\n  },\n  \"seed\": 42,\n  \"producer\": {\n    \"id\": \"Öztürk\"\n  }\n}\n"
   }
 ]

@@ -4,10 +4,12 @@
 // candidate vectors byte-for-byte, including the small-magnitude float
 // rendering required by Finding 4 (TV-018).
 //
-// Single binary. Two runtime dependencies: serde_json (with
-// preserve_order for deterministic key handling at the JSON layer) and
-// sha2 (for SHA-256). The canonicalizer is hand-rolled to match
-// PyYAML's safe_dump output exactly; we do not use any YAML library.
+// Single binary. Three runtime dependencies: serde_json (with
+// preserve_order for deterministic key handling at the JSON layer),
+// sha2 (for SHA-256), and unicode-normalization (to reject non-NFC
+// strings, which read identically and hash differently). The
+// canonicalizer is hand-rolled to match PyYAML's safe_dump output
+// exactly; we do not use any YAML library.
 //
 // Spec:    https://spec.falsify.dev/v0.1
 // Vectors: https://github.com/studio-11-co/falsify/tree/main/spec/test-vectors
@@ -20,6 +22,7 @@
 // License: MIT.
 
 use serde_json::{Number, Value};
+use unicode_normalization::is_nfc;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
 use std::env;
@@ -396,6 +399,10 @@ fn run_vectors(path: &str) -> i32 {
             return 2;
         }
     };
+    if let Some(msg) = duplicate_name_err(&data) {
+        eprintln!("{}", msg);
+        return 2;
+    }
     let parsed: Value = match serde_json::from_str(&data) {
         Ok(v) => v,
         Err(e) => {
@@ -548,6 +555,81 @@ fn is_hex64(s: &str) -> bool {
 // the reasons a manifest is not a valid PRML v0.1/v0.2 manifest (empty = valid).
 // Required fields, version, threshold type, comparator, dataset id/hash (64
 // lowercase hex), producer id, and the control / non-portable character rule.
+// non_nfc_fields mirrors _non_nfc_fields in falsify_prml.py. NFC and NFD
+// spellings of the same text read identically and hash differently, so the same
+// claim would lock to two hashes depending on the authoring platform. Rejected
+// rather than normalized: rewriting the text would change the bytes the author
+// believes they locked.
+fn non_nfc_fields(v: &Value, path: &str) -> Vec<String> {
+    let mut out = Vec::new();
+    match v {
+        Value::String(s) => {
+            if !is_nfc(s) {
+                out.push(if path.is_empty() { "(value)".to_string() } else { path.to_string() });
+            }
+        }
+        Value::Object(m) => {
+            for (k, vv) in m {
+                let child = if path.is_empty() { k.clone() } else { format!("{}.{}", path, k) };
+                if !is_nfc(k) {
+                    out.push(format!("{} (key)", child));
+                }
+                out.extend(non_nfc_fields(vv, &child));
+            }
+        }
+        Value::Array(a) => {
+            for (i, vv) in a.iter().enumerate() {
+                out.extend(non_nfc_fields(vv, &format!("{}[{}]", path, i)));
+            }
+        }
+        _ => {}
+    }
+    out
+}
+
+// duplicate_name_err reports a repeated object name anywhere in a JSON document.
+// serde_json is silently last-wins, so without this the manifest a human reads
+// and the manifest the hash binds can differ with no diagnostic — a tamper
+// channel inside a tamper-evident format. RFC 7493 (I-JSON) §2.3 prohibits them.
+fn duplicate_name_err(raw: &str) -> Option<String> {
+    let b: Vec<char> = raw.chars().collect();
+    let mut stack: Vec<std::collections::HashSet<String>> = Vec::new();
+    let mut expect_name = false;
+    let mut i = 0usize;
+    while i < b.len() {
+        match b[i] {
+            '{' => { stack.push(std::collections::HashSet::new()); expect_name = true; i += 1; }
+            '}' => { stack.pop(); expect_name = false; i += 1; }
+            '[' | ']' => { expect_name = false; i += 1; }
+            ',' => { expect_name = !stack.is_empty(); i += 1; }
+            ':' => { expect_name = false; i += 1; }
+            '"' => {
+                let mut j = i + 1;
+                let mut lit = String::new();
+                while j < b.len() && b[j] != '"' {
+                    if b[j] == '\\' && j + 1 < b.len() { lit.push(b[j]); lit.push(b[j + 1]); j += 2; }
+                    else { lit.push(b[j]); j += 1; }
+                }
+                if expect_name {
+                    if let Some(seen) = stack.last_mut() {
+                        // Unescape so two spellings of one name compare equal.
+                        let name = serde_json::from_str::<String>(&format!("\"{}\"", lit))
+                            .unwrap_or_else(|_| lit.clone());
+                        if !seen.insert(name.clone()) {
+                            return Some(format!(
+                                "duplicate key \"{}\" — a PRML manifest MUST NOT repeat a key", name));
+                        }
+                    }
+                    expect_name = false;
+                }
+                i = j + 1;
+            }
+            _ => { i += 1; }
+        }
+    }
+    None
+}
+
 fn validate_manifest(parsed: &Value) -> Vec<String> {
     let mut errs = Vec::new();
     let map = match parsed.as_object() {
@@ -593,6 +675,10 @@ fn validate_manifest(parsed: &Value) -> Vec<String> {
     for fld in forbidden_char_fields(parsed, "") {
         errs.push(format!("{}: contains a control / non-portable character \
             (C0/C1, U+007F, U+2028/U+2029, or U+FEFF) — not allowed in a PRML string field", fld));
+    }
+    for fld in non_nfc_fields(parsed, "") {
+        errs.push(format!("{}: string is not in Unicode NFC — the same text in a \
+            different normalization form hashes differently; normalize to NFC", fld));
     }
     errs.extend(schema_conformance_errors(map));
     errs
@@ -711,6 +797,10 @@ fn cmd_hash(spec_path: &str) -> i32 {
             return 2;
         }
     };
+    if let Some(msg) = duplicate_name_err(&data) {
+        eprintln!("{}", msg);
+        return 2;
+    }
     let parsed: Value = match serde_json::from_str(&data) {
         Ok(v) => v,
         Err(e) => {
@@ -745,6 +835,10 @@ fn cmd_verify(spec_path: &str, observed: Option<&str>) -> i32 {
             return 2;
         }
     };
+    if let Some(msg) = duplicate_name_err(&data) {
+        eprintln!("{}", msg);
+        return 2;
+    }
     let parsed: Value = match serde_json::from_str(&data) {
         Ok(v) => v,
         Err(e) => {

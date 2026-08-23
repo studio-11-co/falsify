@@ -251,6 +251,17 @@ A PRML manifest **MUST** be expressible in the following YAML subset:
 For canonicalization, all mappings **MUST** be reserialized with keys in
 lexicographic byte order. Nested mappings are ordered recursively.
 
+### 3.2.1 Duplicate Keys
+
+A mapping **MUST NOT** contain the same key twice, at any nesting level. Common
+YAML and JSON parsers resolve a repeated key last-wins with no diagnostic, which
+means the manifest a human reads and the manifest the hash binds can carry
+different values for the same field — a tamper channel inside a tamper-evident
+format. RFC 7493 (I-JSON) §2.3 prohibits duplicate names for the same reason. An
+implementation **MUST** detect duplicates in the input document, before or during
+parsing, and reject the manifest with exit code `2`. Detecting them only after
+parsing is insufficient: by then the duplicate has already been discarded.
+
 ### 3.3 Whitespace and Encoding
 
 - Canonical output **MUST** be UTF-8 encoded.
@@ -277,15 +288,31 @@ code points:
 These code points serialize ambiguously or invisibly and would let two
 visually identical manifests hash differently. A manifest containing any of
 them **MUST** be rejected — it **MUST NOT** be locked or hashed — and the
-implementation **MUST** exit with code `2` (bad input). All other UTF-8 is
-permitted in string values. The control-character vectors in the reject suite
-(Appendix B) enumerate this class normatively.
+implementation **MUST** exit with code `2` (bad input). The control-character
+vectors in the reject suite (Appendix B) enumerate this class normatively.
+
+Additionally, every string scalar and every mapping key **MUST** be in Unicode
+Normalization Form C (NFC). The same text in NFC and in NFD is identical to a
+reader and different to SHA-256, so a claim authored on a platform that composes
+differently would lock to a different hash than the same claim authored
+elsewhere. A manifest containing a non-NFC string **MUST** be rejected with exit
+code `2`; an implementation **MUST NOT** normalize it silently, because doing so
+would change the bytes the author believes they locked. All other UTF-8 is
+permitted in string values.
 
 ### 3.5 Numeric Rendering
 
 `threshold` is a float64 (§2.3). An integer-valued threshold **MUST**
 canonicalize as a float — `1` renders as `1.0` — so that `1` and `1.0` produce
 the same hash. `seed` is an integer and renders with no decimal point.
+
+`threshold` **MUST** be finite. The IEEE 754 special values — positive and
+negative infinity and NaN, spelled `.inf`, `-.inf` and `.nan` in YAML — are
+**PROHIBITED**. Such a manifest locks and verifies cleanly while asserting
+nothing: every observation satisfies `<= .inf`, and no observation satisfies any
+comparison against `.nan`. The result is a bar that no experiment can inform,
+which defeats the purpose of fixing one in advance. A manifest whose `threshold`
+is non-finite **MUST** be rejected with exit code `2`.
 
 Floating-point values **MUST** be rendered in the canonical decimal form
 produced by the reference emitter: the shortest decimal that round-trips to the
@@ -620,6 +647,12 @@ Conformance is enforceable via the falsify reference test suite
 - **v0.1 errata (2026-07-11):** three v0.2 forward-promises corrected
   below. Documentation only; zero normative changes, no effect on
   canonicalization or on any published hash.
+- **v0.1 errata (2026-08-23), TECHNICAL:** three defect reports closed with
+  new normative constraints (§3.2.1, §3.4, §3.5). Unlike the 2026-07-11
+  errata, these **do** change conformance: they narrow what an implementation
+  may accept. No canonical rendering changes and **no already-published hash
+  changes** — every manifest that was valid and free of these defects hashes
+  exactly as before.
 
 > **v0.1 erratum (2026-07-11): v0.2 forward-promises.** Three statements in
 > this document promised normative adoption "with v0.2". The v0.2 RFC froze
@@ -638,6 +671,32 @@ Conformance is enforceable via the falsify reference test suite
 >    `producer.tier: high-risk` profile." Correction: deferred; re-targeted
 >    to the v0.3 cycle. The three §8.1 deployment-level mitigations remain
 >    available and recommended; none is normatively required by v0.2.
+
+> **v0.1 erratum (2026-08-23): three defect reports, TECHNICAL.** Each was
+> reproduced against the reference implementation before being written up; each
+> narrows the set of manifests an implementation may accept. Manifests already
+> published that do not exhibit these defects are unaffected, and no canonical
+> byte sequence or hash changes.
+>
+> 1. **Non-finite `threshold` accepted (§3.5).** `comparator: "<="` with
+>    `threshold: .inf` locked cleanly and verified `PASS` (exit `0`) against an
+>    observation of `0.01`. The manifest was cryptographically sound and
+>    epistemically empty. Correction: `threshold` MUST be finite; `.inf`,
+>    `-.inf` and `.nan` MUST be rejected with exit `2`.
+>
+> 2. **Duplicate keys silently resolved last-wins (§3.2.1).** A manifest with
+>    `metric` twice parsed without a diagnostic, so the value a reader saw and
+>    the value the hash bound differed. Correction: duplicates MUST be detected
+>    in the input document and rejected with exit `2`.
+>
+> 3. **Unicode normalization unconstrained (§3.4).** The same producer name in
+>    NFC and NFD both validated and produced different hashes, breaking
+>    reproducibility for honest users moving a manifest between platforms.
+>    Correction: all strings and keys MUST be NFC; non-NFC input MUST be
+>    rejected, never silently normalized.
+>
+> Reject-suite vectors RJ-015 through RJ-020 (Appendix B) enumerate these three
+> classes normatively, through both the YAML and the JSON door.
 
 ---
 
