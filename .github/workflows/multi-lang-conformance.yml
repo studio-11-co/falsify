@@ -2,10 +2,13 @@ name: Multi-language conformance
 
 # Asserts that every reference implementation (Python, Node.js, Go, Rust)
 # reproduces the v0.1 normative suite (13 vectors) AND the v0.2 candidate
-# suite (8 vectors) byte-for-byte, AND rejects the negative suite (14
-# reject-vectors: control/non-portable chars + structural invalids). Verification
-# surface per run: 4 impls × 21 positive vectors = 84 byte-for-byte
-# agreements, plus 4 impls × 14 reject-vectors = 56 rejection checks.
+# suite (8 vectors) byte-for-byte, AND rejects the negative suite (20
+# reject-vectors: control/non-portable chars, structural invalids, vacuous
+# bars, duplicate keys, non-NFC strings). Verification surface per run: 4 impls
+# × 21 positive vectors = 84 byte-for-byte agreements, plus 40 rejection checks
+# from Python and JS (20 each) and 32 from Go and Rust (16 each — they read
+# JSON only, so the four YAML-only vectors are declared SKIP rather than
+# counted as refusals they never made).
 #
 # A positive-suite failure is a portability regression; a reject-suite failure
 # means an impl silently hashed a non-portable manifest (the control-char rule
@@ -19,6 +22,7 @@ on:
     branches: [main]
     paths:
       - 'falsify.py'
+      - 'falsify_prml.py'
       - 'impl/**'
       - 'spec/test-vectors/**'
       - 'spec/v0.2/generate-candidates.py'
@@ -26,6 +30,7 @@ on:
   pull_request:
     paths:
       - 'falsify.py'
+      - 'falsify_prml.py'
       - 'impl/**'
       - 'spec/test-vectors/**'
       - 'spec/v0.2/generate-candidates.py'
@@ -92,7 +97,7 @@ jobs:
           sys.exit(10 if fails else 0)
           PY
 
-      - name: Negative conformance — reject suite (14 vectors MUST be rejected)
+      - name: Negative conformance — reject suite (20 vectors MUST be rejected)
         # falsify_prml.py is THE PRML reference (validate_manifest); falsify.py is
         # the falsify-engine CLI (different schema) and would reject every input for
         # an unrelated reason, making this check vacuous.
@@ -114,7 +119,14 @@ jobs:
       - name: Conformance — v0.2 candidate suite (8 vectors)
         run: node impl/js/falsify.js test-vectors spec/test-vectors/v0.2/test-vectors.json
 
-      - name: Negative conformance — reject suite (14 vectors MUST be rejected)
+      # The JS impl reads YAML through js-yaml, an optional dependency. Without
+      # it the reject suite scored a false 18/18: every vector "failed to lock"
+      # because no file could be parsed at all. Install it so the refusals are
+      # the impl's own.
+      - name: Install optional YAML dependency
+        run: npm install --no-save js-yaml
+
+      - name: Negative conformance — reject suite (20 vectors MUST be rejected)
         run: python3 spec/test-vectors/reject/check_reject.py -- node impl/js/falsify.js lock
 
   go-conformance:
@@ -138,8 +150,8 @@ jobs:
       - name: Conformance — v0.2 candidate suite (8 vectors)
         run: ./impl/go/falsify-go test-vectors spec/test-vectors/v0.2/test-vectors.json
 
-      - name: Negative conformance — reject suite (14 vectors MUST be rejected)
-        run: python3 spec/test-vectors/reject/check_reject.py -- ./impl/go/falsify-go hash
+      - name: Negative conformance — reject suite (16 JSON vectors; 4 YAML skipped)
+        run: python3 spec/test-vectors/reject/check_reject.py --reads json -- ./impl/go/falsify-go hash
 
   rust-conformance:
     name: Rust (impl/rust)
@@ -172,8 +184,8 @@ jobs:
       - name: Conformance — v0.2 candidate suite (8 vectors)
         run: ./impl/rust/target/release/falsify-rs test-vectors spec/test-vectors/v0.2/test-vectors.json
 
-      - name: Negative conformance — reject suite (14 vectors MUST be rejected)
-        run: python3 spec/test-vectors/reject/check_reject.py -- ./impl/rust/target/release/falsify-rs hash
+      - name: Negative conformance — reject suite (16 JSON vectors; 4 YAML skipped)
+        run: python3 spec/test-vectors/reject/check_reject.py --reads json -- ./impl/rust/target/release/falsify-rs hash
 
   conformance-summary:
     name: All four implementations agree

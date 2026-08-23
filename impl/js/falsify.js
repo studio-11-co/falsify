@@ -234,6 +234,66 @@ function badCharFields(obj, path = '') {
   return out;
 }
 
+// Mirrors _non_nfc_fields in falsify_prml.py. NFC and NFD spellings of the same
+// text read identically and hash differently, so the same claim would lock to two
+// hashes depending on the authoring platform. Rejected rather than normalized:
+// rewriting the text would change the bytes the author believes they locked.
+// JSON.parse is silently last-wins on a repeated name, and a reviver cannot see
+// the duplicate — the collapse happens first. So the raw text is scanned before
+// parsing: the manifest a human reads and the manifest the hash binds must be the
+// same document. RFC 7493 (I-JSON) §2.3 prohibits duplicate names for this reason.
+function assertNoDuplicateNames(raw) {
+  const stack = [];        // one Set of names per open object
+  let expectName = false;  // next string token is a name, not a value
+  let i = 0;
+  while (i < raw.length) {
+    const c = raw[i];
+    if (c === '{') { stack.push(new Set()); expectName = true; i++; continue; }
+    if (c === '}') { stack.pop(); expectName = false; i++; continue; }
+    if (c === '[') { expectName = false; i++; continue; }
+    if (c === ']') { expectName = false; i++; continue; }
+    if (c === ',') { expectName = stack.length > 0; i++; continue; }
+    if (c === ':') { expectName = false; i++; continue; }
+    if (c === '"') {
+      let j = i + 1, out = '';
+      while (j < raw.length && raw[j] !== '"') {
+        if (raw[j] === '\\') { out += raw[j] + raw[j + 1]; j += 2; }
+        else { out += raw[j]; j++; }
+      }
+      if (expectName && stack.length) {
+        // Unescape so "a" and "a" are recognised as the same name.
+        let name;
+        try { name = JSON.parse('"' + out + '"'); } catch { name = out; }
+        const seen = stack[stack.length - 1];
+        if (seen.has(name)) {
+          throw new SyntaxError(
+            `duplicate key "${name}" — a PRML manifest MUST NOT repeat a key`);
+        }
+        seen.add(name);
+      }
+      i = j + 1;
+      continue;
+    }
+    i++;
+  }
+}
+
+function nonNfcFields(obj, path = '') {
+  const out = [];
+  if (typeof obj === 'string') {
+    if (obj.normalize('NFC') !== obj) out.push(path || '(value)');
+  } else if (Array.isArray(obj)) {
+    obj.forEach((v, i) => out.push(...nonNfcFields(v, `${path}[${i}]`)));
+  } else if (obj && typeof obj === 'object') {
+    for (const [k, v] of Object.entries(obj)) {
+      const child = path ? `${path}.${k}` : String(k);
+      if (k.normalize('NFC') !== k) out.push(`${child} (key)`);
+      out.push(...nonNfcFields(v, child));
+    }
+  }
+  return out;
+}
+
 function validateManifest(m) {
   const errors = [];
   for (const f of REQUIRED_FIELDS) {
@@ -264,6 +324,10 @@ function validateManifest(m) {
   for (const fld of badCharFields(m)) {
     errors.push(`${fld}: contains a control / non-portable character `
       + `(C0/C1, U+007F, U+2028/U+2029, or U+FEFF) — not allowed in a PRML string field`);
+  }
+  for (const fld of nonNfcFields(m)) {
+    errors.push(`${fld}: string is not in Unicode NFC — the same text in a `
+      + `different normalization form hashes differently; normalize to NFC`);
   }
   // Full published-schema conformance (spec/schema/prml-v0.1.schema.json).
   // Added in v0.3.12 (Andes assessment, finding 1): validators must agree
@@ -374,6 +438,7 @@ function loadManifest(filePath) {
   // For now we require JSON input to this tool; YAML support requires js-yaml.
   if (filePath.endsWith('.json')) {
     const raw = fs.readFileSync(filePath, 'utf-8');
+    assertNoDuplicateNames(raw);
     return assertNoProtoKeys(JSON.parse(raw));
   }
   // Otherwise use js-yaml if available (optional dependency).

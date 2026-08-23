@@ -1,6 +1,8 @@
 // Package main — falsify-go: third reference implementation of PRML v0.1.
 //
-// Single-file Go implementation. Standard library only.
+// Single-file Go implementation. Standard library plus one dependency:
+// golang.org/x/text/unicode/norm, used only to reject non-NFC strings
+// (which read identically and hash differently). Go's stdlib has no NFC.
 // Reproduces all 13 PRML v0.1 conformance vectors byte-for-byte.
 //
 // Spec:    https://spec.falsify.dev/v0.1
@@ -27,6 +29,8 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+
+	"golang.org/x/text/unicode/norm"
 )
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -459,6 +463,39 @@ func evaluatePredicate(observed, threshold float64, comparator string) (bool, er
 // additive — no conformance vector contains them. Mirrors the Python reference.
 var forbiddenChars = regexp.MustCompile("[\\x00-\\x1f\\x7f-\\x9f\\x{2028}\\x{2029}\\x{feff}]")
 
+// nonNFCFields mirrors _non_nfc_fields in falsify_prml.py. NFC and NFD spellings
+// of the same text read identically and hash differently, so the same claim would
+// lock to two hashes depending on the authoring platform. Rejected rather than
+// normalized: rewriting it would change the bytes the author believes they locked.
+func nonNFCFields(v interface{}, path string) []string {
+	var out []string
+	switch t := v.(type) {
+	case string:
+		if !norm.NFC.IsNormalString(t) {
+			if path == "" {
+				path = "(value)"
+			}
+			out = append(out, path)
+		}
+	case map[string]interface{}:
+		for k, vv := range t {
+			child := k
+			if path != "" {
+				child = path + "." + k
+			}
+			if !norm.NFC.IsNormalString(k) {
+				out = append(out, child+" (key)")
+			}
+			out = append(out, nonNFCFields(vv, child)...)
+		}
+	case []interface{}:
+		for i, vv := range t {
+			out = append(out, nonNFCFields(vv, fmt.Sprintf("%s[%d]", path, i))...)
+		}
+	}
+	return out
+}
+
 // forbiddenCharFields walks a decoded manifest and returns the dotted paths of
 // any string field (key or value) containing a forbidden char.
 func forbiddenCharFields(v interface{}, path string) []string {
@@ -544,6 +581,10 @@ func validateManifest(m map[string]interface{}) []string {
 		errs = append(errs, fld+": contains a control / non-portable character "+
 			"(C0/C1, U+007F, U+2028/U+2029, or U+FEFF) — not allowed in a PRML string field")
 	}
+	for _, fld := range nonNFCFields(m, "") {
+		errs = append(errs, fld+": string is not in Unicode NFC — the same text in a "+
+			"different normalization form hashes differently; normalize to NFC")
+	}
 	errs = append(errs, schemaConformanceErrors(m)...)
 	return errs
 }
@@ -612,9 +653,60 @@ func schemaConformanceErrors(m map[string]interface{}) []string {
 	return errs
 }
 
+// duplicateNameErr reports a repeated object name anywhere in a JSON document.
+// encoding/json is silently last-wins, so without this the manifest a human reads
+// and the manifest the hash binds can differ with no diagnostic — a tamper channel
+// inside a tamper-evident format. RFC 7493 (I-JSON) §2.3 prohibits duplicate names.
+func duplicateNameErr(data []byte) error {
+	dec := json.NewDecoder(strings.NewReader(string(data)))
+	dec.UseNumber()
+	// One `seen` set per open object, pushed and popped as the token stream
+	// descends and ascends.
+	var stack []map[string]bool
+	expectName := false
+	for {
+		tok, err := dec.Token()
+		if err != nil {
+			return nil // malformed JSON is reported by the real decode, not here
+		}
+		switch t := tok.(type) {
+		case json.Delim:
+			switch t {
+			case '{':
+				stack = append(stack, map[string]bool{})
+				expectName = true
+			case '}':
+				stack = stack[:len(stack)-1]
+				expectName = len(stack) > 0
+			case '[':
+				expectName = false
+			case ']':
+				expectName = len(stack) > 0
+			}
+		case string:
+			if expectName && len(stack) > 0 {
+				top := stack[len(stack)-1]
+				if top[t] {
+					return fmt.Errorf("duplicate key %q — a PRML manifest MUST NOT repeat a key", t)
+				}
+				top[t] = true
+				expectName = false
+				continue
+			}
+			expectName = len(stack) > 0
+		default:
+			expectName = len(stack) > 0
+		}
+	}
+}
+
 func cmdHash(specPath string) int {
 	data, err := os.ReadFile(specPath)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "hash: %v\n", err)
+		return exitBad
+	}
+	if err := duplicateNameErr(data); err != nil {
 		fmt.Fprintf(os.Stderr, "hash: %v\n", err)
 		return exitBad
 	}
@@ -644,6 +736,10 @@ func cmdHash(specPath string) int {
 func cmdVerify(specPath, observedStr string) int {
 	data, err := os.ReadFile(specPath)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "verify: %v\n", err)
+		return exitBad
+	}
+	if err := duplicateNameErr(data); err != nil {
 		fmt.Fprintf(os.Stderr, "verify: %v\n", err)
 		return exitBad
 	}
