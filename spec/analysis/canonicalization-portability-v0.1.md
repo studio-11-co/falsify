@@ -221,4 +221,4 @@ each of U+0085 / U+007F / U+2028 / U+2029 / U+FEFF is rejected (a validation vec
 
 ---
 
-**Postscript (2026-07).** Counts in this analysis reflect its writing date (12 v0.1 normative + 6 candidate vectors). The published suite grew to **13 v0.1 + 8 v0.2 = 21 positive vectors, plus 14 reject vectors**; all four implementations remain byte-for-byte in agreement across the full suite in CI.
+**Postscript (2026-07).** Counts in this analysis reflect its writing date (12 v0.1 normative + 6 candidate vectors). The published suite grew to **13 v0.1 + 8 v0.2 = 21 positive vectors, plus 20 reject vectors**; all four implementations remain byte-for-byte in agreement across the full suite in CI.

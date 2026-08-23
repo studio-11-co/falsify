@@ -1,7 +1,7 @@
 # PRML v0.2 Test Vector Candidates (TV-013 → TV-018)
 
 **Status:** HISTORICAL working draft, superseded by the 2026-05-22 freeze.
-> **Post-freeze note (2026-07):** the numbers below reflect the pre-freeze state (12 v0.1 vectors, 6 candidates, a 24-vector target). The published outcome is: **13 v0.1 normative + 8 v0.2 vectors = 21 positive, plus 14 reject vectors**, all live at [spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1). This file is kept unchanged as a record of the RFC process.
+> **Post-freeze note (2026-07):** the numbers below reflect the pre-freeze state (12 v0.1 vectors, 6 candidates, a 24-vector target). The published outcome is: **13 v0.1 normative + 8 v0.2 vectors = 21 positive, plus 20 reject vectors**, all live at [spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1). This file is kept unchanged as a record of the RFC process.
 **Target promotion:** v0.2 freeze on 2026-05-22.
 **Generator:** `spec/v0.2/generate-candidates.py`
 **License:** CC BY 4.0
