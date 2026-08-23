@@ -121,7 +121,7 @@ Each README states exactly what is real and what is not: the Langfuse and Lamina
 This repository is the home of **PRML v0.1** — Pre-Registered ML Manifest Specification. The spec, conformance suite, reference implementations (`impl/`, JS/Go/Rust + a Python reference target), and adjacent documents live under `spec/`:
 
 - **[`spec/PRML-v0.1.md`](spec/PRML-v0.1.md)** — the spec (RFC-style, CC BY 4.0)
-- **[`spec/test-vectors/`](spec/test-vectors/)** — 13 v0.1 normative conformance vectors with locked SHA-256 digests, plus 8 v0.2 vectors and 14 reject vectors (the CI matrix: 21 positive + 14 negative, run against all four implementations)
+- **[`spec/test-vectors/`](spec/test-vectors/)** — 13 v0.1 normative conformance vectors with locked SHA-256 digests, plus 8 v0.2 vectors and 20 reject vectors (the CI matrix: 21 positive, plus 20 negative for Python and JS and 16 for Go and Rust, which read JSON only)
 - **[`spec/analysis/positioning-v0.1.md`](spec/analysis/positioning-v0.1.md)** — PRML vs in-toto / SLSA / Model Cards / HELM / ClinicalTrials.gov
 - **[`spec/analysis/canonicalization-portability-v0.1.md`](spec/analysis/canonicalization-portability-v0.1.md)** — three cross-language findings from the JS second implementation
 - **[`spec/compliance/AI-Act-mapping-v0.1.md`](spec/compliance/AI-Act-mapping-v0.1.md)** — EU AI Act Article 12/17/18/50/72/73 mapping
