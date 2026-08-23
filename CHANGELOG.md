@@ -4,6 +4,49 @@ All notable changes to Falsification Engine are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com); version
 numbers follow [Semantic Versioning](https://semver.org).
 
+## [0.3.13] — 2026-08-23
+
+### Fixed
+- **A non-finite `threshold` locked and verified cleanly while asserting
+  nothing.** `comparator: "<="` with `threshold: .inf` produced `PASS` (exit
+  `0`) against an observed value of `0.01`. The manifest was cryptographically
+  sound, registry-admissible and RFC 3161 timestamped — and guaranteed to pass
+  whatever the experiment produced. No tampering required. `.inf`, `-.inf` and
+  `.nan` are now rejected at lock time (spec §3.5).
+- **Duplicate keys resolved last-wins with no diagnostic**, so the manifest a
+  human reads and the manifest the hash binds could carry different values for
+  the same field — a tamper channel inside a tamper-evident format. Duplicates
+  are now detected in the input document, before the parse discards them, in
+  both the YAML and the JSON door (new spec §3.2.1; RFC 7493 §2.3).
+- **Strings were unconstrained for Unicode normalization.** The same producer
+  name in NFC and NFD both validated and hashed differently, so a claim moved
+  between platforms stopped reproducing. Non-NFC input is now rejected rather
+  than normalized: rewriting it would change the bytes the author believes they
+  locked (spec §3.4).
+
+All three are fixed in all four reference implementations and recorded as a
+**technical** erratum in PRML v0.1 — it narrows what an implementation may
+accept. No canonical rendering changes and no already-published hash changes.
+
+### Changed
+- Reject suite 14 → 20 vectors (`RJ-015`..`RJ-020`), covering each defect
+  through both the YAML and the JSON door. Vectors may now carry raw manifest
+  text plus `ext`, because a duplicate key collapses before a parsed object
+  exists and `.inf` has no JSON literal.
+- **The reject driver was scoring false passes.** It treated any non-zero exit
+  as a correct refusal, so the JS implementation scored 18/18 while failing to
+  read a single file — `js-yaml` was absent. It now requires the diagnostic to
+  cite the vector's own reason, and takes `--reads` so an implementation
+  declares which formats it ingests; vectors it cannot read report `SKIP`
+  rather than counting as refusals it never made. Under the honest driver, Go
+  and Rust were accepting both JSON-door defects.
+- CI runs the four-implementation gate when `falsify_prml.py` changes; it was
+  missing from the path filter, so the commit type most likely to need that
+  gate was the one that skipped it.
+- Go depends on `golang.org/x/text` and Rust on `unicode-normalization` (no
+  stdlib NFC in either); the "stdlib only" and "two crate deps" claims are
+  corrected. Go's floor stays at 1.21.
+
 ## [Unreleased]
 
 ### Added (2026-08-13)
