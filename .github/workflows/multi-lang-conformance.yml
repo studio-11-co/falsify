@@ -92,7 +92,7 @@ jobs:
           sys.exit(10 if fails else 0)
           PY
 
-      - name: Negative conformance — reject suite (14 vectors MUST be rejected)
+      - name: Negative conformance — reject suite (20 vectors MUST be rejected)
         # falsify_prml.py is THE PRML reference (validate_manifest); falsify.py is
         # the falsify-engine CLI (different schema) and would reject every input for
         # an unrelated reason, making this check vacuous.
@@ -114,7 +114,14 @@ jobs:
       - name: Conformance — v0.2 candidate suite (8 vectors)
         run: node impl/js/falsify.js test-vectors spec/test-vectors/v0.2/test-vectors.json
 
-      - name: Negative conformance — reject suite (14 vectors MUST be rejected)
+      # The JS impl reads YAML through js-yaml, an optional dependency. Without
+      # it the reject suite scored a false 18/18: every vector "failed to lock"
+      # because no file could be parsed at all. Install it so the refusals are
+      # the impl's own.
+      - name: Install optional YAML dependency
+        run: npm install --no-save js-yaml
+
+      - name: Negative conformance — reject suite (20 vectors MUST be rejected)
         run: python3 spec/test-vectors/reject/check_reject.py -- node impl/js/falsify.js lock
 
   go-conformance:
@@ -138,8 +145,8 @@ jobs:
       - name: Conformance — v0.2 candidate suite (8 vectors)
         run: ./impl/go/falsify-go test-vectors spec/test-vectors/v0.2/test-vectors.json
 
-      - name: Negative conformance — reject suite (14 vectors MUST be rejected)
-        run: python3 spec/test-vectors/reject/check_reject.py -- ./impl/go/falsify-go hash
+      - name: Negative conformance — reject suite (16 JSON vectors; 4 YAML skipped)
+        run: python3 spec/test-vectors/reject/check_reject.py --reads json -- ./impl/go/falsify-go hash
 
   rust-conformance:
     name: Rust (impl/rust)
@@ -172,8 +179,8 @@ jobs:
       - name: Conformance — v0.2 candidate suite (8 vectors)
         run: ./impl/rust/target/release/falsify-rs test-vectors spec/test-vectors/v0.2/test-vectors.json
 
-      - name: Negative conformance — reject suite (14 vectors MUST be rejected)
-        run: python3 spec/test-vectors/reject/check_reject.py -- ./impl/rust/target/release/falsify-rs hash
+      - name: Negative conformance — reject suite (16 JSON vectors; 4 YAML skipped)
+        run: python3 spec/test-vectors/reject/check_reject.py --reads json -- ./impl/rust/target/release/falsify-rs hash
 
   conformance-summary:
     name: All four implementations agree
