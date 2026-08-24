@@ -1,6 +1,9 @@
-# v0.1 canonical — serve spec/index.html at /v0.1, normalize trailing slash
+# v0.1 is the canonical URL: the page lives at v0.1.html, which Pages serves at
+# /v0.1 with a 200. The previous rule rewrote to /index.html, which Pages then
+# canonicalised with a 308 to /, so the page redirected away from its own
+# canonical tag. Root has no inbound links and now points at the spec.
 /v0.1/  /v0.1  301
-/v0.1   /index.html  200
+/       /v0.1  301
 # v0.2 is frozen as the RFC content
 /v0.2/  /v0.2-rfc  301
 /v0.2   /v0.2-rfc  301
