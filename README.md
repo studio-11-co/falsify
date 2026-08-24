@@ -111,7 +111,7 @@ Each README states exactly what is real and what is not: the Langfuse and Lamina
 
 ---
 
-**Current version:** falsify 0.3.13 (PRML CLI) · falsify-engine 0.3.13 — `falsify --version`.
+**Current version:** falsify 0.3.14 (PRML CLI) · falsify-engine 0.3.14 — `falsify --version`.
 **Working with Claude Code?** See [CLAUDE.md](CLAUDE.md).
 
 ---

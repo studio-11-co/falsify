@@ -40,7 +40,7 @@ import re
 import sys
 import unicodedata
 
-__version__ = "0.3.13"
+__version__ = "0.3.14"
 
 EXIT_PASS = 0
 EXIT_BAD = 2

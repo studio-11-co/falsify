@@ -4,6 +4,27 @@ All notable changes to Falsification Engine are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com); version
 numbers follow [Semantic Versioning](https://semver.org).
 
+## [0.3.14] — 2026-08-24
+
+Packaging and presentation only. No change to canonicalization, verification
+or exit codes; `falsify verify` behaves identically to 0.3.13.
+
+### Changed
+- **The README no longer describes the current product as a three-day
+  hackathon build.** The README is this package's long description, so that
+  line was the first thing a reader of the PyPI page saw about what falsify is
+  today. The origin is not removed: the 0.1.0 entry below and `SUBMISSION.md`
+  both still record it, with dates.
+- **Package keywords** dropped `claude` and `hackathon` and now read
+  `falsifiability, pre-registration, ai-evaluation, reproducibility, audit, CI`.
+  Neither removed keyword described what the package does.
+
+### Fixed
+- **`falsify stats --html` emitted a broken link.** The generated report footer
+  pointed at `github.com/<USER>/falsify-hackathon`, a placeholder that never
+  resolved, in every HTML report a user produced. It now points at
+  `github.com/studio-11-co/falsify`.
+
 ## [0.3.13] — 2026-08-23
 
 ### Fixed
