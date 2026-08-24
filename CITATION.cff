@@ -20,7 +20,7 @@ type: software
 license: MIT
 repository-code: "https://github.com/studio-11-co/falsify"
 url: "https://falsify.dev"
-version: "0.3.13"
+version: "0.3.14"
 date-released: 2026-07-17
 keywords:
   - "PRML"
