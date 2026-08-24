@@ -506,9 +506,6 @@ term used across the docs.
 See [docs/CASE_STUDIES.md](docs/CASE_STUDIES.md) for three concrete
 adoption scenarios: ML team, DevOps team, research group.
 
-## Built with
-
-Claude Opus 4.7 (1M context), in three days, for the Anthropic
-Built with Opus 4.7 hackathon.
+## Cite
 
 **Cite the spec:** Öztürk, C. (2026). *PRML v0.1*. Zenodo. [https://doi.org/10.5281/zenodo.20177839](https://doi.org/10.5281/zenodo.20177839)

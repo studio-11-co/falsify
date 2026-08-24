@@ -57,7 +57,7 @@ get identical behavior. The image is not bit-reproducible — Docker
 base layers and `apt` mirror contents can shift — but it is
 *behaviorally* reproducible against the same commit of this repo.
 
-## Publishing (post-hackathon)
+## Publishing
 
 Pending push to Docker Hub or GHCR. Tracked under 0.2.0 in
 [ROADMAP.md](../ROADMAP.md).
