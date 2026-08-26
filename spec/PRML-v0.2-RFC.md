@@ -20,7 +20,7 @@ A comment that lands by **2026-05-22 23:59 UTC** can change the freeze. A commen
 
 ## Goals of v0.2
 
-v0.1 was scoped narrowly: eight fields, one hash, no I/O. v0.2 keeps that core unchanged and adds the smallest possible set of optional extensions to address gaps that surfaced during the v0.1 launch.
+v0.1 was scoped narrowly: nine fields, one hash, no I/O. v0.2 keeps that core unchanged and adds the smallest possible set of optional extensions to address gaps that surfaced during the v0.1 launch.
 
 **v0.2 explicitly does not aim to:**
 - Replace v0.1 — every v0.1 manifest remains a valid v0.2 manifest
