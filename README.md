@@ -492,6 +492,43 @@ exit code or command that catches each, see
 [docs/ADVERSARIAL.md](docs/ADVERSARIAL.md). For private disclosure
 of invariant breaks, see [.github/SECURITY.md](.github/SECURITY.md).
 
+## Use of generative AI
+
+This codebase was written with heavy use of AI coding assistants. Saying so
+here is the point: a project about making evaluation claims checkable should
+not be vague about how its own code was produced.
+
+**What the assistants did.** Most of the implementation text — the four
+reference implementations, the test suite, the examples and the majority of
+this documentation — was drafted with a large language model in the loop, then
+read, corrected and committed by a human. Boilerplate, adapter code and
+docstrings were generated most heavily; the canonicalisation core and the
+verification logic were written in the slowest, most reviewed passes.
+
+**What the human did.** Every decision that the format depends on is a human
+one: the nine required fields and why each is required, the canonical-bytes
+contract, what counts as TAMPERED versus FAIL, the exit-code semantics, the
+rejection rules for `.inf`, duplicate keys and Unicode normalisation, and the
+choice to keep verification offline and dependency-free. Each of those was
+argued through, frequently against a first draft the model proposed. The
+maintainer can explain any of them.
+
+**How you can check rather than take our word for it.** PRML's correctness is
+not a claim about who typed it. Four independent implementations (Python,
+JavaScript, Go, Rust) must produce byte-identical canonical bytes and the same
+SHA-256 for all 21 published conformance vectors, and must reject 20 negative
+inputs identically. That suite runs in CI on every change. Generated code that
+nobody understood would not survive it; the bugs it caught during development
+are recorded in [CHANGELOG.md](CHANGELOG.md), including three that were found
+after v0.3 shipped and fixed in v0.3.13.
+
+**Contributors.** If you send a patch that was substantially generated, please
+say which model and how in the pull request. We would rather know than guess.
+
+This statement follows the disclosure guidance in
+[NLnet's GenAI policy](https://nlnet.nl/foundation/policies/generativeAI/),
+which we consider a reasonable community norm regardless of funding.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
