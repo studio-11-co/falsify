@@ -27,7 +27,7 @@ faithfully represent the input. Printable Unicode (emoji, CJK, accents) is
 `reject-vectors.json` is a JSON array; each entry has `id`, `title`, `reason`,
 `field` (the dotted path carrying the bad char), and `input` (the manifest).
 Every `input` is otherwise valid — the **only** reason it must be rejected is the
-forbidden character. Fourteen vectors: 9 control-char (`RJ-001`..`RJ-007` carry the bad char in a *value*, `RJ-013`/`RJ-014` in a *key* — top-level and nested) and 5 structural (`RJ-008`..`RJ-012`: missing required field, malformed `dataset.hash`, invalid comparator, unknown version, non-numeric threshold). Each entry carries an `expect` substring its rejection message must contain, and a `category`.
+forbidden character. Twenty vectors: 9 control-char (`RJ-001`..`RJ-007` carry the bad char in a *value*, `RJ-013`/`RJ-014` in a *key* — top-level and nested), 5 structural (`RJ-008`..`RJ-012`: missing required field, malformed `dataset.hash`, invalid comparator, unknown version, non-numeric threshold), 2 vacuous-bar (`RJ-015`/`RJ-016`), 2 duplicate-key (`RJ-017`/`RJ-019`) and 2 normalization (`RJ-018`/`RJ-020`). `RJ-015`..`RJ-018` are YAML-only, so a JSON-only implementation runs 16 and skips 4 (`check_reject.py --reads json`). Each entry carries an `expect` substring its rejection message must contain, and a `category`.
 
 ## Running it
 
