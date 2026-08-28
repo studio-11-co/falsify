@@ -53,9 +53,17 @@ the absence of a cryptographic pre-commitment.
 Three contemporary forces make this gap urgent:
 
 1. **Regulatory.** The EU AI Act's logging (Article 12) and recordkeeping
-   (Article 18) obligations enter force August 2, 2026. High-risk AI providers
-   must demonstrate that performance claims attached to a deployed model are the
-   same claims registered prior to deployment.
+   (Article 18) obligations for high-risk systems under Annex III apply from
+   2 December 2027, following the deferral enacted by Regulation (EU) 2026/1744.
+   High-risk AI providers must demonstrate that performance claims attached to a
+   deployed model are the same claims registered prior to deployment.
+
+   > **v0.1 erratum (2026-08-28):** this section previously stated that
+   > Articles 12 and 18 obligations "enter force August 2, 2026". Regulation
+   > (EU) 2026/1744 (OJ, 24 July 2026) defers Sections 1–3 of Chapter III —
+   > which include both articles — to 2 December 2027 for systems classified
+   > high-risk under Article 6(2) and Annex III. The original text reflected
+   > the pre-Omnibus timetable and was correct when written (1 May 2026).
 2. **Scientific.** Benchmark contamination, data leakage, and selective
    reporting consistently degrade the informativeness of public evaluations.
 3. **Commercial.** Capability claims attached to frontier model releases are

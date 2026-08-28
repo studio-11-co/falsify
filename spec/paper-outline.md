@@ -49,7 +49,7 @@
 ### 2.2 Why pre-registration, why now
 
 - Clinical trials solved this in 2007 (`ClinicalTrials.gov`). Psychology adopted it in 2013 (OSF). ML has not.
-- The 2026 regulatory window: EU AI Act Article 12 logging requirements enter force August 2, 2026. Article 18 mandates 10-year retention of evaluation records. NIST AI RMF v1.1 references content-addressed audit trails as a recommended control.
+- The regulatory window: EU AI Act Article 12 logging and Article 18 recordkeeping obligations for Annex III high-risk systems apply from 2 December 2027 (deferred from 2 August 2026 by Regulation (EU) 2026/1744). Article 18 mandates 10-year retention of evaluation records. NIST AI RMF v1.1 references content-addressed audit trails as a recommended control.
 - The cost of doing nothing scales with deployment scope. The cost of pre-registering a claim is one hash function call.
 
 ### 2.3 Contributions
