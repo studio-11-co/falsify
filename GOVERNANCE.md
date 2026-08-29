@@ -44,8 +44,12 @@ certified by ISO, CEN/CENELEC, NIST, or any notified body.
 Single-maintainer control is a maintenance risk, but it is **not** a lock-in
 risk, by construction:
 
-- The specification is **CC BY 4.0**; the reference implementations are
-  **MIT**. Anyone may fork, re-implement, or re-host without permission.
+- The specification is published under the **[Community Specification License
+  1.0](spec/LICENSE.md)** (since 2026-08-29; previously CC BY 4.0, and copies
+  distributed before that date remain available under it). That licence grants
+  copyright *and* patent rights, irrevocably, within the declared
+  [Scope](spec/Scope.md). The reference implementations are **MIT**. Anyone may
+  fork, re-implement, or re-host without permission.
 - Conformance is defined by **published byte-level test vectors**, not by a
   blessed binary. A second implementation in any language can prove
   equivalence independently.

@@ -6,7 +6,7 @@
 **Freeze date:** 2026-05-22, 23:59 UTC
 **Promotion to final:** deferred; no date set (status line re-dated 2026-07-11, superseding the earlier "final draft expected 2026-05-29")
 **Spec home:** spec.falsify.dev/v0.2-rfc (this document)
-**License:** CC BY 4.0 — same as v0.1
+**License:** [Community Specification License 1.0](./LICENSE.md) — same as v0.1 (changed from CC BY 4.0 on 2026-08-29; copies distributed before that date remain available under CC BY 4.0)
 
 ---
 

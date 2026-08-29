@@ -7,7 +7,7 @@
 - **Length:** 8 pages + references + appendix (NeurIPS workshop format)
 - **Authors:** Cüneyt Öztürk — `hello@falsify.dev`
 - **Correspondence URL:** `https://spec.falsify.dev/v0.1`
-- **Code & data:** `https://github.com/studio-11-co/falsify` (MIT) · spec under CC BY 4.0
+- **Code & data:** `https://github.com/studio-11-co/falsify` (MIT) · spec under the Community Specification License 1.0
 - **Status:** Outline — to be expanded into full draft by 2026-05-22 (3-week window)
 
 ---
@@ -229,7 +229,7 @@ Once h_i is published, h_i is immutable. An amendment never overwrites; it appen
 | 12 | Automatic logging of events relevant to risk | `claim_id`, `created_at`, exit code, `prior_hash` chain |
 | 17 | Quality management system records | manifest + sidecar + chain hash |
 | 18 | 10-year retention of technical documentation | append-only chain, plain text |
-| 50 | Transparency obligations to deployers | published canonical URL + spec license (CC BY 4.0) |
+| 50 | Transparency obligations to deployers | published canonical URL + spec license (Community Specification License 1.0) |
 
 ### 7.2 NIST AI RMF v1.0
 
@@ -359,7 +359,7 @@ PRML provides the primitive that ML evaluation has lacked: a cryptographic recor
 - [ ] Funding statement: self-funded
 - [ ] Ethics statement: PRML is a primitive; deployment ethics are out of scope
 - [ ] arXiv categories: cs.CR primary; cs.LG, cs.SE cross-list
-- [ ] License: CC BY 4.0 (matches spec)
+- [ ] License: CC BY 4.0 for the paper (the spec itself moved to the Community Specification License 1.0 on 2026-08-29)
 
 ---
 

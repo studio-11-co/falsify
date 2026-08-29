@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://spec.falsify.dev/schema/prml-v0.1.schema.json",
   "title": "PRML v0.1 — Pre-Registered ML Manifest",
-  "description": "Formal JSON Schema for the PRML v0.1 specification (https://spec.falsify.dev/v0.1). A manifest binds a pre-registered evaluation claim to a SHA-256 hash over canonicalised bytes. CC BY 4.0.",
+  "description": "Formal JSON Schema for the PRML v0.1 specification (https://spec.falsify.dev/v0.1). A manifest binds a pre-registered evaluation claim to a SHA-256 hash over canonicalised bytes. Community Specification License 1.0.",
   "type": "object",
   "additionalProperties": false,
   "required": [

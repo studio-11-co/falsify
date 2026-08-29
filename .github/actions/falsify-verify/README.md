@@ -115,4 +115,4 @@ If the recomputed hash matches `falsify` CLI's output but disagrees with the act
 ## License
 
 Action code: MIT (matches `falsify` reference implementation).
-PRML specification: CC BY 4.0.
+PRML specification: Community Specification License 1.0.

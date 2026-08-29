@@ -47,7 +47,7 @@ arXiv requires endorsement for first-time submissions in cs.* categories.
 ### 3. Submission flow
 
 1. arxiv.org → "Submit" → "New submission"
-2. License: **CC BY 4.0** (matches spec license)
+2. License: **CC BY 4.0** for the preprint (the spec itself moved to the Community Specification License 1.0 on 2026-08-29)
 3. Categories:
    - Primary: `cs.CR`
    - Cross-list: `cs.CY`, `cs.SE`

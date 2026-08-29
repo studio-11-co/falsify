@@ -1,7 +1,7 @@
 # Migration guide — PRML v0.1 to v0.2
 
 **Status:** Stable. v0.2 freezes 2026-05-22 23:59 UTC.
-**License:** CC BY 4.0
+**License:** Community Specification License 1.0 (changed from CC BY 4.0 on 2026-08-29)
 **Editor:** Cüneyt Öztürk
 
 ---

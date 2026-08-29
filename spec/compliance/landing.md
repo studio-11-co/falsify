@@ -72,7 +72,7 @@ The full mapping document is at [spec/compliance/AI-Act-mapping-v0.1.md](https:/
 | 12 | Automatic logging, traceable over lifetime | `claim_id`, `created_at`, exit code, `prior_hash` chain |
 | 17 | Quality management records | manifest body + sidecar hash + chain hash |
 | 18 | 10-year retention | append-only chain, plain-text manifest format |
-| 50 | Transparency to deployers | published canonical URL, CC BY 4.0 spec, deterministic verifier |
+| 50 | Transparency to deployers | published canonical URL, Community Spec License 1.0 spec, deterministic verifier |
 | 72 | Post-market monitoring | amendment chain over deployment lifetime |
 | 73 | Serious incident reporting | `notes` field on amendments documenting incident context |
 
@@ -102,7 +102,7 @@ Your post-market monitoring plan requires recurring evaluation against drift. PR
 
 ## What PRML is not
 
-- **Not a compliance product.** PRML is a primitive. The reference implementation (`falsify`) is single-file Python under MIT. The specification is under CC BY 4.0. There is no SaaS, no subscription, no enterprise license.
+- **Not a compliance product.** PRML is a primitive. The reference implementation (`falsify`) is single-file Python under MIT. The specification is under the Community Specification License 1.0. There is no SaaS, no subscription, no enterprise license.
 - **Not a substitute for a notified body.** Notified bodies assess your full conformity package. PRML produces one component of the technical-documentation portion of that package.
 - **Not a substitute for your QMS.** Your quality management system stays where it is. PRML provides the cryptographic substrate for the documents your QMS already produces.
 - **Not a substitute for model cards or datasheets.** Those remain. PRML sits underneath them, providing the verifiable hash that a model card cites when it reports an accuracy number.

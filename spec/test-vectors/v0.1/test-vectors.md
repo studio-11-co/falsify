@@ -4,7 +4,7 @@
 **Reference implementation:** [`falsify`](https://github.com/studio-11-co/falsify) — `_canonicalize()` in `falsify.py`
 **Generated:** 2026-05-01
 **Editor:** Cüneyt Öztürk — `hello@falsify.dev`
-**License:** CC BY 4.0
+**License:** Community Specification License 1.0
 
 ---
 

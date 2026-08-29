@@ -3,7 +3,7 @@
 **Status:** Draft 0 (non-normative). Open for input; nothing here is frozen.
 **Editor:** Cüneyt Öztürk · hello@falsify.dev · Falsify OÜ (reg. 17574308, Estonia)
 **Supersedes:** `docs/execution-linkage-draft.md` (strawman, 2026-07-31)
-**License:** CC BY 4.0
+**License:** Community Specification License 1.0 (changed from CC BY 4.0 on 2026-08-29)
 **Reference implementations:** `falsify_linkage.py` (Python) · `impl/js/linkage.js` (also `falsify-js` npm ≥ 0.1.11) · `impl/go/linkage.go` · `impl/rust/src/linkage.rs` — byte-parity across all four asserted by `tests/test_linkage_parity.py`. Adapter precedent: `mlflow-falsify >= 0.3.0`.
 
 ---

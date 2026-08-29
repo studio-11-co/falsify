@@ -6,7 +6,16 @@
 **Editor:** Cüneyt Öztürk \<hello@falsify.dev\>
 **Reference Implementation:** [falsify](https://github.com/studio-11-co/falsify) (MIT)
 **Canonical URL:** https://spec.falsify.dev/v0.1
-**License:** CC BY 4.0
+**License:** [Community Specification License 1.0](./LICENSE.md) — see [Scope.md](./Scope.md) and [Notices.md](./Notices.md)
+
+> **Licence change, 2026-08-29.** This specification was previously published
+> under CC BY 4.0, which grants copyright permissions only and expressly grants
+> no patent rights — the wrong instrument for a document meant to be
+> implemented by third parties. It is now published under the Community
+> Specification License 1.0, which grants both, irrevocably, within the declared
+> Scope. Copies distributed before this date remain available under CC BY 4.0;
+> that grant is irrevocable and is not withdrawn here. No normative text changed
+> with this licence change.
 
 ---
 

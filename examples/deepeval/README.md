@@ -92,6 +92,6 @@ PRML proves the *bar was locked*, never the *result*.
 ---
 
 *Part of [`studio-11-co/falsify`](https://github.com/studio-11-co/falsify). Spec:
-[spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1) · CC BY 4.0. Reference
+[spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1) · Community Specification License 1.0. Reference
 implementation MIT. DeepEval is © Confident AI, Apache-2.0 — this example
 depends on it, and is not affiliated with or endorsed by Confident AI.*

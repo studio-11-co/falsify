@@ -114,4 +114,4 @@ A v0.2-conforming impl MUST pass all v0.1 vectors. This is non-negotiable; v0.2 
 ## License
 
 This conformance harness is released under MIT (see repo root).
-The vector data is CC BY 4.0 alongside the spec.
+The vector data is published under the Community Specification License 1.0 alongside the spec (changed from CC BY 4.0 on 2026-08-29).

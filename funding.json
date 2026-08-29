@@ -6,7 +6,7 @@
     "role": "owner",
     "name": "Falsify OÜ",
     "email": "hello@falsify.dev",
-    "description": "Falsify OÜ (registry code 17574308, Tallinn, Estonia) maintains PRML — an open specification (CC BY 4.0) for locking the success criteria of an AI/ML evaluation (metric, comparator, threshold, dataset hash, seed) to a SHA-256 digest before the evaluation runs, so any third party can later verify the pass bar predated the result. The company maintains the specification, four byte-equivalent reference implementations, a published conformance suite, and a public commitment registry with Ed25519-signed receipts, RFC 3161 timestamps, and mirroring to the Rekor transparency log. Sole maintainer: Cüneyt Öztürk.",
+    "description": "Falsify OÜ (registry code 17574308, Tallinn, Estonia) maintains PRML — an open specification (Community Specification License 1.0) for locking the success criteria of an AI/ML evaluation (metric, comparator, threshold, dataset hash, seed) to a SHA-256 digest before the evaluation runs, so any third party can later verify the pass bar predated the result. The company maintains the specification, four byte-equivalent reference implementations, a published conformance suite, and a public commitment registry with Ed25519-signed receipts, RFC 3161 timestamps, and mirroring to the Rekor transparency log. Sole maintainer: Cüneyt Öztürk.",
     "webpageUrl": {
       "url": "https://falsify.dev"
     }
@@ -22,7 +22,7 @@
       "repositoryUrl": {
         "url": "https://github.com/studio-11-co/falsify"
       },
-      "licenses": ["spdx:MIT", "spdx:CC-BY-4.0"],
+      "licenses": ["spdx:MIT", "spdx:Community-Spec-1.0"],
       "tags": ["ai-evaluation", "reproducibility", "pre-registration", "cryptography", "supply-chain-security", "compliance", "eu-ai-act", "transparency-log", "developer-tools", "python"]
     }
   ],

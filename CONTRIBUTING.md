@@ -6,8 +6,20 @@ intact.
 
 ## Contributor licensing
 
-By submitting a pull request, issue, patch, or any other contribution
-to this repository, you certify that:
+**Two different licences apply, depending on what you are changing.**
+
+- **Specification contributions** — anything under `spec/` — are governed by the
+  [Community Specification License 1.0](spec/LICENSE.md), not by the terms
+  below. Under that licence you keep your copyright, you grant everyone
+  copyright and patent rights within the declared [Scope](spec/Scope.md), and
+  you grant nobody a right to sublicense your contribution under different
+  terms. Acceptances, withdrawals and patent exclusion notices are recorded in
+  [spec/Notices.md](spec/Notices.md).
+- **Source-code contributions** — everything else in this repository — are
+  governed by the terms in this section.
+
+By submitting a pull request, issue, patch, or any other **source-code**
+contribution to this repository, you certify that:
 
 1. You wrote the contribution, or you have the right to submit it
    under the MIT License.

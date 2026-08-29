@@ -58,5 +58,5 @@ Rekor transparency log), commit the manifest at
 ## Scope
 
 PRML proves the bar was locked before the run. It never proves the observed
-score is correct — that stays with your eval infrastructure. Spec CC BY 4.0,
+score is correct — that stays with your eval infrastructure. Spec under the Community Specification License 1.0,
 implementations MIT.

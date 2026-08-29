@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://spec.falsify.dev/schema/prml-v0.2.schema.json",
   "title": "PRML v0.2 — Pre-Registered ML Manifest (RFC, freeze 2026-05-22)",
-  "description": "Formal JSON Schema for the PRML v0.2 RFC (https://spec.falsify.dev/v0.2-rfc). v0.2 adds optional fields (streaming variant, runner attestation, revocation) over v0.1. Every v0.1 manifest is a valid v0.2 manifest. Fully backwards-compatible at the hash level. CC BY 4.0.",
+  "description": "Formal JSON Schema for the PRML v0.2 RFC (https://spec.falsify.dev/v0.2-rfc). v0.2 adds optional fields (streaming variant, runner attestation, revocation) over v0.1. Every v0.1 manifest is a valid v0.2 manifest. Fully backwards-compatible at the hash level. Community Specification License 1.0.",
   "type": "object",
   "additionalProperties": false,
   "required": [

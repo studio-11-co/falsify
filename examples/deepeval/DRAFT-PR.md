@@ -66,7 +66,7 @@ no network.
 
 - **Additive and opt-in.** Zero changes to DeepEval's core or existing metrics;
   gated behind the `deepeval[prml]` extra.
-- **No lock-in.** The PRML spec is CC BY 4.0 and the reference implementations
+- **No lock-in.** The PRML spec is under the Community Specification License 1.0 and the reference implementations
   are MIT, across four languages. Conformance is defined by published byte-level
   test vectors, not a vendor binary. DeepEval (and its users) can re-implement
   or drop it at any time with no dependency on us.

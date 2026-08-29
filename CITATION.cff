@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you cite the PRML specification or the falsify reference implementation in academic or technical work, please use the form below."
 title: "falsify — Reference implementation of the PRML (Pre-Registered ML Manifest) specification"
 abstract: >-
-  PRML is an open CC BY 4.0 specification for committing machine-learning
+  PRML is an open specification (Community Specification License 1.0) for committing machine-learning
   evaluation claims to a SHA-256 hash before the experiment runs. falsify
   is the Python reference implementation that produces canonical bytes
   per the spec's §4 rules and validates against 13 v0.1 conformance

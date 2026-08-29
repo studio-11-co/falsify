@@ -295,7 +295,7 @@ out.append("")
 out.append("**Status:** working draft, not yet normative.")
 out.append("**Target promotion:** v0.2 freeze on 2026-05-22.")
 out.append("**Generator:** `spec/v0.2/generate-candidates.py`")
-out.append("**License:** CC BY 4.0")
+out.append("**License:** Community Specification License 1.0")
 out.append("")
 out.append("---")
 out.append("")
@@ -377,7 +377,7 @@ out.append("Expected: 6/6 vectors pass in each implementation. Divergences are f
 out.append("")
 out.append("---")
 out.append("")
-out.append("*Working draft, CC BY 4.0. Promotion to v0.2 normative on 2026-05-22.*")
+out.append("*Working draft, Community Specification License 1.0. Promotion to v0.2 normative on 2026-05-22.*")
 
 text = "\n".join(out) + "\n"
 with open("spec/v0.2/test-vectors-candidates.md", "w") as f:
