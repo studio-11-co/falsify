@@ -37,6 +37,10 @@ Response time: usually within 3 business days.
 
 ## Trademark policy
 
+> The authoritative policy is [TRADEMARK.md](../TRADEMARK.md); this is a
+> summary. Where the two differ, TRADEMARK.md governs. The marks are held
+> by Falsify OÜ and are unregistered.
+
 The MIT License covers the source code. It does **not** cover the
 "FALSIFY" name or the chevron logo.
 

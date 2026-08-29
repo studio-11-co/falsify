@@ -10,7 +10,13 @@ Trademark notice
 ──────────────────────────────────────────────────────────────────────────
 
 "FALSIFY" and the falsify chevron mark ( ⟐ falsify ) are trademarks of
-Cüneyt Öztürk. The MIT License grants rights to the underlying source
+Falsify OÜ (Estonia, registry code 17574308), which has operated the
+project since the company was incorporated on 2026-08-12. They are
+UNREGISTERED marks, asserted with ™; no application has been filed with
+any office. The full policy — including the uses that need no
+permission — is in TRADEMARK.md, which governs if the two differ.
+
+The MIT License grants rights to the underlying source
 code; it does NOT grant any right to use the "FALSIFY" name, the
 chevron logo, or any confusingly similar mark in connection with:
 
@@ -40,9 +46,15 @@ See docs/COMMERCIAL.md for details.
 Contributions
 ──────────────────────────────────────────────────────────────────────────
 
-By submitting a pull request, you agree that your contribution is
-licensed under the MIT License and you grant Cüneyt Öztürk a perpetual,
+These terms apply to SOURCE CODE only. By submitting a pull request
+that changes source code, you agree that your contribution is licensed
+under the MIT License and you grant Cüneyt Öztürk a perpetual,
 irrevocable license to re-license your contribution under any terms,
 including future commercial or dual-license arrangements.
+
+Contributions to the SPECIFICATION — anything under spec/ — are governed
+instead by the Community Specification License 1.0 (spec/LICENSE.md).
+Under that licence you keep your copyright and grant nobody a right to
+re-license your contribution.
 
 See CONTRIBUTING.md for the full contributor terms.
