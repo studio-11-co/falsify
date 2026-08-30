@@ -78,10 +78,27 @@ the bar it encodes is under-determined. Re-run with a different judge, the verdi
 changes, and nothing in the record shows it. This is not in the §8.1 threat model,
 which lists four other non-protections.
 
-Practice already prescribes the fix — RAG evaluation guidance tells practitioners to
-"fix the judge model per experiment" and names "comparing scores across different
-judge models" as a common pitfall. So the requirement exists in the field; what is
+Practice already prescribes the fix, and from two independent directions. RAG evaluation
+guidance tells practitioners to "fix the judge model per experiment" and names "comparing
+scores across different judge models" as a common pitfall. A separate practitioner handbook,
+in a section titled "Statistical comparison and release gates", is sharper: under **Judge
+calibration** it says "measure agreement against human labels; freeze prompt/model/version;
+include examples; periodically re-audit drift", and under **Release rule** it requires "no
+critical-slice regression, statistically credible aggregate improvement, and SLO/security
+compliance". So the requirement exists in the field, stated as a release gate; what is
 missing is a named place to record it and a verifier that notices when it is absent.
+
+Two consequences for the field design, both from that wording:
+
+1. The unit to pin is **prompt + model + version**, not the model alone. The first sketch of
+   this defect said "the judge model", which is too coarse.
+2. **A hosted judge can change while its name stays the same.** Recording a model name pins a
+   label, not a function — which is why the same handbook asks for periodic drift re-audits.
+   A field carrying only a name would give false assurance: the manifest would verify while
+   the bar quietly moved. Any resolution has to say what is actually being committed to — a
+   prompt hash and a provider-attested version at minimum — and be honest that where a
+   provider offers no immutable identifier, the judge cannot be pinned at all. That
+   limitation belongs in the threat model, not in the marketing.
 
 Candidate resolution for v1.0 (not decided): a reserved `metric_args.judge` mapping
 (`id`, `version`/`hash`, `prompt_hash`, `temperature`), plus a conformance rule that
