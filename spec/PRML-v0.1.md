@@ -250,6 +250,14 @@ editing** a published manifest. The threat that anchoring defends against is
 the producer **back-dating** a manifest that was authored after the fact.
 The two are different and require different mechanisms.
 
+There is a third limit, and it is the boundary of what any receipt can carry.
+Anchoring establishes that the committed bytes existed **no later than** the
+anchor time and have not changed since. That the evaluation ran *after* that
+point — and therefore that the bar preceded the result — follows from using the
+mechanism as intended: anchor first, then run. A receipt encountered in
+isolation, with no independent evidence of when the run began, bounds the
+commitment in time but does not by itself order it against the run.
+
 ---
 
 ## 3. Canonical Serialization
