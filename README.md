@@ -128,7 +128,7 @@ This repository is the home of **PRML v0.1** — Pre-Registered ML Manifest Spec
 - **[`spec/analysis/canonicalization-portability-v0.1.md`](spec/analysis/canonicalization-portability-v0.1.md)** — three cross-language findings from the JS second implementation
 - **[`spec/compliance/AI-Act-mapping-v0.1.md`](spec/compliance/AI-Act-mapping-v0.1.md)** — EU AI Act Article 12/17/18/50/72/73 mapping
 - **[`spec/compliance/landing.md`](spec/compliance/landing.md)** — compliance-audience landing copy
-- **[`spec/paper/`](spec/paper/)** — 14-page arXiv preprint (LaTeX, CC BY 4.0)
+- **[`spec/paper/`](spec/paper/)** — 14-page preprint manuscript (LaTeX, CC BY 4.0); not posted to a preprint server
 - **[`spec/v0.2/ROADMAP.md`](spec/v0.2/ROADMAP.md)** — v0.2 RFC roadmap (freeze 2026-05-22)
 
 **Audit & compliance crosswalks** (subcategory-by-subcategory maps from major AI governance frameworks to PRML fields, FULL/PARTIAL/NONE tagged):
@@ -168,6 +168,8 @@ Hosted spec at [spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1). Public re
 **Listed in / referenced by** (independent curation — discoverability and third-party review, not adoption claims):
 
 - **[SchemaStore](https://github.com/SchemaStore/schemastore/pull/5673)** — the PRML JSON Schema is in the catalog; `.prml.yaml` autocompletes and validates in VS Code, JetBrains, Cursor, Zed, and anything using `yaml-language-server`. *(real tooling integration)*
+- **[UK AI Security Institute — Inspect extensions](https://github.com/UKGovernmentBEIS/inspect_ai/pull/4440)** — `falsify-inspect` is listed on the official Inspect extensions page (Analysis section)
+- **[OWASP CycloneDX property taxonomy](https://github.com/CycloneDX/cyclonedx-property-taxonomy/pull/193)** — `prml` is a registered top-level namespace (merged 2026-08-31), so `prml:*` properties are legitimate inside any CycloneDX BOM including ML-BOM; the namespace document is [`spec/compliance/cyclonedx-property-taxonomy.md`](spec/compliance/cyclonedx-property-taxonomy.md). A namespace is a place, not adoption: no tool emits `prml:` properties yet.
 - **[theopenlane/awesome-compliance](https://github.com/theopenlane/awesome-compliance)** — Compliance Specs (PR reviewed + merged by an Openlane co-founder)
 - **[AthenaCore/AwesomeResponsibleAI](https://github.com/AthenaCore/AwesomeResponsibleAI)** — Responsible-AI Audit section
 - **[GenAI-Gurus/awesome-eu-ai-act](https://github.com/GenAI-Gurus/awesome-eu-ai-act)** — EU AI Act Reference Implementations
@@ -473,7 +475,7 @@ Run `make dogfood` to re-verify. CI runs these on every PR.
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
-> **Latest — 2026-05-23** · **PRML v0.2 frozen** with all 21 conformance vectors (13 v0.1 stable + 8 v0.2) passing byte-for-byte across the four reference implementations. Lock #2 (public hypothesis on spec's own distribution) resolved at **0/3 external contributors**, mechanism worked, [post-mortem published](https://falsify.dev/notes/lock-2-postmortem/). **`mlflow-falsify` v0.2.0** shipped with `MLFLOW_FALSIFY_TAG_SCOPE=experiment` for HPO sweeps; [MLflow community plugin showcase PR](https://github.com/mlflow/mlflow/pull/23569) is live and under review. Five long-form working notes published for EU AI Act readiness: [readiness assessment](https://falsify.dev/eu-ai-act-readiness/), [2 August 2026 deadline](https://falsify.dev/ai-act-deadline-august-2026/), [Article 12 ten-item checklist](https://falsify.dev/article-12-checklist/), [notified body evidence](https://falsify.dev/notified-body-evidence/), [ISO/IEC 42001 readiness](https://falsify.dev/iso-42001-readiness/). DOI [10.5281/zenodo.20177839](https://doi.org/10.5281/zenodo.20177839). PRML JSON Schema in [SchemaStore](https://github.com/SchemaStore/schemastore/pull/5673) (Mads Kristensen / Microsoft) — `.prml.yaml` files autocomplete in VS Code, JetBrains, Helix, Zed, and Cursor. `registry.falsify.dev` live with README badges at `registry.falsify.dev/badge/<hash>.svg`.
+> **Latest — 2026-08-24** · **falsify 0.3.14** on PyPI; v0.3.13 (2026-08-23) fixed three specification defects and expanded the negative-conformance suite to 20 reject vectors. The conformance suite stays at 21 positive + 20 reject vectors across the four reference implementations. Registry receipts carry an RFC 3161 countersignature and a Rekor v2 mirror.
 
 ## Roadmap
 
