@@ -3,7 +3,8 @@
 This document defines the official `prml` property namespace for
 [CycloneDX](https://cyclonedx.org/) BOMs, administered by the maintainers of the
 [PRML specification](https://spec.falsify.dev/v0.1) (Pre-Registered ML Manifest —
-an open, MIT/CC-BY-licensed format that commits an ML evaluation's success
+an open format, published under the Community Specification License 1.0 with
+MIT-licensed reference implementations, that commits an ML evaluation's success
 criteria to a SHA-256 hash before the run).
 
 Purpose: a CycloneDX `modelCard.quantitativeAnalysis.performanceMetrics` entry
@@ -20,6 +21,16 @@ verifiable offline by any consumer of the BOM.
 | `prml:receipt:transparency-log` | Reference to an append-only transparency-log entry for the commitment (e.g. a Rekor log index). |
 | `prml:verify:observed` | The observed value later checked against the pre-registered comparator/threshold. |
 | `prml:verify:verdict` | `PASS` or `FAIL` as returned by a conforming PRML verifier for the observed value. |
+
+## Placement
+
+Put the `prml:*` properties on the component whose evaluation they describe (the
+same place a `modelCard` sits). CycloneDX `declarations.evidence` entries carry no
+free-form properties; when the BOM also carries attestations, each evidence entry
+points at the artefact by URL and names the taxonomy key it substantiates in
+`propertyName`. A complete, schema-valid 1.6 attestation built this way, with a
+validator that re-derives the hash and the verdict offline, is in
+[`examples/cyclonedx-attestation`](../../examples/cyclonedx-attestation/).
 
 Verification is offline: a consumer recomputes the canonical hash from the
 manifest text and compares comparator/threshold to the observed value.
