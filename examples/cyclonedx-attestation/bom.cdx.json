@@ -1,0 +1,168 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.6.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:3f8c1d2e-6b1a-4d5e-9c7f-2a4b6c8d0e1f",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-09-02T15:00:00Z",
+    "authors": [
+      { "name": "Cüneyt Öztürk", "email": "hello@falsify.dev" }
+    ],
+    "component": {
+      "bom-ref": "falsify-py-0.3.14",
+      "type": "library",
+      "name": "falsify",
+      "version": "0.3.14",
+      "purl": "pkg:pypi/falsify@0.3.14",
+      "description": "PRML reference implementation (Python). The evaluation attested below is its own conformance run against the PRML v0.1 test vectors.",
+      "properties": [
+        { "name": "prml:manifest:canonical-sha256", "value": "390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c" },
+        { "name": "prml:manifest:claim-id", "value": "019fb31c-3c80-7e79-9acb-8af651c55dfa" },
+        { "name": "prml:manifest:url", "value": "https://registry.falsify.dev/390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c.yaml" },
+        { "name": "prml:receipt:rfc3161-tst", "value": "https://registry.falsify.dev/390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c.tsr" },
+        { "name": "prml:receipt:transparency-log", "value": "https://log2025-1.rekor.sigstore.dev log index 45932166" },
+        { "name": "prml:verify:observed", "value": "21" },
+        { "name": "prml:verify:verdict", "value": "PASS" }
+      ],
+      "externalReferences": [
+        { "type": "attestation", "url": "https://registry.falsify.dev/390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c.receipt.json", "comment": "Registry receipt (Ed25519-signed JSON) with links to the RFC 3161 token and the Rekor entry." },
+        { "type": "documentation", "url": "https://spec.falsify.dev/v0.1", "comment": "PRML v0.1 specification." }
+      ]
+    }
+  },
+  "definitions": {
+    "standards": [
+      {
+        "bom-ref": "std-prereg-eval",
+        "name": "Pre-registered evaluation claim",
+        "version": "1",
+        "description": "Two requirements a consumer of an evaluation result can check without trusting the party that ran it. Written for this example; not an external standard.",
+        "owner": "PRML specification maintainers",
+        "requirements": [
+          {
+            "bom-ref": "req-bar-fixed",
+            "identifier": "REQ-1",
+            "title": "Acceptance criterion fixed before the run",
+            "text": "The metric, comparator, threshold, dataset identity and seed that decide pass or fail were committed to a cryptographic hash, and a party independent of the evaluator recorded the time of that commitment, before the result was produced."
+          },
+          {
+            "bom-ref": "req-result-meets-bar",
+            "identifier": "REQ-2",
+            "title": "Observed result meets the fixed criterion",
+            "text": "The observed value satisfies the comparator and threshold recorded in the committed manifest, as evaluated by a conforming PRML verifier."
+          }
+        ]
+      }
+    ]
+  },
+  "declarations": {
+    "assessors": [
+      {
+        "bom-ref": "assessor-falsify",
+        "thirdParty": false,
+        "organization": { "name": "Falsify OÜ", "url": [ "https://falsify.dev" ] }
+      }
+    ],
+    "targets": {
+      "components": [
+        {
+          "bom-ref": "target-falsify-py-0.3.14",
+          "type": "library",
+          "name": "falsify",
+          "version": "0.3.14",
+          "purl": "pkg:pypi/falsify@0.3.14"
+        }
+      ]
+    },
+    "evidence": [
+      {
+        "bom-ref": "ev-manifest",
+        "propertyName": "prml:manifest:canonical-sha256",
+        "description": "The PRML manifest whose canonical bytes hash to 390e78d9…5590c. It names the metric (conformance_vectors_passing), comparator (>=), threshold (21.0), dataset (prml-v0.1-test-vectors-json, sha256 cd7d22ee…2a8e) and seed (1). Recompute the hash with any of the four reference implementations.",
+        "data": [
+          { "name": "manifest.prml.yaml", "contents": { "url": "https://registry.falsify.dev/390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c.yaml" }, "classification": "public" }
+        ],
+        "created": "2026-07-30T12:18:14Z",
+        "author": { "name": "registry.falsify.dev" }
+      },
+      {
+        "bom-ref": "ev-rfc3161",
+        "propertyName": "prml:receipt:rfc3161-tst",
+        "description": "RFC 3161 timestamp token over the canonical hash, issued by timestamp.sigstore.dev at 2026-07-30T12:18:14Z. Verify offline with openssl ts -verify against the TSA chain; the token binds the hash to a time asserted by a party other than the evaluator.",
+        "data": [
+          { "name": "390e78d9…5590c.tsr", "contents": { "url": "https://registry.falsify.dev/390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c.tsr" }, "classification": "public" }
+        ],
+        "created": "2026-07-30T12:18:14Z",
+        "author": { "name": "timestamp.sigstore.dev" }
+      },
+      {
+        "bom-ref": "ev-rekor",
+        "propertyName": "prml:receipt:transparency-log",
+        "description": "Inclusion proof for the commitment in the public Rekor transparency log (shard log2025-1, log index 45932166). Append-only: the entry cannot be altered or backdated after the fact.",
+        "data": [
+          { "name": "390e78d9…5590c.rekor", "contents": { "url": "https://registry.falsify.dev/390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c.rekor" }, "classification": "public" }
+        ],
+        "created": "2026-07-30T12:18:14Z",
+        "author": { "name": "rekor.sigstore.dev" }
+      },
+      {
+        "bom-ref": "ev-verdict",
+        "propertyName": "prml:verify:verdict",
+        "description": "Observed value 21 (conformance vectors passing) checked against the committed comparator and threshold (>= 21.0) by the PRML reference verifier: PASS. Anyone can redo this with the manifest and the observed value; no registry access is needed.",
+        "data": [
+          { "name": "verify.txt", "contents": { "attachment": { "contentType": "text/plain", "content": "falsify verify manifest.prml.yaml --expected-hash 390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c --observed 21\nPASS  metric=conformance_vectors_passing  observed=21.0  >=  threshold=21.0\n" } }, "classification": "public" }
+        ],
+        "created": "2026-09-02T15:00:00Z",
+        "author": { "name": "Falsify OÜ" }
+      }
+    ],
+    "claims": [
+      {
+        "bom-ref": "claim-bar-fixed",
+        "target": "target-falsify-py-0.3.14",
+        "predicate": "The acceptance criterion for this component's conformance evaluation (conformance_vectors_passing >= 21.0 on dataset prml-v0.1-test-vectors-json, seed 1) was committed to SHA-256 390e78d9…5590c and independently timestamped at 2026-07-30T12:18:14Z.",
+        "reasoning": "The manifest hashes to the committed value (ev-manifest); the RFC 3161 token (ev-rfc3161) and the Rekor entry (ev-rekor) fix the time at which that hash existed. Scope, stated plainly: this proves the bar existed no later than 2026-07-30T12:18:14Z. It does not by itself prove the evaluation was run after that moment, and it says nothing about whether the result is correct.",
+        "evidence": [ "ev-manifest", "ev-rfc3161", "ev-rekor" ]
+      },
+      {
+        "bom-ref": "claim-result-meets-bar",
+        "target": "target-falsify-py-0.3.14",
+        "predicate": "The observed result, 21 conformance vectors passing, satisfies the committed criterion (>= 21.0).",
+        "reasoning": "A conforming PRML verifier evaluates the committed comparator and threshold against the observed value and returns PASS (ev-verdict). The observed value is reported by the assessor; the bar it is checked against is the committed one, not one chosen after the run.",
+        "evidence": [ "ev-verdict", "ev-manifest" ]
+      }
+    ],
+    "attestations": [
+      {
+        "summary": "Self-attestation by the maintainer that the PRML v0.1 conformance evaluation of falsify 0.3.14 was pre-registered (bar locked and independently timestamped before the result) and that the observed result meets the pre-registered bar.",
+        "assessor": "assessor-falsify",
+        "map": [
+          {
+            "requirement": "req-bar-fixed",
+            "claims": [ "claim-bar-fixed" ],
+            "conformance": { "score": 1.0, "rationale": "Hash, RFC 3161 token and transparency-log entry are public and verifiable offline; the manifest recomputes to the committed hash." },
+            "confidence": { "score": 0.9, "rationale": "Time evidence comes from a public TSA and a public log, not from the assessor. Residual: no proof that the run started after the commitment (a draft execution-linkage profile, prml-linkage/0, addresses this and is not used here)." }
+          },
+          {
+            "requirement": "req-result-meets-bar",
+            "claims": [ "claim-result-meets-bar" ],
+            "conformance": { "score": 1.0, "rationale": "Verifier output PASS for observed 21 against >= 21.0." },
+            "confidence": { "score": 0.7, "rationale": "The observed value is self-reported by the assessor. A third-party assessor re-running the conformance suite would raise this." }
+          }
+        ]
+      }
+    ],
+    "affirmation": {
+      "statement": "I affirm that the evidence referenced above is public, that the manifest hash and receipts can be re-verified without contacting Falsify OÜ, and that the limits of what a receipt proves are stated in each claim's reasoning.",
+      "signatories": [
+        {
+          "name": "Cüneyt Öztürk",
+          "role": "Maintainer, PRML specification",
+          "organization": { "name": "Falsify OÜ", "url": [ "https://falsify.dev" ] },
+          "externalReference": { "type": "attestation", "url": "https://registry.falsify.dev/390e78d9121f8f7a9029d4668d8010df7857c47fef9b06f6b2e6a98d7324590c.receipt.json", "comment": "The registry receipt this affirmation rests on. CycloneDX requires a signatory to carry either a signature or an organization plus an external reference; this example is unsigned." }
+        }
+      ]
+    }
+  }
+}
