@@ -61,3 +61,24 @@ revealed value does not match its commitment.
 Proving that the evaluation ran after the commitment (execution linkage,
 `prml-linkage/0`); confidentiality of the *result* (PRML commits criteria,
 not outcomes).
+
+## Fit with external work (added 2026-09-03)
+
+Two 2026 documents describe the need this issue addresses without naming a
+mechanism for it:
+
+- A runtime-governance paper for financial-services agents (Doyle-Spare,
+  *The Economics of Agentic AI*, SSRN 7129939, §8.4) argues that a
+  deterministic gate must "limit how much of the threshold they reveal" so the
+  control does not become an optimisation target, and defines a per-decision
+  record that carries a "Baseline version". A sealed commit is the public,
+  third-party-timed counterpart of that hidden threshold; a receipt is what the
+  "Baseline version" field could point at.
+- The IMF staff note on agentic payments (NOTE/2026/004, Table 3 and note 5)
+  names "authorization traceability failures" as a risk class and describes
+  control thresholds as enforced "once established", without a check on when
+  they were established.
+
+Neither document references PRML or pre-registration; they are cited here as
+evidence that the hidden-but-provable threshold is a live requirement, not as
+endorsements.
