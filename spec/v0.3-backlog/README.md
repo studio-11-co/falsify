@@ -18,3 +18,4 @@ These four are the binding decisions from the v0.2 freeze (2026-05-22).
 Other deferred items remain in the v0.2 RFC "Proposals deferred to v0.3+"
 list and may or may not promote to this backlog depending on community
 input received after freeze.
+- `05-sealed-disclosure.md` — sealed commitments and field-level selective disclosure (opened 2026-09-03; registry sealed commits exist today, spec unchanged)
