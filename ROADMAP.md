@@ -30,7 +30,7 @@ the result.
   for the itemized registry and documentation corrections.
 - Four reference implementations (Python, JavaScript, Go, Rust), all
   byte-equivalent on the 21 frozen conformance vectors (13 v0.1 + 8 v0.2)
-  and all rejecting the reject suite (20 vectors).
+  and all rejecting all 20 reject vectors.
 - Registry (`registry.falsify.dev`): Ed25519-signed receipts, PRML
   validation at commit time, full-manifest storage, in-browser verifier
   running the same canonical.js the server uses.
