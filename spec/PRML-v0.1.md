@@ -569,11 +569,15 @@ A conformance test harness will be published with v0.2.
 
 ## 11. IANA Considerations
 
-This document requests the registration of:
+The media type `application/vnd.prml+yaml` is registered with IANA in the
+vendor tree (registered 2026-09-03; entry at
+https://www.iana.org/assignments/media-types/application/vnd.prml+yaml).
+The registration records the file extensions `.prml` and `.prml.yaml`,
+encoding `binary` (UTF-8, NFC, no BOM; transports MUST NOT re-encode), and
+the security and interoperability considerations of sections 5 and 8.
 
-- File extension: `.prml`
-- MIME type: `application/vnd.prml+yaml`
-- Sidecar extension: `.prml.sha256`
+The sidecar extension `.prml.sha256` is a convention of this specification
+and is not part of the media type registration.
 
 A PRML Metric Registry will be established with v0.2.
 
