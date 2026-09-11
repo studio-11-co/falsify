@@ -2,7 +2,7 @@
 
 **Version:** 0.1 (Draft)
 **Date:** 2026-05-01
-**Status:** Working Draft — Public Review
+**Status:** Frozen working draft (2026-05-22) — not a finished standard
 **Editor:** Cüneyt Öztürk \<hello@falsify.dev\>
 **Reference Implementation:** [falsify](https://github.com/studio-11-co/falsify) (MIT)
 **Canonical URL:** https://spec.falsify.dev/v0.1
@@ -61,10 +61,13 @@ cases that are not YAML-specific; the two implementations that parse YAML reject
 all 20. The media type `application/vnd.prml+yaml` was registered with IANA on
 2026-09-03; registration is not endorsement.
 
-**Not settled.** This specification does not bind a criteria record to the
-execution it describes: a record establishes that a criteria object existed no
-later than a stated time, not that the evaluation ran afterwards. Execution
-linkage is out of scope for v0.1 and is the main open gap. Three statements in
+**Not settled.** A manifest and its digest carry no evidence of time on their own.
+Only a time-anchored record — a digest countersigned by an independent timestamp
+authority or entered in a public transparency log — can establish that a criteria
+object existed no later than the anchored time. Even then it does not establish
+that the evaluation ran afterwards: this specification does not bind a criteria
+record to the execution it describes. Execution linkage is out of scope for v0.1
+and is the main open gap. Three statements in
 this document promised normative adoption "with v0.2"; v0.2 froze without them and
 they are re-targeted to the v0.3 cycle (see Errata). §3 has no formal grammar, so
 an independent implementation must work from the normative prose and the
