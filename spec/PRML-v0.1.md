@@ -50,33 +50,38 @@ including the EU AI Act (Regulation 2024/1689) Articles 12 and 18.
 
 This document is **not** a finished standard. It is published under the Community
 Specification License 1.0 by a single editor; no standards body has adopted it,
-and no part of it carries a presumption of conformity with any regulation.
+and it carries no presumption of conformity with any regulation.
 
-What is settled. §3 canonicalization and this document's normative content froze
-on 2026-05-22 and have not changed since. Three defect reports were accepted on
-2026-08-23; each narrowed the set of manifests an implementation may accept, and
-none changed a canonical byte sequence or a hash. The four reference
-implementations (Python, JavaScript, Go, Rust) agree on 21 conformance vectors and
-on a negative-conformance suite of 20 cases. The media type
-`application/vnd.prml+yaml` was registered with IANA on 2026-09-03 — a
-registration, which is not an endorsement of this document or of its claims.
+**Settled.** §3 canonicalization has not changed since the freeze on 2026-05-22.
+Three defect reports accepted on 2026-08-23 added rejection requirements for
+invalid input; they changed no canonical byte sequence and no digest of any valid
+manifest. The four reference implementations (Python, JavaScript, Go, Rust) agree
+byte-for-byte on 21 conformance vectors. All four reject the 16 negative-conformance
+cases that are not YAML-specific; the two implementations that parse YAML reject
+all 20. The media type `application/vnd.prml+yaml` was registered with IANA on
+2026-09-03; registration is not endorsement.
 
-What is not settled. Binding a recorded criteria object to the execution of the
-evaluation it describes is unsolved here and is deferred to a later revision; a
-record establishes that a criteria object existed no later than a stated time,
-not that the run came afterwards. Three statements in this document promised
-normative adoption "with v0.2"; v0.2 froze without them and they are re-targeted
-to the v0.3 cycle (see Errata). §3 has no formal grammar, so an independent
-implementer must work from prose.
+**Not settled.** This specification does not bind a criteria record to the
+execution it describes: a record establishes that a criteria object existed no
+later than a stated time, not that the evaluation ran afterwards. Execution
+linkage is out of scope for v0.1 and is the main open gap. Three statements in
+this document promised normative adoption "with v0.2"; v0.2 froze without them and
+they are re-targeted to the v0.3 cycle (see Errata). §3 has no formal grammar, so
+an independent implementation must work from the normative prose and the
+conformance vectors.
 
-Who uses it. Every implementation and every public registry record to date
-originates with the editor. This document has not yet been implemented
-independently, and that is the strongest evidence it currently lacks.
+**Implementation status.** All four reference implementations were written by the
+editor, and all public registry records to date originate with the editor. No
+independent implementation is known to the editor. Independent interoperability
+therefore remains unproven.
 
-The v0.2 RFC froze on 2026-05-22; its promotion to final is deferred until
-external reviewers exist, and its three open questions will not be resolved
-unilaterally. Comments are invited at
-`github.com/studio-11-co/falsify/discussions` or by email to `hello@falsify.dev`.
+A manifest is interpreted under the rules identified by its `version` field, so
+valid v0.1 manifests continue to verify under v0.1 rules as later revisions are
+developed. The v0.2 RFC froze on 2026-05-22 and its formal comment window is
+closed; promotion to final is deferred until external reviewers exist, and its
+three open questions will not be resolved unilaterally. General feedback and
+defect reports remain welcome at
+`github.com/studio-11-co/falsify/discussions` or at `hello@falsify.dev`.
 
 ---
 

@@ -116,7 +116,7 @@ For each addition: motivation paragraph → schema diff → byte-level canonical
 
 ### §11 Conclusion (≈0.5 pages)
 
-Same shape as v0.1 conclusion: the cost of adoption is one hash function call; the cost of non-adoption is the gap that v0.1 named and v0.2 closes by addition. v0.2 is fully backwards-compatible. We invite the community to adopt the format in publication and audit pipelines. v0.3 freeze is targeted for early 2027.
+Same shape as v0.1 conclusion: the cost of adoption is one hash function call; the cost of non-adoption is the gap that v0.1 named and v0.2 closes by addition. v0.2 preserves v0.1 canonicalization and hashes for valid v0.1 manifests. We invite the community to adopt the format in publication and audit pipelines. v0.3 freeze is targeted for early 2027.
 
 ### Appendices
 
