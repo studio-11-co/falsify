@@ -8,6 +8,16 @@
 **Canonical URL:** https://spec.falsify.dev/v0.1
 **License:** [Community Specification License 1.0](./LICENSE.md) — see [Scope.md](./Scope.md) and [Notices.md](./Notices.md)
 
+> **Correction, 2026-09-11.** §2.3.4 previously read "a registry receipt proves
+> the bar was locked before the run". That overstates what a receipt establishes,
+> and it contradicts both the paragraph that follows it and the threat model in
+> §8.1: `created_at` defends against retroactive editing, anchoring defends
+> against back-dating, and neither establishes that the evaluation ran after the
+> commitment. The sentence has been narrowed to what a receipt does evidence —
+> existence no later than the anchored time, and non-substitution since. No
+> requirement, field, algorithm or conformance vector is affected, and no
+> implementation needs to change.
+
 > **Licence change, 2026-08-29.** This specification was previously published
 > under CC BY 4.0, which grants copyright permissions only and expressly grants
 > no patent rights — the wrong instrument for a document meant to be
@@ -38,12 +48,35 @@ including the EU AI Act (Regulation 2024/1689) Articles 12 and 18.
 
 ## Status of This Memo
 
-This document is a working draft published for public review. It is **not** a
-finished standard. Comments are invited at
-`github.com/studio-11-co/falsify/discussions` or by email to `hello@falsify.dev`.
+This document is **not** a finished standard. It is published under the Community
+Specification License 1.0 by a single editor; no standards body has adopted it,
+and no part of it carries a presumption of conformity with any regulation.
 
-The next planned revision (v0.2) will incorporate review feedback and freeze the
-canonicalization rules of §3.
+What is settled. §3 canonicalization and this document's normative content froze
+on 2026-05-22 and have not changed since. Three defect reports were accepted on
+2026-08-23; each narrowed the set of manifests an implementation may accept, and
+none changed a canonical byte sequence or a hash. The four reference
+implementations (Python, JavaScript, Go, Rust) agree on 21 conformance vectors and
+on a negative-conformance suite of 20 cases. The media type
+`application/vnd.prml+yaml` was registered with IANA on 2026-09-03 — a
+registration, which is not an endorsement of this document or of its claims.
+
+What is not settled. Binding a recorded criteria object to the execution of the
+evaluation it describes is unsolved here and is deferred to a later revision; a
+record establishes that a criteria object existed no later than a stated time,
+not that the run came afterwards. Three statements in this document promised
+normative adoption "with v0.2"; v0.2 froze without them and they are re-targeted
+to the v0.3 cycle (see Errata). §3 has no formal grammar, so an independent
+implementer must work from prose.
+
+Who uses it. Every implementation and every public registry record to date
+originates with the editor. This document has not yet been implemented
+independently, and that is the strongest evidence it currently lacks.
+
+The v0.2 RFC froze on 2026-05-22; its promotion to final is deferred until
+external reviewers exist, and its three open questions will not be resolved
+unilaterally. Comments are invited at
+`github.com/studio-11-co/falsify/discussions` or by email to `hello@falsify.dev`.
 
 ---
 
@@ -241,8 +274,11 @@ signed store, not a log. It is useful for in-browser verification
 and as corroboration, but it **SHOULD NOT** be relied on as the sole
 audit-grade anchor for high-risk or regulatory use; select at least one
 additional independent mechanism from the list above. In every case a
-registry receipt proves the bar was locked before the run; it never
-proves the result.
+registry receipt evidences that a specific criteria object existed no later
+than the anchored time and is unchanged since. It does **not** evidence that
+the evaluation ran afterwards — establishing that order requires a separate
+execution-side record, dated independently of this one — and it never proves
+the result.
 
 This distinction matters for §8.1 threat-model analysis: the
 threat that `created_at` defends against is the producer **retroactively
