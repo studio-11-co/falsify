@@ -126,7 +126,7 @@ This paper makes the following contributions:
 
 \subsection{Non-goals}
 
-PRML does not establish whether a metric is \emph{correct}; it establishes that it was \emph{committed before being tested}. PRML does not prove dataset \emph{legitimacy} (who labeled it, with what bias); it proves that the evaluator used the bytes they claimed. PRML does not replace model cards, datasheets, or red-team reports; it underpins them. The position is precise: PRML is a cryptographic floor, not a substitute for any layer above it.
+PRML does not establish whether a metric is \emph{correct}; it establishes that a specific criteria object \emph{existed no later than a stated, independently anchored time} and has not changed since. It does not establish that the evaluation ran after that time; that ordering rests on a separate execution-side record. PRML does not prove dataset \emph{legitimacy} (who labeled it, with what bias), nor that the evaluation was in fact run against the named bytes; it fixes \emph{which dataset digest was committed}, so that a later disclosure either reproduces that digest or does not. PRML does not replace model cards, datasheets, or red-team reports; it underpins them. The position is precise: PRML is a cryptographic floor, not a substitute for any layer above it.
 
 \section{Background and related work}
 \label{sec:related}
