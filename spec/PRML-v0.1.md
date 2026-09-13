@@ -96,7 +96,9 @@ therefore remains unproven.
 
 A manifest is interpreted under the rules identified by its `version` field, so
 valid v0.1 manifests continue to verify under v0.1 rules as later revisions are
-developed. The v0.2 RFC froze on 2026-05-22 and its formal comment window is
+developed. The compatibility and deprecation commitments for this specification,
+its conformance corpus, the packaged implementations and the public registry are
+stated in [COMPATIBILITY.md](COMPATIBILITY.md) (adopted 2026-09-13). The v0.2 RFC froze on 2026-05-22 and its formal comment window is
 closed; promotion to final is deferred until external reviewers exist, and its
 three open questions will not be resolved unilaterally. General feedback and
 defect reports remain welcome at

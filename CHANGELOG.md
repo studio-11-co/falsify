@@ -6,6 +6,16 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+- **`spec/COMPATIBILITY.md`** — compatibility and deprecation policy, adopted
+  2026-09-13 and linked from the specification's Status section: what a
+  specification version, a package version and a registry record promise; how
+  anything is deprecated (two minor releases or six months, stderr warning,
+  migration note); vectors are added and withdrawn, never changed.
+- v0.2 forward-promises dispositioned (Errata 2026-09-13, editorial): metric
+  registry withdrawn; signature sidecar re-scoped to `spec/v0.3-backlog/06-signature-sidecar.md`
+  with an Ed25519 test vector; no `producer.tier` field, ever.
+
 ## [0.4.0] — 2026-09-13
 
 Canonical output changes for some inputs (v0.2 integral-float thresholds), hence a

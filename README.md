@@ -160,6 +160,8 @@ Two of the four are distributed as packages; two exist only in this repository. 
 | Go | in-repo only (`impl/go/`) | `hash` `verify` `test-vectors` |
 | Rust | in-repo only (`impl/rust/`) | `hash` `verify` `test-vectors` |
 
+**What we promise across versions:** [`spec/COMPATIBILITY.md`](spec/COMPATIBILITY.md) (adopted 2026-09-13) — a manifest valid under `prml/X.Y` stays valid under `prml/X.Y` forever; vectors are added, never changed; nothing is removed without two minor releases' notice.
+
 **Writing your own?** [`spec/IMPLEMENTERS-GUIDE.md`](spec/IMPLEMENTERS-GUIDE.md) — where every rule is stated, which corpus to check against (13 + 8 + 92 positive vectors, 20 reject), the exact commands, what "conformant" means, and the mistakes the first three implementations made. No independent implementation exists yet; the first one gets listed here.
 
 
