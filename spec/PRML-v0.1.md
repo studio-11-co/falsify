@@ -67,7 +67,13 @@ authority or entered in a public transparency log — can establish that a crite
 object existed no later than the anchored time. Even then it does not establish
 that the evaluation ran afterwards: this specification does not bind a criteria
 record to the execution it describes. Execution linkage is out of scope for v0.1
-and is the main open gap. Three statements in
+and is the main open gap. A time-anchored record is also silent on who held the
+criteria before the run: if the party that sets the criteria and the party whose
+work is assessed can communicate outside the record — the ordinary case when both
+sit inside one organisation — the anchor remains valid and the assessment can
+still be compromised. This specification binds bytes to a time; it does not
+establish that the criteria were withheld from the party they were meant to test.
+Three statements in
 this document promised normative adoption "with v0.2"; v0.2 froze without them and
 they are re-targeted to the v0.3 cycle (see Errata). §3 has no formal grammar, so
 an independent implementation must work from the normative prose and the
