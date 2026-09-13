@@ -86,7 +86,7 @@ See [docs/CASE_STUDIES.md](docs/CASE_STUDIES.md) for three concrete adoption sto
 
 **Open `*.prml.yaml` in your IDE:** as of May 2026 the PRML JSON Schema is in the [SchemaStore](https://github.com/SchemaStore/schemastore/pull/5673) catalog. VS Code, JetBrains IDEs, Helix, Zed, and anything using `yaml-language-server` autocomplete and validate manifest files out of the box. No config.
 
-**Try it without installing:** [`registry.falsify.dev`](https://registry.falsify.dev) — paste a PRML manifest, get a SHA-256 permalink and a README badge. No account, no server-side state beyond the hash.
+**Try it without installing:** [`registry.falsify.dev`](https://registry.falsify.dev) — paste a PRML manifest, get a SHA-256 permalink and a README badge. No account, the manifest you commit is stored and served publicly.
 
 **Add it to your CI in five lines:** [`studio-11-co/prml-verify-action@v2`](https://github.com/studio-11-co/prml-verify-action) — composite GitHub Action wrapping the falsify CLI ([listed on the GitHub Marketplace](https://github.com/marketplace/actions/prml-verify)). Block merges on tampered or regressed eval claims. Optional public registry receipt (a convenience index, not a cryptographic timestamping authority — see [spec §2.3.4](https://spec.falsify.dev/v0.1#created-at)).
 

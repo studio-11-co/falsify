@@ -64,4 +64,41 @@
     <loc>https://spec.falsify.dev/v0.2-comments/</loc>
     <lastmod>2026-08-13</lastmod>
   </url>
+
+  <url>
+    <loc>https://spec.falsify.dev/COMPATIBILITY.md</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://spec.falsify.dev/IMPLEMENTERS-GUIDE.md</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://spec.falsify.dev/grammar/README.md</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://spec.falsify.dev/grammar/prml-canonical.abnf</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://spec.falsify.dev/test-vectors/edge/README.md</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://spec.falsify.dev/v0.3-backlog/06-signature-sidecar.md</loc>
+    <lastmod>2026-09-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
 </urlset>

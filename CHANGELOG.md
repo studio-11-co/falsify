@@ -53,8 +53,8 @@ implementer's guide.
 - `spec/grammar/candidate-vectors-2026-09-13.json`: 83 inputs at the edges of
   the plain-scalar predicate and the float rule, with expected bytes and hash
   and each reference implementation's agreement on 2026-09-13 — kept as the
-  dated pre-correction snapshot; 82 of the 83 were promoted to the edge suite the
-  same day (see below).
+  dated pre-correction snapshot; all 83, plus ten boundary vectors for the v0.2
+  by-value rule, form the 92-vector edge suite (see below).
 
 ### Changed
 - §3.5 no longer calls the reference canonicalizer "normative for this

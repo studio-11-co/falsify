@@ -460,7 +460,7 @@ function loadManifest(filePath) {
     assertNoDuplicateNames(raw);
     return assertNoProtoKeys(JSON.parse(raw));
   }
-  // Otherwise use js-yaml. Declared dependency since 0.1.14: the canonical media
+  // Otherwise use js-yaml. Declared dependency since 0.2.0: the canonical media
   // type is application/vnd.prml+yaml, so a verifier that cannot read YAML cannot
   // read the format. It stays behind require() so a JSON-only caller in a locked-down
   // environment still works if the module is absent.
