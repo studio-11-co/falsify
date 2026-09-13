@@ -32,7 +32,7 @@ Exit codes match the spec: `0` PASS, `2` BAD (bad input/spec), `3` TAMPERED, `10
 
 ## What this is
 
-About 450 lines of Go, zero runtime dependencies. The canonicalizer is hand-rolled to match PyYAML's `safe_dump` output exactly, with the same plain-scalar predicate the JavaScript implementation uses (PyYAML rules, not Go's YAML library defaults).
+About 450 lines of Go, zero runtime dependencies. The canonicalizer implements the §3.6 formal grammar: the plain-scalar predicate (`spec/grammar/README.md` §C5) and the float rule (§C4) are transcribed from the specification, not approximated from PyYAML — the 2026-09-13 audit found 21 inputs on which the earlier hand-rolled approximation was wrong. Verified on the 21 conformance vectors and the 82-vector edge suite., with the same plain-scalar predicate the JavaScript implementation uses (PyYAML rules, not Go's YAML library defaults).
 
 Notably, Go's standard library handles two of the three portability findings **without workarounds** that the JavaScript implementation needed:
 

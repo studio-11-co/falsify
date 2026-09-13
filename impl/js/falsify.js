@@ -26,15 +26,23 @@ const crypto = require('crypto');
 // Canonicalization
 // ─────────────────────────────────────────────────────────────────────────
 
-const YAML_INDICATORS = ['?', ':', ',', '[', ']', '{', '}', '#', '&', '*',
-                         '!', '|', '>', "'", '"', '%', '@', '`'];
-
-const PLAIN_BOOL_NULL = new Set([
-  'y','Y','yes','Yes','YES','n','N','no','No','NO',
-  'true','True','TRUE','false','False','FALSE',
-  'on','On','ON','off','Off','OFF',
-  'null','Null','NULL','~','',
-]);
+// §3.6 / README §C5 — the plain-scalar predicate, stated exactly.
+// A string renders plain iff P1–P6 all hold; otherwise single-quoted.
+// P2: first-character indicators that always force quoting.
+const P2_FIRST = new Set(['#', ',', '[', ']', '{', '}', '&', '*', '!', '|', '>', "'", '"', '%', '@', '`']);
+// P6: YAML 1.1 implicit resolvers — a plain scalar matching one of these would
+// read back as a non-string, so it must be quoted. Transcribed from the
+// specification (spec/grammar/README.md §C5); do not "simplify".
+const P6_RESOLVERS = [
+  /^(?:yes|Yes|YES|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$/,
+  /^(?:[-+]?(?:[0-9][0-9_]*)\.[0-9_]*(?:[eE][-+][0-9]+)?|\.[0-9][0-9_]*(?:[eE][-+][0-9]+)?|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\.[0-9_]*|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$/,
+  /^(?:[-+]?0b[0-1_]+|[-+]?0[0-7_]+|[-+]?(?:0|[1-9][0-9_]*)|[-+]?0x[0-9a-fA-F_]+|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$/,
+  /^(?:~|null|Null|NULL)$/,
+  /^(?:[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]|[0-9][0-9][0-9][0-9]-[0-9][0-9]?-[0-9][0-9]?(?:[Tt]|[ \t]+)[0-9][0-9]?:[0-9][0-9]:[0-9][0-9](?:\.[0-9]*)?(?:[ \t]*(?:Z|[-+][0-9][0-9]?(?::[0-9][0-9])?))?)$/,
+  /^(?:<<)$/,
+  /^(?:=)$/,
+  /^(?:!|&|\*)$/,
+];
 
 // Fields whose value MUST round-trip as a float even when integer-valued.
 // PyYAML preserves float-ness via its number type; JSON parsers in many
@@ -57,36 +65,27 @@ function floatFieldsForRecord(obj) {
   return floatFieldsFor(obj && obj.version);
 }
 
-function looksLikeNumber(s) {
-  if (/^[-+]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)([eE][-+]?[0-9]+)?$/.test(s)) return true;
-  if (/^[-+]?[0-9]+$/.test(s)) return true;
-  if (/^[-+]?0[xX][0-9a-fA-F]+$/.test(s)) return true;
-  if (/^[-+]?0[oO]?[0-7]+$/.test(s)) return true;
-  if (/^[-+]?\.(inf|Inf|INF)$/.test(s)) return true;
-  if (/^\.(nan|NaN|NAN)$/.test(s)) return true;
-  return false;
-}
-
-function looksLikeTimestamp(s) {
-  return /^\d{4}-\d{2}-\d{2}([Tt ]\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?$/.test(s);
-}
-
+// Returns true when the string must be single-quoted (i.e. it is NOT a plain
+// scalar under README §C5 P1–P6). Whitespace in P3–P5 is U+0020 only: every
+// other character PyYAML would treat as whitespace is outside the §3.4
+// portable set and is rejected before this code runs.
 function needsQuoting(s) {
   if (typeof s !== 'string') return false;
-  if (s.length === 0) return true;
-  if (PLAIN_BOOL_NULL.has(s)) return true;
-  if (looksLikeNumber(s)) return true;
-  if (looksLikeTimestamp(s)) return true;
+  if (s.length === 0) return true;                                  // P1
   const first = s[0];
-  if (YAML_INDICATORS.includes(first)) return true;
-  if (first === '-' && s.length > 1 && s[1] === ' ') return true;
-  if (first === ' ' || first === '\t') return true;
-  const last = s[s.length - 1];
-  if (last === ' ' || last === '\t') return true;
-  if (s.includes(': ')) return true;
-  if (s.includes(' #')) return true;
-  if (s.endsWith(':')) return true;
-  if (/[\x00-\x08\x0b-\x1f\x7f]/.test(s)) return true;
+  if (P2_FIRST.has(first)) return true;                             // P2
+  if ((first === '?' || first === ':' || first === '-') &&
+      (s.length === 1 || s[1] === ' ')) return true;                // P3
+  if (first === ' ' || s[s.length - 1] === ' ') return true;        // P4
+  for (let i = 1; i < s.length; i++) {                              // P5
+    const c = s[i];
+    if (c === ':' && (i === s.length - 1 || s[i + 1] === ' ')) return true;
+    if (c === '#' && s[i - 1] === ' ') return true;
+  }
+  for (const re of P6_RESOLVERS) if (re.test(s)) return true;       // P6
+  // Defensive: control characters never reach here (§3.4 rejects them), but
+  // if they did, quoting is the safe failure.
+  if (/[\x00-\x1f\x7f]/.test(s)) return true;
   return false;
 }
 
@@ -441,12 +440,15 @@ function loadManifest(filePath) {
     assertNoDuplicateNames(raw);
     return assertNoProtoKeys(JSON.parse(raw));
   }
-  // Otherwise use js-yaml if available (optional dependency).
+  // Otherwise use js-yaml. Declared dependency since 0.1.14: the canonical media
+  // type is application/vnd.prml+yaml, so a verifier that cannot read YAML cannot
+  // read the format. It stays behind require() so a JSON-only caller in a locked-down
+  // environment still works if the module is absent.
   let yaml;
   try {
     yaml = require('js-yaml');
   } catch (e) {
-    throw new Error('YAML loading requires js-yaml: npm install js-yaml. Or pass a .json file.');
+    throw new Error('YAML loading requires js-yaml (a declared dependency of falsify-js; reinstall the package, or run: npm install js-yaml). Or pass a .json file.');
   }
   // CORE_SCHEMA: no custom/JS type tags (e.g. !!js/function) can be
   // instantiated from untrusted manifest content.

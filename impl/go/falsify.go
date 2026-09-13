@@ -37,90 +37,61 @@ import (
 // Canonicalization
 // ─────────────────────────────────────────────────────────────────────────
 
-// yamlIndicators are characters that, when at the start of a string, force
-// PyYAML to quote it. We match PyYAML's behaviour to reproduce its bytes.
-var yamlIndicators = map[byte]bool{
-	'?': true, ':': true, ',': true, '[': true, ']': true,
-	'{': true, '}': true, '#': true, '&': true, '*': true,
-	'!': true, '|': true, '>': true, '\'': true, '"': true,
-	'%': true, '@': true, '`': true,
+var p2First = map[rune]bool{
+	'#': true, ',': true, '[': true, ']': true, '{': true, '}': true,
+	'&': true, '*': true, '!': true, '|': true, '>': true, '\'': true,
+	'"': true, '%': true, '@': true, '`': true,
 }
 
-// plainBoolNullSet contains strings that look like bool/null and would be
-// re-resolved by a YAML 1.1 parser if left unquoted.
-var plainBoolNullSet = map[string]bool{
-	"y": true, "Y": true, "yes": true, "Yes": true, "YES": true,
-	"n": true, "N": true, "no": true, "No": true, "NO": true,
-	"true": true, "True": true, "TRUE": true,
-	"false": true, "False": true, "FALSE": true,
-	"on": true, "On": true, "ON": true,
-	"off": true, "Off": true, "OFF": true,
-	"null": true, "Null": true, "NULL": true,
-	"~": true, "": true,
+// p6Resolvers: YAML 1.1 implicit resolvers. A plain scalar matching one of
+// these would read back as a non-string, so it must be quoted. Transcribed
+// from spec/grammar/README.md §C5 — do not "simplify".
+var p6Resolvers = []*regexp.Regexp{
+	regexp.MustCompile(`^(?:yes|Yes|YES|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$`),
+	regexp.MustCompile(`^(?:[-+]?(?:[0-9][0-9_]*)\.[0-9_]*(?:[eE][-+][0-9]+)?|\.[0-9][0-9_]*(?:[eE][-+][0-9]+)?|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\.[0-9_]*|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$`),
+	regexp.MustCompile(`^(?:[-+]?0b[0-1_]+|[-+]?0[0-7_]+|[-+]?(?:0|[1-9][0-9_]*)|[-+]?0x[0-9a-fA-F_]+|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$`),
+	regexp.MustCompile(`^(?:~|null|Null|NULL)$`),
+	regexp.MustCompile(`^(?:[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]|[0-9][0-9][0-9][0-9]-[0-9][0-9]?-[0-9][0-9]?(?:[Tt]|[ \t]+)[0-9][0-9]?:[0-9][0-9]:[0-9][0-9](?:\.[0-9]*)?(?:[ \t]*(?:Z|[-+][0-9][0-9]?(?::[0-9][0-9])?))?)$`),
+	regexp.MustCompile(`^(?:<<)$`),
+	regexp.MustCompile(`^(?:=)$`),
+	regexp.MustCompile(`^(?:!|&|\*)$`),
 }
 
-// numberRegexes — strings matching any of these would be parsed as numbers
-// in YAML 1.1 plain-scalar resolution and therefore need quoting.
-var (
-	floatRegex     = regexp.MustCompile(`^[-+]?(\.[0-9]+|[0-9]+(\.[0-9]*)?)([eE][-+]?[0-9]+)?$`)
-	intRegex       = regexp.MustCompile(`^[-+]?[0-9]+$`)
-	hexRegex       = regexp.MustCompile(`^[-+]?0[xX][0-9a-fA-F]+$`)
-	octalRegex     = regexp.MustCompile(`^[-+]?0[oO]?[0-7]+$`)
-	infRegex       = regexp.MustCompile(`^[-+]?\.(inf|Inf|INF)$`)
-	nanRegex       = regexp.MustCompile(`^\.(nan|NaN|NAN)$`)
-	timestampRegex = regexp.MustCompile(`^\d{4}-\d{2}-\d{2}([Tt ]\d{2}:\d{2}:\d{2}(\.\d+)?(Z|[+-]\d{2}:?\d{2})?)?$`)
-	controlChars   = regexp.MustCompile("[\x00-\x08\x0b-\x1f\x7f]")
-)
+var controlChars = regexp.MustCompile("[\x00-\x1f\x7f]")
 
-func looksLikeNumber(s string) bool {
-	return floatRegex.MatchString(s) ||
-		intRegex.MatchString(s) ||
-		hexRegex.MatchString(s) ||
-		octalRegex.MatchString(s) ||
-		infRegex.MatchString(s) ||
-		nanRegex.MatchString(s)
-}
-
-func looksLikeTimestamp(s string) bool {
-	return timestampRegex.MatchString(s)
-}
-
+// needsQuoting returns true when s is NOT a plain scalar under README §C5
+// P1–P6. Whitespace in P3–P5 is U+0020 only: every other character PyYAML
+// would treat as whitespace is outside the §3.4 portable set and is rejected
+// before this code runs.
 func needsQuoting(s string) bool {
-	if len(s) == 0 {
+	if len(s) == 0 { // P1
 		return true
 	}
-	if plainBoolNullSet[s] {
+	r := []rune(s)
+	first := r[0]
+	if p2First[first] { // P2
 		return true
 	}
-	if looksLikeNumber(s) {
+	if (first == '?' || first == ':' || first == '-') && (len(r) == 1 || r[1] == ' ') { // P3
 		return true
 	}
-	if looksLikeTimestamp(s) {
+	if first == ' ' || r[len(r)-1] == ' ' { // P4
 		return true
 	}
-	first := s[0]
-	if yamlIndicators[first] {
-		return true
+	for i := 1; i < len(r); i++ { // P5
+		if r[i] == ':' && (i == len(r)-1 || r[i+1] == ' ') {
+			return true
+		}
+		if r[i] == '#' && r[i-1] == ' ' {
+			return true
+		}
 	}
-	if first == '-' && len(s) > 1 && s[1] == ' ' {
-		return true
+	for _, re := range p6Resolvers { // P6
+		if re.MatchString(s) {
+			return true
+		}
 	}
-	if first == ' ' || first == '\t' {
-		return true
-	}
-	last := s[len(s)-1]
-	if last == ' ' || last == '\t' {
-		return true
-	}
-	if strings.Contains(s, ": ") {
-		return true
-	}
-	if strings.Contains(s, " #") {
-		return true
-	}
-	if strings.HasSuffix(s, ":") {
-		return true
-	}
+	// Defensive: control characters never reach here (§3.4 rejects them).
 	if controlChars.MatchString(s) {
 		return true
 	}

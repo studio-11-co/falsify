@@ -33,7 +33,7 @@ Exit codes match the spec: `0` PASS, `2` BAD (bad input/spec), `3` TAMPERED, `10
 
 ## What this is
 
-About 600 lines of Rust, two runtime dependencies (`serde_json` for JSON-with-preserved-number-text parsing, `sha2` for SHA-256 hashing). The canonicalizer is hand-rolled to match PyYAML's `safe_dump` output exactly. We do not use any YAML library; all the work happens against the JSON source via serde_json.
+About 650 lines of Rust, four runtime dependencies (`regex` for the §3.6 C5 resolver patterns, `serde_json` for JSON-with-preserved-number-text parsing, `sha2` for SHA-256 hashing). The canonicalizer implements the §3.6 formal grammar: the plain-scalar predicate (`spec/grammar/README.md` §C5) and the float rule (§C4) are transcribed from the specification, not approximated from PyYAML — the 2026-09-13 audit found 21 inputs on which the earlier hand-rolled approximation was wrong. Verified on the 21 conformance vectors and the 82-vector edge suite. We do not use any YAML library; all the work happens against the JSON source via serde_json.
 
 Notable design points:
 

@@ -139,13 +139,23 @@ CI has been green. Four classes:
 | C — float notation | `threshold: 1e-05`, `-1e-05` | Rust only | renders `0.00001`: it reformats only when serde/ryu already chose exponent notation, so the *e* < −4 rule is never applied (ryu switches at 1e-6; Python at 1e-5) |
 | D — v0.2 float-ness | `threshold: 1300.0` under `prml/0.2` | JavaScript only | `JSON.parse` yields the number 1300; the distinction the grammar (C6) makes cannot be observed |
 
-**Status.** The candidate vectors are published, not promoted: adding them to the
-conformance suite today would turn the CI red for three implementations. They
-are the acceptance test for correcting those implementations, which is release
-work with its own review. Until then the only honest statement about
-cross-language agreement is the one the specification already makes: **the four
-reference implementations agree byte-for-byte on the 21 conformance vectors.**
-Not on arbitrary input.
+**Status (updated later the same day).** Classes A, B and C were corrected on
+2026-09-13: the JavaScript, Go and Rust predicates are now transcriptions of
+§C5 (the resolver patterns verbatim), Rust's float rendering implements §C4
+from the exponent, and the registry's `canonical.js` was corrected in step.
+After correction: Python 83/83, Go 83/83, Rust 83/83, JavaScript 82/83. The 82
+agreeing inputs were promoted to `spec/test-vectors/edge/` and run in CI for all
+four implementations. `candidate-vectors-2026-09-13.json` is kept as the dated
+**pre-correction** snapshot; its `implementation_status_2026_09_13` field is
+what was measured before the fix, not the current state.
+
+Class D (`CV-V2b`) is not a bug in the same sense: JavaScript cannot observe the
+distinction C6 makes, and the v0.2 RFC never stated the rule the vectors encode.
+It is a specification decision — canonicalize v0.2 `threshold` by parsed type
+(C6 as written; requires raw-number-preserving parsers in JavaScript and the
+registry) or by value (integral → integer spelling; changes no published digest;
+Python/Go/Rust change for `1300.0` inputs) — and it stays out of every suite
+until made.
 
 ## Gaps this grammar makes visible (for v0.3, not changed here)
 

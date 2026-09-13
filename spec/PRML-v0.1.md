@@ -79,10 +79,13 @@ they are re-targeted to the v0.3 cycle (see Errata). §3 has had a formal
 grammar since 2026-09-13 (§3.6), verified against all 21 conformance vectors by
 an implementation written from the grammar alone. What that verification also
 showed is now the open item in its place: the four reference implementations
-agree byte-for-byte on the 21 conformance vectors, and a wider 83-input battery
+agree byte-for-byte on the 21 conformance vectors; a wider 83-input battery
 published the same day found 21 inputs, outside the vectors, on which three of
-them depart from the grammar. Agreement is established on the vectors, not on
-arbitrary input.
+them departed from the grammar. They were corrected the same day, and 82 of
+those inputs now run in CI as an edge suite (`spec/test-vectors/edge/`). One
+case is open: a v0.2 `threshold` spelled `1300.0`, because the v0.2 RFC does
+not say whether `threshold` canonicalizes by parsed type or by value, and a
+JavaScript parser cannot observe the former.
 
 **Implementation status.** All four reference implementations were written by the
 editor, and all public registry records to date originate with the editor. No
@@ -429,12 +432,16 @@ already emits.
 Stating the plain-scalar predicate exactly also made its edges testable. A
 battery of 83 inputs built for that purpose
 ([`spec/grammar/candidate-vectors-2026-09-13.json`](grammar/candidate-vectors-2026-09-13.json))
-showed that three of the four reference implementations depart from the grammar
-on 21 inputs, none of which is covered by a conformance vector (README,
-"Divergences"). Those inputs are published as candidate vectors. They are not
-part of the conformance suite, and until they are, cross-language agreement
-between the four reference implementations is established on the 21 vectors of
-Appendix B and not on arbitrary input.
+showed that three of the four reference implementations departed from the
+grammar on 21 inputs, none of which is covered by a conformance vector (README,
+"Divergences"). The three implementations were corrected the same day to the
+predicate and the float rule as stated, and 82 of the 83 inputs were promoted to
+an **edge suite** ([`spec/test-vectors/edge/`](test-vectors/edge/)) that the
+multi-language CI runs alongside Appendix B. One input remains outside every
+suite: a v0.2 manifest whose `threshold` is spelled `1300.0`. Whether that
+renders as `1300.0` (its parsed type, which a JavaScript JSON or YAML parser
+cannot observe) or as `1300` (its value) is a decision the v0.2 RFC does not
+make; until it does, C6 stands as written and that case is recorded, not tested.
 
 ---
 
@@ -833,11 +840,15 @@ Conformance is enforceable via the falsify reference test suite
 >    implementations do not reproduce the reference bytes:** over-quoting `?x`,
 >    `y`, `1e5`; under-quoting `<<`, `1:30`, `1_000`, a lone `-`; Rust rendering
 >    a `threshold` of 1e-05 as `0.00001`; JavaScript unable to distinguish
->    `1300.0` from `1300` under v0.2. They are published as candidate vectors
->    (`spec/grammar/candidate-vectors-2026-09-13.json`) and stay outside the
->    conformance suite until the implementations are corrected. The claim this
->    document makes — agreement on the 21 vectors of Appendix B — is unchanged
->    and was re-verified the same day.
+>    `1300.0` from `1300` under v0.2. All but the last were corrected the same
+>    day and the 82 inputs now run in CI as an edge suite
+>    (`spec/test-vectors/edge/`); the pre-correction measurement is kept as a
+>    dated snapshot in `spec/grammar/candidate-vectors-2026-09-13.json`. The
+>    remaining input — `1300.0` under v0.2 — awaits a decision the v0.2 RFC does
+>    not make: whether `threshold` canonicalizes by parsed type or by value. The
+>    claim this document makes — agreement on the 21 vectors of Appendix B — is
+>    unchanged and was re-verified the same day; the four implementations now
+>    also agree on the 82 edge vectors.
 
 ---
 

@@ -35,8 +35,9 @@ numbers follow [Semantic Versioning](https://semver.org).
   checks in CI. No canonical byte or digest changes.
 - `spec/grammar/candidate-vectors-2026-09-13.json`: 83 inputs at the edges of
   the plain-scalar predicate and the float rule, with expected bytes and hash
-  and each reference implementation's agreement on 2026-09-13. **Not** in the
-  conformance suite (see below).
+  and each reference implementation's agreement on 2026-09-13 — kept as the
+  dated pre-correction snapshot; 82 of the 83 were promoted to the edge suite the
+  same day (see below).
 
 ### Changed
 - §3.5 no longer calls the reference canonicalizer "normative for this
@@ -45,15 +46,34 @@ numbers follow [Semantic Versioning](https://semver.org).
 - `multi-lang-conformance.yml` summary notice said "14 reject-vectors"; the
   suite has 20 (16 for the JSON-only implementations) since 0.3.13.
 
-### Known divergences (published, not fixed here)
-- Running the 83-input battery through all four reference implementations:
-  62 agree, **21 do not** — none covered by a conformance vector, so the daily CI
-  stayed green. JavaScript, Go and Rust over-quote `?x` `:x` `y` `n` `1e5`
-  `0o17` and under-quote `-` `<<` `=` `1_000` `1:30` `0b101`; Rust renders a
-  `threshold` of `1e-05` as `0.00001`; JavaScript cannot distinguish `1300.0`
-  from `1300` under v0.2. Root causes and classes in `spec/grammar/README.md`.
-  Correcting the three implementations is separate release work; the candidate
-  vectors are its acceptance test.
+### Fixed (cross-language, same day as the grammar)
+- **JavaScript, Go and Rust reference implementations corrected to the §3.6
+  grammar.** The 83-input battery run through all four implementations gave 62
+  agreements and 21 divergences — none covered by a conformance vector, so the
+  daily CI had stayed green. The three hand-rolled plain-scalar predicates
+  (ported from one another) over-quoted `?x` `:x` `y` `n` `1e5` `0o17` and
+  under-quoted `-` `<<` `=` `1_000` `1:30` `0b101`; Rust rendered a `threshold`
+  of `1e-05` as `0.00001`. All three predicates are now transcriptions of README
+  §C5 (P1–P6 plus the YAML 1.1 resolver patterns verbatim); Rust's float
+  rendering implements §C4 from the exponent rather than from ryu's choice of
+  notation (Rust gains the `regex` crate). The registry's `canonical.js` was
+  corrected in step; all six publicly listed registry records re-derive their
+  stored hash under the corrected canonicalizer. Result: Python 83/83, Go 83/83,
+  Rust 83/83, JavaScript 82/83.
+- **Edge suite** `spec/test-vectors/edge/edge-vectors.json` (82 vectors,
+  EV-001..EV-082) added and wired into `multi-lang-conformance.yml` for all four
+  implementations. Separate from the 21 normative vectors of Appendix B by
+  design (`spec/test-vectors/edge/README.md`). `FACTS.env` gains
+  `VECTORS_EDGE=82`.
+
+### Open (recorded, not tested)
+- `CV-V2b` — a v0.2 manifest with `threshold: 1300.0`. Python/Go/Rust render
+  `1300.0` (parsed type); JavaScript and the registry render `1300`, because
+  neither `JSON.parse` nor js-yaml can distinguish the two spellings. The v0.2
+  RFC does not say whether `threshold` canonicalizes by type or by value; the
+  v0.2 ROADMAP had proposed "always at least one decimal place" and the frozen
+  candidate vectors went the other way. A specification decision, not a bug
+  fix; kept out of every suite until made.
 
 ## [0.3.14] — 2026-08-24
 

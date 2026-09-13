@@ -4,12 +4,13 @@
 // candidate vectors byte-for-byte, including the small-magnitude float
 // rendering required by Finding 4 (TV-018).
 //
-// Single binary. Three runtime dependencies: serde_json (with
+// Single binary. Four runtime dependencies: regex (the §3.6 C5 resolver
+// patterns, transcribed verbatim — added 2026-09-13), serde_json (with
 // preserve_order for deterministic key handling at the JSON layer),
 // sha2 (for SHA-256), and unicode-normalization (to reject non-NFC
 // strings, which read identically and hash differently). The
-// canonicalizer is hand-rolled to match PyYAML's safe_dump output
-// exactly; we do not use any YAML library.
+// canonicalizer implements the §3.6 grammar (README §C5 predicate, §C4 float
+// rule); we do not use any YAML library.
 //
 // Spec:    https://spec.falsify.dev/v0.1
 // Vectors: https://github.com/studio-11-co/falsify/tree/main/spec/test-vectors
@@ -21,6 +22,7 @@
 //
 // License: MIT.
 
+use regex::Regex;
 use serde_json::{Number, Value};
 use unicode_normalization::is_nfc;
 use sha2::{Digest, Sha256};
@@ -28,6 +30,7 @@ use std::collections::BTreeMap;
 use std::env;
 use std::fs;
 use std::process;
+use std::sync::OnceLock;
 
 mod linkage;
 
@@ -35,176 +38,68 @@ mod linkage;
 // Canonicalization
 // ─────────────────────────────────────────────────────────────────────────
 
-const YAML_INDICATORS: &[char] = &[
-    '?', ':', ',', '[', ']', '{', '}', '#', '&', '*', '!', '|', '>', '\'', '"', '%', '@', '`',
+// §3.6 / README §C5 — the plain-scalar predicate, stated exactly. A string
+// renders plain iff P1–P6 all hold; otherwise it is single-quoted.
+//
+// P6 patterns are the YAML 1.1 implicit resolvers, transcribed from
+// spec/grammar/README.md §C5. A plain scalar matching one would read back as
+// a non-string. Do not "simplify" them: the 2026-09-13 divergences came from
+// a hand-rolled approximation of exactly this list.
+fn p6_resolvers() -> &'static [Regex] {
+    static R: OnceLock<Vec<Regex>> = OnceLock::new();
+    R.get_or_init(|| {
+        [
+            r"^(?:yes|Yes|YES|no|No|NO|true|True|TRUE|false|False|FALSE|on|On|ON|off|Off|OFF)$",
+            r"^(?:[-+]?(?:[0-9][0-9_]*)\.[0-9_]*(?:[eE][-+][0-9]+)?|\.[0-9][0-9_]*(?:[eE][-+][0-9]+)?|[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\.[0-9_]*|[-+]?\.(?:inf|Inf|INF)|\.(?:nan|NaN|NAN))$",
+            r"^(?:[-+]?0b[0-1_]+|[-+]?0[0-7_]+|[-+]?(?:0|[1-9][0-9_]*)|[-+]?0x[0-9a-fA-F_]+|[-+]?[1-9][0-9_]*(?::[0-5]?[0-9])+)$",
+            r"^(?:~|null|Null|NULL)$",
+            r"^(?:[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]|[0-9][0-9][0-9][0-9]-[0-9][0-9]?-[0-9][0-9]?(?:[Tt]|[ \t]+)[0-9][0-9]?:[0-9][0-9]:[0-9][0-9](?:\.[0-9]*)?(?:[ \t]*(?:Z|[-+][0-9][0-9]?(?::[0-9][0-9])?))?)$",
+            r"^(?:<<)$",
+            r"^(?:=)$",
+            r"^(?:!|&|\*)$",
+        ]
+        .iter()
+        .map(|p| Regex::new(p).expect("resolver pattern"))
+        .collect()
+    })
+}
+
+const P2_FIRST: &[char] = &[
+    '#', ',', '[', ']', '{', '}', '&', '*', '!', '|', '>', '\'', '"', '%', '@', '`',
 ];
 
-fn is_plain_bool_or_null(s: &str) -> bool {
-    matches!(
-        s,
-        "" | "y"
-            | "Y"
-            | "yes"
-            | "Yes"
-            | "YES"
-            | "n"
-            | "N"
-            | "no"
-            | "No"
-            | "NO"
-            | "true"
-            | "True"
-            | "TRUE"
-            | "false"
-            | "False"
-            | "FALSE"
-            | "on"
-            | "On"
-            | "ON"
-            | "off"
-            | "Off"
-            | "OFF"
-            | "null"
-            | "Null"
-            | "NULL"
-            | "~"
-    )
-}
-
-// PyYAML's "looks like a number" test, simplified to the regex shapes
-// that fire on PRML-relevant strings. Implemented with manual character
-// inspection to avoid pulling in a regex crate.
-fn looks_like_number(s: &str) -> bool {
-    if s.is_empty() {
-        return false;
-    }
-    // Float / int / hex / octal / inf / nan
-    let bytes = s.as_bytes();
-    let mut i = 0;
-    if bytes[0] == b'+' || bytes[0] == b'-' {
-        i += 1;
-    }
-    if i >= bytes.len() {
-        return false;
-    }
-    // .nan / .inf
-    if bytes[i] == b'.' && (s[i..].eq_ignore_ascii_case(".nan") || s[i..].eq_ignore_ascii_case(".inf")) {
-        return true;
-    }
-    // Hex 0x...
-    if i + 1 < bytes.len() && bytes[i] == b'0' && (bytes[i + 1] == b'x' || bytes[i + 1] == b'X') {
-        let rest = &bytes[i + 2..];
-        return !rest.is_empty() && rest.iter().all(|b| b.is_ascii_hexdigit());
-    }
-    // Octal 0o... or 0...
-    if bytes[i] == b'0' && i + 1 < bytes.len() && (bytes[i + 1] == b'o' || bytes[i + 1] == b'O') {
-        let rest = &bytes[i + 2..];
-        return !rest.is_empty() && rest.iter().all(|&b| b >= b'0' && b <= b'7');
-    }
-    // Decimal float / int / scientific
-    let mut saw_digit = false;
-    let mut saw_dot = false;
-    let mut saw_e = false;
-    while i < bytes.len() {
-        let c = bytes[i];
-        if c.is_ascii_digit() {
-            saw_digit = true;
-        } else if c == b'.' && !saw_dot && !saw_e {
-            saw_dot = true;
-        } else if (c == b'e' || c == b'E') && !saw_e && saw_digit {
-            saw_e = true;
-            // optional sign
-            if i + 1 < bytes.len() && (bytes[i + 1] == b'+' || bytes[i + 1] == b'-') {
-                i += 1;
-            }
-            // require at least one digit after e
-            if i + 1 >= bytes.len() {
-                return false;
-            }
-        } else {
-            return false;
-        }
-        i += 1;
-    }
-    saw_digit
-}
-
-fn looks_like_timestamp(s: &str) -> bool {
-    // Match YYYY-MM-DD or YYYY-MM-DDTHH:MM:SS(.fff)?(Z|±HH:MM)?
-    // Hand-coded — no regex dependency.
-    let b = s.as_bytes();
-    if b.len() < 10 {
-        return false;
-    }
-    if !b[0..4].iter().all(|c| c.is_ascii_digit())
-        || b[4] != b'-'
-        || !b[5..7].iter().all(|c| c.is_ascii_digit())
-        || b[7] != b'-'
-        || !b[8..10].iter().all(|c| c.is_ascii_digit())
-    {
-        return false;
-    }
-    if b.len() == 10 {
-        return true;
-    }
-    if !(b[10] == b'T' || b[10] == b't' || b[10] == b' ') {
-        return false;
-    }
-    if b.len() < 19 {
-        return false;
-    }
-    if !b[11..13].iter().all(|c| c.is_ascii_digit())
-        || b[13] != b':'
-        || !b[14..16].iter().all(|c| c.is_ascii_digit())
-        || b[16] != b':'
-        || !b[17..19].iter().all(|c| c.is_ascii_digit())
-    {
-        return false;
-    }
-    // Optional .fff and Z/offset can follow; accept the rest as plausible.
-    true
-}
-
+// True when s is NOT a plain scalar under README §C5 P1–P6. Whitespace in
+// P3–P5 is U+0020 only: every other character PyYAML would treat as
+// whitespace is outside the §3.4 portable set and is rejected before this.
 fn needs_quoting(s: &str) -> bool {
     if s.is_empty() {
-        return true;
+        return true; // P1
     }
-    if is_plain_bool_or_null(s) {
-        return true;
+    let r: Vec<char> = s.chars().collect();
+    let first = r[0];
+    if P2_FIRST.contains(&first) {
+        return true; // P2
     }
-    if looks_like_number(s) {
-        return true;
+    if (first == '?' || first == ':' || first == '-') && (r.len() == 1 || r[1] == ' ') {
+        return true; // P3
     }
-    if looks_like_timestamp(s) {
-        return true;
+    if first == ' ' || r[r.len() - 1] == ' ' {
+        return true; // P4
     }
-    let first = s.chars().next().unwrap();
-    if YAML_INDICATORS.contains(&first) {
-        return true;
+    for i in 1..r.len() {
+        // P5
+        if r[i] == ':' && (i == r.len() - 1 || r[i + 1] == ' ') {
+            return true;
+        }
+        if r[i] == '#' && r[i - 1] == ' ' {
+            return true;
+        }
     }
-    if first == '-' && s.len() > 1 && s.as_bytes()[1] == b' ' {
-        return true;
+    if p6_resolvers().iter().any(|re| re.is_match(s)) {
+        return true; // P6
     }
-    if first == ' ' || first == '\t' {
-        return true;
-    }
-    let last = s.chars().last().unwrap();
-    if last == ' ' || last == '\t' {
-        return true;
-    }
-    if s.contains(": ") {
-        return true;
-    }
-    if s.contains(" #") {
-        return true;
-    }
-    if s.ends_with(':') {
-        return true;
-    }
-    // Control characters
-    if s.bytes()
-        .any(|b| b < 0x09 || (b > 0x0a && b < 0x20) || b == 0x7f)
-    {
+    // Defensive: control characters never reach here (§3.4 rejects them).
+    if r.iter().any(|&c| (c as u32) < 0x20 || c == '\u{7f}') {
         return true;
     }
     false
@@ -224,55 +119,41 @@ fn quote_single(s: &str) -> String {
     out
 }
 
-// Render a json::Number for a float field, matching PyYAML's safe_dump
-// output. PyYAML inherits Python's repr(float):
-//   - magnitudes < 1e-4 or >= 1e16 use scientific notation with mantissa
-//     decimal place (`.0`) decoration and 2-digit zero-padded exponent
-//   - other floats use shortest round-trip decimal
-//
-// serde_json's Number::to_string emits scientific notation without
-// padding (`1e-6`) and without mantissa decimal (`1e-6`); both must be
-// fixed to reproduce PyYAML byte-for-byte.
-fn render_number_for_float_field(raw: &str) -> String {
-    if let Some(e_idx) = raw.find(|c: char| c == 'e' || c == 'E') {
-        let (mantissa, exponent_part) = raw.split_at(e_idx);
-        // exponent_part starts with 'e' or 'E', then optional +/-, then digits.
-        let e_char = &exponent_part[..1];
-        let rest = &exponent_part[1..];
-        let (sign, digits) = if rest.starts_with('-') || rest.starts_with('+') {
-            (&rest[..1], &rest[1..])
+// §3.6 constraint C4 — float rendering from the rule as stated, not from the
+// formatter's own choice of notation. `{:e}` gives the shortest round-trip
+// digits (ryu) as d[.ddd]e[-]N; the exponent decides the notation:
+//   -4 <= e < 16  -> decimal        (0.0001, 0.85, 90.0, 1000000000000000.0)
+//   otherwise     -> exponent form  (1.0e-05, 1.5e-07, 1.0e+16, 5.0e-324)
+// with a "." always present in the mantissa, an explicit exponent sign and at
+// least two exponent digits. The 2026-09-13 divergence (1e-05 rendered as
+// 0.00001) came from reformatting only when ryu had already chosen exponent
+// form; ryu switches at 1e-6, the rule switches at 1e-5.
+fn render_float(x: f64) -> String {
+    if x == 0.0 {
+        return if x.is_sign_negative() { "-0.0".to_string() } else { "0.0".to_string() };
+    }
+    let s = format!("{:e}", x);
+    let (mant, exp) = s.split_once('e').expect("exponent form");
+    let e: i32 = exp.parse().expect("exponent");
+    let neg = mant.starts_with('-');
+    let digits: String = mant.chars().filter(|c| c.is_ascii_digit()).collect();
+    let sign = if neg { "-" } else { "" };
+    if (-4..16).contains(&e) {
+        if e >= 0 {
+            let cut = (e + 1) as usize;
+            if digits.len() > cut {
+                format!("{}{}.{}", sign, &digits[..cut], &digits[cut..])
+            } else {
+                format!("{}{:0<width$}.0", sign, digits, width = cut)
+            }
         } else {
-            ("+", rest)
-        };
-        // Pad digits to at least 2 with leading zeros.
-        let padded_digits = if digits.len() < 2 {
-            format!("{:0>2}", digits)
-        } else {
-            digits.to_string()
-        };
-        // PyYAML always emits an explicit sign on the exponent (`e-06`,
-        // `e+06`). serde_json may omit `+`; we normalise to always-explicit
-        // for negative, but PyYAML actually omits `+` for positive
-        // exponents (e.g. `1.0e+06` is rare; `1.0e+10` would render). To
-        // match PyYAML exactly: include sign only when negative; positive
-        // exponents drop the sign? Empirically PyYAML emits "1.0e+06" for
-        // 1e6, but our test surface only exercises small values. Be
-        // conservative: emit the sign as-is for negative; for positive,
-        // drop it.
-        let signed_exp = if sign == "-" {
-            format!("{}-{}", e_char, padded_digits)
-        } else {
-            format!("{}+{}", e_char, padded_digits)
-        };
-        if !mantissa.contains('.') {
-            return format!("{}.0{}", mantissa, signed_exp);
+            format!("{}0.{}{}", sign, "0".repeat((-e - 1) as usize), digits)
         }
-        return format!("{}{}", mantissa, signed_exp);
+    } else {
+        let (d0, rest) = digits.split_at(1);
+        let frac = if rest.is_empty() { "0" } else { rest };
+        format!("{}{}.{}e{}{:02}", sign, d0, frac, if e < 0 { "-" } else { "+" }, e.abs())
     }
-    if !raw.contains('.') {
-        return format!("{}.0", raw);
-    }
-    raw.to_string()
 }
 
 // Float fields whose canonical form must always carry at least one
@@ -309,11 +190,16 @@ fn render_scalar(v: &Value, field: &str, version: &str) -> String {
 }
 
 fn render_number(n: &Number, field: &str, version: &str) -> String {
-    let raw = n.to_string();
-    if is_float_field(field, version) {
-        return render_number_for_float_field(&raw);
+    // C6: a float-typed value renders as float wherever it sits; an integer
+    // renders as integer unless the field is float-typed under this version
+    // (v0.1 `threshold`), in which case it is a float64 and renders as one.
+    if n.is_f64() {
+        return render_float(n.as_f64().expect("f64"));
     }
-    raw
+    if is_float_field(field, version) {
+        return render_float(n.as_f64().unwrap_or(0.0));
+    }
+    n.to_string()
 }
 
 // Sort the keys of a serde_json::Map alphabetically by traversing it

@@ -268,3 +268,14 @@ a normative grammar is supposed to buy: a fixed target that programs can be wron
 against. Before 2026-09-13 there was no such target — §3.5 said the program was the
 target — and so there was, strictly, nothing for these three implementations to
 be wrong *against*.
+
+**Addendum (2026-09-13, later the same day).** Classes A, B and C were corrected:
+the three hand-rolled predicates were replaced by transcriptions of §C5, Rust's
+float rendering was rewritten to §C4, and the registry's `canonical.js` followed.
+Post-correction: Python 83/83, Go 83/83, Rust 83/83, JavaScript 82/83. The 82
+agreeing inputs are now `spec/test-vectors/edge/` and run in CI. The one case that
+remains (class D, `1300.0` under v0.2) is a specification decision the v0.2 RFC
+never made, recorded in the edge suite's README. The empirical claim is therefore
+now: **four implementations agree byte-for-byte on 21 conformance vectors and 82
+edge vectors** — still not "on arbitrary input", but on a corpus that for the
+first time includes the inputs a grammar says are hard.
