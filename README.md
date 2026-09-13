@@ -151,7 +151,17 @@ This repository is the home of **PRML v0.1** — Pre-Registered ML Manifest Spec
 
 **Reference implementations** (four languages, 13 v0.1 + 8 v0.2 candidate vectors = 21 total; multi-lang CI runs all 21 byte-for-byte per push and daily at 04:00 UTC):
 
-- **Python:** [`falsify.py`](falsify.py) — original reference, uses PyYAML
+Two of the four are distributed as packages; two exist only in this repository. That difference is deliberate: Python and JavaScript are the implementations people install and author manifests with, while Go and Rust implement the verification core (`hash`, `verify`, `test-vectors`) and exist to prove that the canonicalization is portable across languages and runtimes. There is no Go module and no crates.io crate, and none is planned for the 0.x line.
+
+| Implementation | Distribution | Commands |
+|---|---|---|
+| Python | PyPI `falsify` | `init` `lock` `hash` `verify` `test-vectors` |
+| JavaScript | npm `falsify-js` | `init` `lock` `hash` `verify` `test-vectors` |
+| Go | in-repo only (`impl/go/`) | `hash` `verify` `test-vectors` |
+| Rust | in-repo only (`impl/rust/`) | `hash` `verify` `test-vectors` |
+
+
+- **Python:** [`falsify_prml.py`](falsify_prml.py) — original reference, uses PyYAML. Installed as the `falsify` command. ⚠ Not `falsify.py`: that is the workflow engine, a different tool with a different schema, installed as `falsify-engine`.
 - **Node.js:** [`impl/js/`](impl/js/) — second reference, ~400 LOC, hand-rolled, zero deps
 - **Go:** [`impl/go/`](impl/go/) — third reference, ~450 LOC, hand-rolled, stdlib only
 - **Rust:** [`impl/rust/`](impl/rust/) — fourth reference, ~600 LOC, hand-rolled, two deps (`serde_json`, `sha2`)
@@ -442,7 +452,8 @@ ln -sf "$(pwd)/hooks/commit-msg" .git/hooks/commit-msg
 
 ## Repository layout
 
-- `falsify.py` — single-file Python CLI, stdlib + pyyaml only.
+- `falsify_prml.py` — PRML reference implementation, single-file Python CLI, stdlib + pyyaml only (the `falsify` command).
+- `falsify.py` — the workflow **engine**, a separate tool with its own schema (the `falsify-engine` command). Not PRML; not covered by the conformance vectors.
 - `impl/js/falsify.js` — Node.js second reference implementation (13/13 v0.1 + 8/8 v0.2 = 21/21 vectors). The npm package [`falsify-js`](https://www.npmjs.com/package/falsify-js) is a separately published copy kept in sync with this file; a CI drift-diff in that repo verifies the two files are byte-identical.
 - `impl/go/falsify.go` — Go third reference implementation (21/21 vectors).
 - `impl/rust/` — Rust fourth reference implementation (21/21 vectors).

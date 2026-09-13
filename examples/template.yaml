@@ -1,6 +1,19 @@
 # Falsification Engine — claim spec
 #
-# Fill in every placeholder before running `falsify lock`.
+# ⛔ THIS IS NOT A PRML MANIFEST. It is the input format of the workflow
+#    engine, which is a different tool with a different schema. The command is
+#    `falsify-engine`, NOT `falsify`. Running `falsify lock` on this file exits 2
+#    with "missing required field: version / claim_id / created_at" — correctly,
+#    because those are PRML fields and this file has none of them.
+#
+#    For a PRML manifest:  falsify init my-claim.prml.yaml
+#    Worked PRML example:  examples/first-manifest/accuracy.prml.yaml
+#    See examples/README.md.
+#
+# HOW THIS FILE IS USED (it is a template, not a runnable input):
+#     falsify-engine init my-claim          # scaffolds .falsify/my-claim/spec.yaml
+#     $EDITOR .falsify/my-claim/spec.yaml   # fill in every placeholder
+#     falsify-engine lock my-claim          # takes a claim NAME, not a file path
 # Placeholders: "<...>", TODO, FIXME, REPLACE_ME, XXX.
 # A spec with any placeholder left in a string field cannot be locked
 # (the CLI will exit 2: bad spec).

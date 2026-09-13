@@ -4,6 +4,30 @@ All notable changes to Falsification Engine are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com); version
 numbers follow [Semantic Versioning](https://semver.org).
 
+## [Unreleased]
+
+### Fixed
+- **`examples/template.yaml` no longer reads as a PRML manifest.** It is the
+  *workflow engine* schema and always was, but it sat unlabelled among the PRML
+  examples and the header told readers to run `falsify lock` on it — which exits 2
+  with "missing required field: version / claim_id / created_at". The header now
+  names the right tool and the right flow (`falsify-engine init <name>`, which takes
+  a claim NAME, not a file path), and points PRML users at `falsify init` or
+  `examples/first-manifest/accuracy.prml.yaml`.
+- **`README.md` called `falsify.py` the Python reference implementation.** It is not;
+  `falsify_prml.py` is. `falsify.py` is the workflow engine, a different tool with a
+  different schema, installed as `falsify-engine`. Two places corrected.
+
+### Added
+- `examples/README.md` — routes a reader to the right tool in one table. Every
+  command in it was executed before the file was committed.
+- `README.md` reference-implementation section now states which implementations are
+  **distributed** (Python on PyPI, JavaScript on npm) and which exist **in-repo only**
+  (Go, Rust), with each one's command set. Go and Rust implement the verification core
+  and deliberately omit authoring commands; there is no Go module and no crates.io
+  crate, and none is planned for the 0.x line. Previously a reader had to guess.
+- `pyproject.toml` description now says the package also ships `falsify-engine`.
+
 ## [0.3.14] — 2026-08-24
 
 Packaging and presentation only. No change to canonicalization, verification
