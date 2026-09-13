@@ -115,7 +115,7 @@ Each README states exactly what is real and what is not: the Langfuse and Lamina
 
 ---
 
-**Current version:** falsify 0.3.14 (PRML CLI) · falsify-engine 0.3.14 — `falsify --version`.
+**Current version:** falsify 0.4.0 (PRML CLI) · falsify-engine 0.4.0 — `falsify --version`.
 **Working with Claude Code?** See [CLAUDE.md](CLAUDE.md).
 
 ---
@@ -159,6 +159,8 @@ Two of the four are distributed as packages; two exist only in this repository. 
 | JavaScript | npm `falsify-js` | `init` `lock` `hash` `verify` `test-vectors` |
 | Go | in-repo only (`impl/go/`) | `hash` `verify` `test-vectors` |
 | Rust | in-repo only (`impl/rust/`) | `hash` `verify` `test-vectors` |
+
+**Writing your own?** [`spec/IMPLEMENTERS-GUIDE.md`](spec/IMPLEMENTERS-GUIDE.md) — where every rule is stated, which corpus to check against (13 + 8 + 92 positive vectors, 20 reject), the exact commands, what "conformant" means, and the mistakes the first three implementations made. No independent implementation exists yet; the first one gets listed here.
 
 
 - **Python:** [`falsify_prml.py`](falsify_prml.py) — original reference, uses PyYAML. Installed as the `falsify` command. ⚠ Not `falsify.py`: that is the workflow engine, a different tool with a different schema, installed as `falsify-engine`.
@@ -489,7 +491,7 @@ Run `make dogfood` to re-verify. CI runs these on every PR.
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
-> **Latest — 2026-08-24** · **falsify 0.3.14** on PyPI; v0.3.13 (2026-08-23) fixed three specification defects and expanded the negative-conformance suite to 20 reject vectors. The conformance suite stays at 21 positive + 20 reject vectors across the four reference implementations. Registry receipts carry an RFC 3161 countersignature and a Rekor v2 mirror.
+> **Latest — 2026-08-24** · **falsify 0.4.0** on PyPI; v0.3.13 (2026-08-23) fixed three specification defects and expanded the negative-conformance suite to 20 reject vectors. The conformance suite stays at 21 positive + 20 reject vectors across the four reference implementations. Registry receipts carry an RFC 3161 countersignature and a Rekor v2 mirror.
 
 ## Roadmap
 

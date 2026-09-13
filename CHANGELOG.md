@@ -6,6 +6,13 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.4.0] — 2026-09-13
+
+Canonical output changes for some inputs (v0.2 integral-float thresholds), hence a
+minor bump, not a patch. The reference canonicalizer now implements the §3.6 grammar's
+C6 rule for v0.2 and ships with the grammar, the 92-vector edge suite and the
+implementer's guide.
+
 ### Fixed
 - **`examples/template.yaml` no longer reads as a PRML manifest.** It is the
   *workflow engine* schema and always was, but it sat unlabelled among the PRML

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "falsify"
-version = "0.3.14"
+version = "0.4.0"
 description = "PRML reference CLI (`falsify`) — pre-register an ML evaluation claim as a SHA-256 manifest; verify PASS/FAIL/TAMPERED. Also ships `falsify-engine`, a separate pre-registration workflow CLI with its own schema."
 readme = "README.md"
 license = { text = "MIT" }

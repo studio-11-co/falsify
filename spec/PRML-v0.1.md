@@ -445,6 +445,11 @@ pinning that rule's boundaries now form the **edge suite**
 ([`spec/test-vectors/edge/`](test-vectors/edge/), 92 vectors), which the
 multi-language CI runs for all four implementations alongside Appendix B.
 
+An implementer starting from this specification alone should begin with
+[`IMPLEMENTERS-GUIDE.md`](IMPLEMENTERS-GUIDE.md): where each rule is stated, the
+corpus to check against, the commands, and the errors the reference
+implementations themselves made.
+
 ---
 
 ## 4. Hash Algorithm

@@ -11,8 +11,8 @@ suspected vulnerabilities.
 
 | Component | Supported |
 |-----------|-----------|
-| `falsify` PRML CLI (PyPI) | latest 0.3.x |
-| `falsify-js` (npm) | latest 0.1.x |
+| `falsify` PRML CLI (PyPI) | latest 0.4.x |
+| `falsify-js` (npm) | latest 0.2.x |
 | `prml-verify-action` | latest `v2.x` |
 | PRML spec | v0.1 (stable), v0.2 (frozen RFC) |
 
