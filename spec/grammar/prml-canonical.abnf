@@ -77,8 +77,11 @@ key    = string
    ; "yes" therefore renders single-quoted.
 
 scalar = null-literal / bool-literal / integer / float / string
-   ; C6 (type): which alternative applies is fixed by the manifest's type
-   ; system, not by the spelling — see README §"Which production applies".
+   ; C6 (type / value): which alternative applies is fixed by the manifest's
+   ; type system — except `threshold` at the root, which renders BY VALUE:
+   ; always float under prml/0.1; under prml/0.2 integer when integral and
+   ; below 2^53, float otherwise (RFC post-freeze clarification 2026-09-13).
+   ; See README §C6.
 
 null-literal = %s"null"
 bool-literal = %s"true" / %s"false"

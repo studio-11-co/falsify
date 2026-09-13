@@ -128,6 +128,24 @@ function pythonRepr(v) {
 
 function renderScalar(v, hint) {
   if (v === null || v === undefined) return 'null';
+  if (hint === 'v02-threshold' && (typeof v === 'number' || typeof v === 'bigint')) {
+    // PRML v0.2 `threshold` renders by VALUE (RFC post-freeze clarification,
+    // 2026-09-13; spec/grammar/README.md §C6): integral and |v| < 2^53 ->
+    // integer digits; otherwise the §C4 float form. So 1300.0 and 1300 are one
+    // manifest with one hash — the one distinction JSON.parse and js-yaml
+    // cannot carry, which is why the rule is by value and why 2^53 (the safe
+    // integer bound) is where it stops.
+    const TWO_53 = 9007199254740992;
+    if (typeof v === 'bigint') {
+      if (v < 9007199254740992n && v > -9007199254740992n) return v.toString();
+      v = Number(v);
+    }
+    if (Number.isFinite(v)) {
+      if (Number.isInteger(v) && Math.abs(v) < TWO_53) return v === 0 ? '0' : v.toString();
+      if (Number.isInteger(v)) return Math.abs(v) >= 1e16 ? pythonRepr(v) : v.toFixed(1);
+      return pythonRepr(v);
+    }
+  }
   if (typeof v === 'boolean') return v ? 'true' : 'false';
   if (typeof v === 'bigint') return v.toString();
   if (typeof v === 'number') {
@@ -151,7 +169,7 @@ function renderScalar(v, hint) {
   throw new Error('renderScalar: unsupported value type ' + typeof v);
 }
 
-function renderMapping(obj, indent, floatFields) {
+function renderMapping(obj, indent, floatFields, opts) {
   const keys = Object.keys(obj).sort();
   const lines = [];
   const pad = ' '.repeat(indent);
@@ -159,13 +177,13 @@ function renderMapping(obj, indent, floatFields) {
     const v = obj[k];
     if (v !== null && typeof v === 'object' && !Array.isArray(v) && typeof v !== 'bigint') {
       lines.push(`${pad}${k}:`);
-      lines.push(renderMapping(v, indent + 2, floatFields));
+      lines.push(renderMapping(v, indent + 2, floatFields, opts));
     } else if (Array.isArray(v)) {
       lines.push(`${pad}${k}:`);
       for (const item of v) {
         const hint = floatFields.has(k) ? 'float' : null;
         if (item !== null && typeof item === 'object' && !Array.isArray(item)) {
-          const sub = renderMapping(item, indent + 2, floatFields);
+          const sub = renderMapping(item, indent + 2, floatFields, opts);
           // Prefix first nested line with "- " instead of indent
           const padNested = ' '.repeat(indent + 2);
           const subLines = sub.split('\n');
@@ -179,7 +197,8 @@ function renderMapping(obj, indent, floatFields) {
         }
       }
     } else {
-      const hint = floatFields.has(k) ? 'float' : null;
+      let hint = floatFields.has(k) ? 'float' : null;
+      if (indent === 0 && k === 'threshold' && opts && opts.v02ThresholdByValue) hint = 'v02-threshold';
       lines.push(`${pad}${k}: ${renderScalar(v, hint)}`);
     }
   }
@@ -188,7 +207,8 @@ function renderMapping(obj, indent, floatFields) {
 
 function canonicalize(obj) {
   const floatFields = floatFieldsForRecord(obj);
-  return renderMapping(obj, 0, floatFields) + '\n';
+  const opts = { v02ThresholdByValue: !!(obj && obj.version === 'prml/0.2') };
+  return renderMapping(obj, 0, floatFields, opts) + '\n';
 }
 
 function manifestHash(obj) {

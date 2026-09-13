@@ -29,6 +29,14 @@ If you produce manifests, you may opt into v0.2 optional fields when they add va
 
 4. **Multi-metric claims = multiple manifests.** Until the v0.3 claim-tree design lands, an evaluation suite reporting N metrics is N v0.1/v0.2 manifests with a shared `claim_group` identifier.
 
+### `threshold` rendering (post-freeze clarification, 2026-09-13)
+
+Under v0.1 an integer-valued `threshold` renders as a float (`1` → `1.0`). Under
+v0.2 `threshold` renders **by value**: integral and below 2^53 → integer digits
+(`1300.0` → `1300`), otherwise float. Re-locking a v0.1 manifest as v0.2 can
+therefore change the `threshold` line; the hash changes with the `version` line
+anyway. See the RFC's "Post-freeze clarification".
+
 ### Optional fields (RFC P-01 through P-05)
 
 These are opt-in. Manifests that omit them are valid v0.2.

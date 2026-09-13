@@ -148,6 +148,50 @@ These are not new proposals; they are clarifications the editor is locking into 
 
 5. **P-02 `attestation_uri` distinction (contributed by Ceri John, Topeuph AI / ValiChord).** The P-02 field note distinguishes between *execution attestation* (who ran the eval and when, e.g. Sigstore as documented in Cookbook Pattern 11) and *independence attestation* (verdicts produced by parties that could not coordinate outcomes, e.g. blind commit-reveal as documented in Cookbook Pattern 13). Both address different parts of the §8.1 gap and are complementary, not alternative. The distinction surfaces during v0.2 review on Discussion #11 and lands here verbatim; Pattern 13 ships in the cookbook as a co-authored entry.
 
+## Post-freeze clarification (2026-09-13): canonical rendering of `threshold`
+
+The frozen text never said how `threshold` renders under `prml/0.2`. The v0.2
+ROADMAP (#3) had proposed "always at least one decimal place"; the frozen
+candidate vectors went the other way and render `1300` for an integer input;
+neither document stated a rule, and the schema says only `number`. The gap was
+found on 2026-09-13 when the §3.6 formal grammar made it testable: for a
+threshold spelled `1300.0`, Python, Go and Rust rendered `1300.0` (the parsed
+type) while JavaScript and the public registry rendered `1300` — because neither
+`JSON.parse` nor js-yaml can distinguish the two spellings.
+
+**Rule (normative for `prml/0.2`).** The canonical rendering of `threshold` is
+determined by its **value**, not by the spelling or type of the input:
+
+- if the value is an integer and its magnitude is below 2^53 (9 007 199 254 740 992),
+  it renders as the `integer` production of §3.6 — its decimal digits, with
+  negative zero rendering as `0`;
+- otherwise it renders as the `float` production under constraint C4 (shortest
+  round-trip digits; decimal form for −4 ≤ e < 16, exponent form otherwise).
+
+So `1300`, `1300.0` and `1.3e3` are one v0.2 manifest with one hash; `1300.5`
+renders `1300.5`; `9007199254740992` (2^53) renders `9007199254740992.0`; `1e16`
+and `10000000000000000` both render `1.0e+16`; `1e-05` renders `1.0e-05`.
+
+**Why 2^53.** Above it the shortest round-trip decimal of an integral binary64
+can differ from its exact integer value (`1e23` is exactly 99999999999999991611392
+but its shortest spelling is `1e+23`), so "its decimal digits" stops being one
+string. Below it every integral value is exactly representable and the two
+coincide; 2^53 is also the bound of JavaScript's safe integers, so no
+implementation needs arbitrary-precision arithmetic to comply.
+
+**Why by value.** Canonicalization exists so that the same claim yields the same
+bytes regardless of who wrote it or with what; making the bytes depend on
+whether a producer typed `1300` or `1300.0` would import a distinction that
+YAML, JSON and half the reference implementations do not carry. v0.1 already
+renders `threshold` by value (always float, §3.5); v0.2 continues that principle
+with the integer case admitted.
+
+**Compatibility.** No published v0.2 candidate vector spelled an integral
+threshold as a float, so no published digest changes. The rule is pinned by ten
+vectors in the edge suite (`spec/test-vectors/edge/`, EV-083..EV-092) and is
+implemented in all four reference implementations and the registry as of this
+date. Constraint C6 in `spec/grammar/README.md` states the same rule.
+
 ## Comment summary template
 
 When you comment, please use this format:

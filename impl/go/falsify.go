@@ -31,6 +31,7 @@ import (
 	"strings"
 
 	"golang.org/x/text/unicode/norm"
+	"math"
 )
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -139,6 +140,67 @@ func floatFieldsFor(version string) map[string]bool {
 // v0.1 conformance vectors. Go's own encoding/json marshal does not pad,
 // however, so any input round-tripped through Go's marshaler would fail; the
 // canonicalizer expects raw json.Number strings preserved by UseNumber.
+// pythonReprFloat renders a float64 per §3.6 constraint C4 from its VALUE:
+// shortest round-trip digits; decimal form for -4 <= e < 16, exponent form
+// otherwise, with a "." always in the mantissa, an explicit exponent sign and
+// at least two exponent digits. (renderNumber, below, works from the raw JSON
+// text and assumes it is already the shortest spelling — README gap G5.)
+func pythonReprFloat(f float64) string {
+	if f == 0 {
+		if math.Signbit(f) {
+			return "-0.0"
+		}
+		return "0.0"
+	}
+	s := strconv.FormatFloat(f, 'e', -1, 64) // e.g. "1e+16", "1.5e-07", "-5e-01"
+	eIdx := strings.IndexByte(s, 'e')
+	mant, expStr := s[:eIdx], s[eIdx+1:]
+	e, _ := strconv.Atoi(expStr)
+	neg := strings.HasPrefix(mant, "-")
+	digits := strings.ReplaceAll(strings.TrimPrefix(mant, "-"), ".", "")
+	sign := ""
+	if neg {
+		sign = "-"
+	}
+	if e >= -4 && e < 16 {
+		if e >= 0 {
+			cut := e + 1
+			if len(digits) > cut {
+				return sign + digits[:cut] + "." + digits[cut:]
+			}
+			return sign + digits + strings.Repeat("0", cut-len(digits)) + ".0"
+		}
+		return sign + "0." + strings.Repeat("0", -e-1) + digits
+	}
+	frac := digits[1:]
+	if frac == "" {
+		frac = "0"
+	}
+	es := "+"
+	if e < 0 {
+		es = "-"
+		e = -e
+	}
+	return fmt.Sprintf("%s%s.%se%s%02d", sign, digits[:1], frac, es, e)
+}
+
+// renderThresholdV02 — PRML v0.2 `threshold` renders by VALUE (RFC post-freeze
+// clarification, 2026-09-13; spec/grammar/README.md §C6): integral and
+// |v| < 2^53 -> integer digits; otherwise the C4 float form. So 1300.0 and
+// 1300 are one manifest with one hash. 2^53 is the bound because above it the
+// shortest round-trip digits of an integral float can differ from its exact
+// value.
+func renderThresholdV02(n json.Number) (string, bool) {
+	f, err := strconv.ParseFloat(string(n), 64)
+	if err != nil || math.IsInf(f, 0) || math.IsNaN(f) {
+		return "", false
+	}
+	if f == math.Trunc(f) && math.Abs(f) < 9007199254740992 {
+		return strconv.FormatInt(int64(f), 10), true
+	}
+	return pythonReprFloat(f), true
+}
+
 func renderNumber(n json.Number, field string, floatFields map[string]bool) string {
 	s := string(n)
 	if !floatFields[field] {
@@ -187,7 +249,13 @@ func renderScalar(v interface{}, field string, floatFields map[string]bool) (str
 // renderMapping emits a YAML block-style mapping with keys sorted
 // lexicographically. Indent is the current depth in spaces.
 // Returns the rendered text (without trailing newline at top level).
+// renderMapping keeps the historical signature; the version-aware form below
+// is what Canonicalize uses.
 func renderMapping(m map[string]interface{}, indent int, floatFields map[string]bool) (string, error) {
+	return renderMappingV(m, indent, floatFields, "")
+}
+
+func renderMappingV(m map[string]interface{}, indent int, floatFields map[string]bool, version string) (string, error) {
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
@@ -200,7 +268,7 @@ func renderMapping(m map[string]interface{}, indent int, floatFields map[string]
 		switch sub := v.(type) {
 		case map[string]interface{}:
 			lines = append(lines, fmt.Sprintf("%s%s:", pad, k))
-			nested, err := renderMapping(sub, indent+2, floatFields)
+			nested, err := renderMappingV(sub, indent+2, floatFields, version)
 			if err != nil {
 				return "", err
 			}
@@ -209,7 +277,7 @@ func renderMapping(m map[string]interface{}, indent int, floatFields map[string]
 			lines = append(lines, fmt.Sprintf("%s%s:", pad, k))
 			for _, item := range sub {
 				if itemMap, ok := item.(map[string]interface{}); ok {
-					nested, err := renderMapping(itemMap, indent+2, floatFields)
+					nested, err := renderMappingV(itemMap, indent+2, floatFields, version)
 					if err != nil {
 						return "", err
 					}
@@ -226,6 +294,14 @@ func renderMapping(m map[string]interface{}, indent int, floatFields map[string]
 				}
 			}
 		default:
+			if indent == 0 && k == "threshold" && version == "prml/0.2" {
+				if n, ok := v.(json.Number); ok {
+					if r, ok2 := renderThresholdV02(n); ok2 {
+						lines = append(lines, fmt.Sprintf("%s%s: %s", pad, k, r))
+						continue
+					}
+				}
+			}
 			rendered, err := renderScalar(v, k, floatFields)
 			if err != nil {
 				return "", err
@@ -245,7 +321,7 @@ func Canonicalize(m map[string]interface{}) (string, error) {
 	if lv, _ := m["linkage_version"].(string); lv == "prml-linkage/0" {
 		floatFields = floatFieldsLinkage
 	}
-	body, err := renderMapping(m, 0, floatFields)
+	body, err := renderMappingV(m, 0, floatFields, version)
 	if err != nil {
 		return "", err
 	}

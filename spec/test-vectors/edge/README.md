@@ -1,4 +1,4 @@
-# Edge suite — §3.6 grammar edge cases (82 vectors)
+# Edge suite — §3.6 grammar edge cases (92 vectors)
 
 **Added 2026-09-13.** Same file format as `../v0.1/test-vectors.json` (`id`,
 `title`, `description`, `input`, `canonical`, `hash`); every reference
@@ -20,20 +20,22 @@ suite can grow as the grammar exposes more edges without renumbering Appendix B.
 - 62 vectors place a string in `notes` (`?x`, `-`, `<<`, `1:30`, `1_000`, `y`,
   `1e5`, `0o17`, `2026-05-01`, `''`, …);
 - 19 place a float in `threshold` under v0.1 (`1e-05`, `5e-324`, `1e16`, …);
-- 1 places an integer `threshold` under v0.2 (`1300`).
+- 1 places an integer `threshold` under v0.2 (`1300`);
+- 10 (EV-083..EV-092) pin the **v0.2 `threshold` by-value rule** decided on
+  2026-09-13: `1300.0`→`1300`, `-0.0`→`0`, `2.0`→`2`, `2^53-1`→integer,
+  `2^53`→`9007199254740992.0`, `1e16` and `10000000000000000`→`1.0e+16`,
+  `1300.5`, `0`, `1e-05`→`1.0e-05`.
 
 Expected bytes and hashes are those of the reference canonicalizer and of the
-from-grammar emitter `spec/grammar/check_grammar.py`, which agree on all 82.
+from-grammar emitter `spec/grammar/check_grammar.py`, which agree on all 92.
 
-## What is deliberately NOT here
+## The case that was a decision, not a bug
 
-`CV-V2b` from `spec/grammar/candidate-vectors-2026-09-13.json`: a v0.2 manifest
-whose `threshold` is spelled `1300.0`. Python, Go and Rust render it `1300.0`
-(parsed type); JavaScript and the registry render it `1300`, because neither
-`JSON.parse` nor js-yaml can distinguish `1300.0` from `1300`. The v0.2 RFC does
-not say which is right. Until it does, the case is recorded there with its
-pre-correction status and is tested nowhere. Promoting it would encode a
-specification decision inside a test file.
+`CV-V2b` (`threshold: 1300.0` under v0.2) was held out of the first version of
+this suite because promoting it would have encoded a specification decision the
+v0.2 RFC had never made. That decision was taken the same day — **by value**
+(RFC "Post-freeze clarification (2026-09-13)") — and the case is now `EV-083`,
+with nine companions that pin the rule's boundaries.
 
 ## History
 
@@ -41,5 +43,5 @@ The 83-input battery was first run on 2026-09-13 against all four
 implementations: 62 agreed, 21 did not. JavaScript, Go and Rust were corrected
 the same day (predicate transcribed from §C5; Rust's float rendering rewritten
 to §C4; the registry's `canonical.js` corrected in step), after which 82/82
-agree. The pre-correction measurement is preserved, per implementation, in the
+agreed; with the v0.2 by-value decision later that day, 92/92 in all four. The pre-correction measurement is preserved, per implementation, in the
 candidate file's `implementation_status_2026_09_13` field.

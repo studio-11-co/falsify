@@ -189,6 +189,20 @@ fn render_scalar(v: &Value, field: &str, version: &str) -> String {
     }
 }
 
+// PRML v0.2 `threshold` renders by VALUE (RFC post-freeze clarification,
+// 2026-09-13; spec/grammar/README.md §C6): integral and |v| < 2^53 -> integer
+// digits, otherwise the §C4 float form. `1300.0` and `1300` are therefore one
+// manifest with one hash. 2^53 is the bound because above it the shortest
+// round-trip digits of an integral float can differ from its exact value.
+fn render_threshold_v02(n: &Number) -> String {
+    let f = n.as_f64().unwrap_or(0.0);
+    if f.is_finite() && f.fract() == 0.0 && f.abs() < 9007199254740992.0 {
+        format!("{}", f as i64)
+    } else {
+        render_float(f)
+    }
+}
+
 fn render_number(n: &Number, field: &str, version: &str) -> String {
     // C6: a float-typed value renders as float wherever it sits; an integer
     // renders as integer unless the field is float-typed under this version
@@ -215,6 +229,12 @@ fn render_mapping(map: &serde_json::Map<String, Value>, indent: usize, version: 
     let mut lines: Vec<String> = Vec::with_capacity(map.len());
     for k in sorted_keys(map) {
         let v = &map[k];
+        if indent == 0 && k == "threshold" && version == "prml/0.2" {
+            if let Value::Number(n) = v {
+                lines.push(format!("{}{}: {}", pad, k, render_threshold_v02(n)));
+                continue;
+            }
+        }
         match v {
             Value::Object(sub) => {
                 lines.push(format!("{}{}:", pad, k));

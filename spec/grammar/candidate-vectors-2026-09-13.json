@@ -2459,13 +2459,14 @@
     "id": "studio-11.co"
    }
   },
-  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1300.0\nversion: prml/0.2\n",
-  "hash": "931669d17e8d9611010553e999090065420bf5926bdf8346663c8f461a64d27e",
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1300\nversion: prml/0.2\n",
+  "hash": "b85235455c4e988f6f529e0542818e6f48cb55eb9c446017601d7875cbca73c3",
   "implementation_status_2026_09_13": {
    "python": "agree",
    "javascript": "DIVERGES",
    "go": "agree",
    "rust": "agree"
-  }
+  },
+  "note": "Expected bytes updated 2026-09-13 after the value-determined decision (threshold renders '1300'). Before the decision the expectation was 'threshold: 1300.0' and Python/Go/Rust matched it while JavaScript and the registry did not; implementation_status_2026_09_13 records that pre-decision measurement."
  }
 ]

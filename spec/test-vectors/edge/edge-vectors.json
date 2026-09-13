@@ -2028,5 +2028,245 @@
   },
   "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1300\nversion: prml/0.2\n",
   "hash": "b85235455c4e988f6f529e0542818e6f48cb55eb9c446017601d7875cbca73c3"
+ },
+ {
+  "id": "EV-083",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: 1300.0 (float spelling of an integral value) -> 1300",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1300.0,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1300\nversion: prml/0.2\n",
+  "hash": "b85235455c4e988f6f529e0542818e6f48cb55eb9c446017601d7875cbca73c3"
+ },
+ {
+  "id": "EV-084",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: negative zero -> 0",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": -0.0,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0\nversion: prml/0.2\n",
+  "hash": "31b59d306305f8edfbfc1ae4207605fcb28b0a1ea9671a4a20fefa5a30be5bf1"
+ },
+ {
+  "id": "EV-085",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: 2.0 -> 2",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 2.0,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 2\nversion: prml/0.2\n",
+  "hash": "ad34fbcb1241ca9e24e616832b72b3c820d3525e139a53d4ddda55ed6ebe8cbf"
+ },
+ {
+  "id": "EV-086",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: 2^53-1 (largest safe integer) -> integer digits",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 9007199254740991,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 9007199254740991\nversion: prml/0.2\n",
+  "hash": "b6f039518021f75b53058e95e26586df57191a1d7bd000c6ba45e42051b7bf1f"
+ },
+ {
+  "id": "EV-087",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: 2^53 exactly -> float form",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 9007199254740992,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 9007199254740992.0\nversion: prml/0.2\n",
+  "hash": "f57382ef75747251b3fdab4167819c694b0ee0646c41596a07a6ab3223df477a"
+ },
+ {
+  "id": "EV-088",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: 1e16 as float -> exponent form",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1e+16,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.0e+16\nversion: prml/0.2\n",
+  "hash": "3361c8e53b531274ea6e773cf35a96fe6d53c439808a07b668e50482f13e5290"
+ },
+ {
+  "id": "EV-089",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: 1e16 as integer input -> exponent form",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 10000000000000000,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.0e+16\nversion: prml/0.2\n",
+  "hash": "3361c8e53b531274ea6e773cf35a96fe6d53c439808a07b668e50482f13e5290"
+ },
+ {
+  "id": "EV-090",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: 1300.5 -> 1300.5",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1300.5,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1300.5\nversion: prml/0.2\n",
+  "hash": "b8e7ba3ab4694ded8fcfdaf217be2352edffd0987126e3e11b358d9b1c78da37"
+ },
+ {
+  "id": "EV-091",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: integer zero -> 0",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0\nversion: prml/0.2\n",
+  "hash": "31b59d306305f8edfbfc1ae4207605fcb28b0a1ea9671a4a20fefa5a30be5bf1"
+ },
+ {
+  "id": "EV-092",
+  "source": "decision-2026-09-13",
+  "title": "v0.2 threshold by value: 1e-05 -> 1.0e-05 (by value, not raw text)",
+  "description": "v0.2 `threshold` canonicalizes by VALUE (RFC post-freeze clarification, 2026-09-13): integral and |v| < 2^53 -> integer digits; otherwise §3.6 C4 float. Spelling of the input is irrelevant.",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1e-05,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.0e-05\nversion: prml/0.2\n",
+  "hash": "bcd53b212b015313758167957db32816a7339826115569d8e4944412e96f05a4"
  }
 ]

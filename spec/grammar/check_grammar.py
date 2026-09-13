@@ -140,7 +140,17 @@ def render_float(x: float) -> str:
 FLOAT_FIELDS = {"prml/0.1": {"threshold"}}
 
 
+TWO_53 = 2 ** 53
+
+
 def render_scalar(v, field: str, version: str) -> str:
+    # v0.2 `threshold` renders by VALUE (RFC post-freeze clarification, 2026-09-13;
+    # README §C6): integral and |v| < 2^53 -> integer digits, otherwise C4 float.
+    if version == "prml/0.2" and field == "threshold" and isinstance(v, (int, float)) and not isinstance(v, bool):
+        fv = float(v)
+        if fv == fv and fv not in (float("inf"), float("-inf")) and fv.is_integer() and abs(fv) < TWO_53:
+            return str(int(fv))
+        return render_float(fv)
     if v is None:
         return "null"
     if isinstance(v, bool):
@@ -184,7 +194,7 @@ def emit(manifest: dict) -> str:
                     else:
                         out.append(f"{pad}- {render_scalar(item, k, version)}")
             else:
-                out.append(f"{pad}{render_string(k)}: {render_scalar(v, k, version)}")
+                out.append(f"{pad}{render_string(k)}: {render_scalar(v, k if depth == 0 else '', version)}")
 
     def _walk_into(sub: list[str], m: dict, depth: int, field: str, ver: str) -> None:
         pad = "  " * depth
@@ -222,11 +232,17 @@ def _check_scalar(tok: str, field: str, version: str) -> str:
     if _INT.match(tok):
         if field in FLOAT_FIELDS.get(version, set()):
             raise GrammarError(f"{field}: integer spelling where §3.5 requires float under {version}")
+        if version == "prml/0.2" and field == "threshold" and abs(int(tok)) >= TWO_53:
+            raise GrammarError("v0.2 threshold with |v| >= 2^53 must render as float (C6)")
         return "integer"
     if _FLOAT_DEC.match(tok) or _FLOAT_EXP.match(tok):
         # C4: the spelling must be the one the rule produces for its own value
         if render_float(float(tok)) != tok:
             raise GrammarError(f"float {tok!r} is not the canonical rendering of its value")
+        if version == "prml/0.2" and field == "threshold":
+            fv = float(tok)
+            if fv.is_integer() and abs(fv) < TWO_53:
+                raise GrammarError("v0.2 integral threshold below 2^53 must render as integer (C6)")
         return "float"
     if _SQ.match(tok):
         inner = tok[1:-1].replace("''", "'")
@@ -299,7 +315,7 @@ def recognize(text: str) -> dict:
         if has_value:
             if val_tok == "":
                 raise GrammarError(f"empty value after ': ' : {ln!r}")
-            _check_scalar(val_tok, key_text, version)
+            _check_scalar(val_tok, key_text if depth == 0 else "", version)
         prev_depth = depth
     return {"lines": len(lines), "version": version}
 
@@ -356,6 +372,9 @@ def main() -> int:
                                          "  id: imagenet-val-2012\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n"),
         "root key order (version before threshold)": base.replace("threshold: 0.85\nversion: prml/0.1\n", "version: prml/0.1\nthreshold: 0.85\n"),
     }
+    v02 = [v for v in json.loads(VECTOR_FILES[1].read_text(encoding="utf-8")) if "threshold: 1300\n" in v["canonical"]][0]["canonical"]
+    mutations["v0.2 integral threshold spelled as float (1300.0)"] = v02.replace("threshold: 1300\n", "threshold: 1300.0\n")
+    mutations["v0.2 threshold 2^53 spelled as integer"] = v02.replace("threshold: 1300\n", "threshold: 9007199254740992\n")
     neg_ok = True
     for name, text in mutations.items():
         try:

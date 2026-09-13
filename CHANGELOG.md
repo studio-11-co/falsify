@@ -59,21 +59,26 @@ numbers follow [Semantic Versioning](https://semver.org).
   notation (Rust gains the `regex` crate). The registry's `canonical.js` was
   corrected in step; all six publicly listed registry records re-derive their
   stored hash under the corrected canonicalizer. Result: Python 83/83, Go 83/83,
-  Rust 83/83, JavaScript 82/83.
-- **Edge suite** `spec/test-vectors/edge/edge-vectors.json` (82 vectors,
-  EV-001..EV-082) added and wired into `multi-lang-conformance.yml` for all four
+  Rust 83/83, JavaScript 82/83 — 83/83 in all four after the v0.2 decision below.
+- **Edge suite** `spec/test-vectors/edge/edge-vectors.json` (92 vectors,
+  EV-001..EV-092) added and wired into `multi-lang-conformance.yml` for all four
   implementations. Separate from the 21 normative vectors of Appendix B by
   design (`spec/test-vectors/edge/README.md`). `FACTS.env` gains
-  `VECTORS_EDGE=82`.
+  `VECTORS_EDGE=92`.
 
-### Open (recorded, not tested)
-- `CV-V2b` — a v0.2 manifest with `threshold: 1300.0`. Python/Go/Rust render
-  `1300.0` (parsed type); JavaScript and the registry render `1300`, because
-  neither `JSON.parse` nor js-yaml can distinguish the two spellings. The v0.2
-  RFC does not say whether `threshold` canonicalizes by type or by value; the
-  v0.2 ROADMAP had proposed "always at least one decimal place" and the frozen
-  candidate vectors went the other way. A specification decision, not a bug
-  fix; kept out of every suite until made.
+### Changed (specification, v0.2)
+- **v0.2 `threshold` canonicalizes by value** (RFC "Post-freeze clarification
+  (2026-09-13)"): integral and below 2^53 → integer digits, otherwise the §3.6 C4
+  float. `1300.0` and `1300` are one manifest. The frozen RFC had never stated a
+  rule; the ROADMAP proposed the opposite of what the vectors did; JavaScript and
+  the registry could not observe the type distinction at all. Python, Go and Rust
+  now render `1300.0` as `1300`; no published digest changes (no vector spelled an
+  integral threshold as a float). `falsify_prml.canonicalize` applies the rule at
+  the root mapping only, like the v0.1 float rule.
+- Edge suite grows to **92** (EV-083..EV-092 pin the boundaries: `-0.0`→`0`,
+  `2^53-1`, `2^53`→`9007199254740992.0`, `1e16`/`10000000000000000`→`1.0e+16`,
+  `1300.5`, `1e-05`). `FACTS.env` `VECTORS_EDGE=92`. All four implementations and
+  the registry pass 92/92.
 
 ## [0.3.14] — 2026-08-24
 

@@ -106,15 +106,22 @@ implementations got them wrong (see Divergences): `?x`, `:x`, `-x`, `y`, `n`,
 **single-quoted**. Whitespace in P3–P5 means U+0020 only; every other character
 PyYAML would treat as whitespace is outside the portable set and rejected first.
 
-**C6 — Which production applies.** The manifest's *type*, not its spelling,
-selects the production: `null-literal` for null, `bool-literal` for booleans,
-`integer` for integers, `float` for floats, `string` for strings. One field is
-version-aware (§3.5): under `prml/0.1`, `threshold` is a float64 and an
-integer-valued threshold renders as `float` (`1` → `1.0`); under `prml/0.2` it
-renders according to its parsed type. Through the JSON door this means
-`"threshold": 1300` and `"threshold": 1300.0` are **different** v0.2 manifests
-with different hashes — a distinction JavaScript's `Number` cannot carry (see D
-below).
+**C6 — Which production applies.** The manifest's *type* selects the production
+— `null-literal` for null, `bool-literal` for booleans, `integer` for integers,
+`float` for floats, `string` for strings — with one field rendered **by value**
+rather than by type, at the root mapping only:
+
+- under `prml/0.1`, `threshold` is a float64: an integer-valued threshold renders
+  as `float` (`1` → `1.0`) (§3.5);
+- under `prml/0.2`, `threshold` renders as `integer` if its value is an integer
+  with magnitude below 2^53, and as `float` (C4) otherwise (RFC post-freeze
+  clarification, 2026-09-13). `1300`, `1300.0` and `1.3e3` are one manifest;
+  `9007199254740992` renders `9007199254740992.0`; `1e16` renders `1.0e+16`.
+
+The rule is by value so that the bytes cannot depend on whether a producer typed
+`1300` or `1300.0` — a distinction YAML, JSON and JavaScript's `Number` do not
+reliably carry. *(Until 2026-09-13 this paragraph said v0.2 rendered by parsed
+type; see Divergences, class D.)*
 
 **C7 — Sequences (informative).** No v0.1 or v0.2 schema field is a sequence;
 only free-form `metric_args` could contain one. The `sequence-N` productions
@@ -143,19 +150,22 @@ CI has been green. Four classes:
 2026-09-13: the JavaScript, Go and Rust predicates are now transcriptions of
 §C5 (the resolver patterns verbatim), Rust's float rendering implements §C4
 from the exponent, and the registry's `canonical.js` was corrected in step.
-After correction: Python 83/83, Go 83/83, Rust 83/83, JavaScript 82/83. The 82
-agreeing inputs were promoted to `spec/test-vectors/edge/` and run in CI for all
-four implementations. `candidate-vectors-2026-09-13.json` is kept as the dated
+After correction: Python 83/83, Go 83/83, Rust 83/83, JavaScript 82/83 — and,
+once class D was settled by the RFC clarification later the same day, 83/83 in
+all four. The inputs were promoted to `spec/test-vectors/edge/` (92 vectors with
+the ten boundary vectors for the new rule) and run in CI for all four. `candidate-vectors-2026-09-13.json` is kept as the dated
 **pre-correction** snapshot; its `implementation_status_2026_09_13` field is
 what was measured before the fix, not the current state.
 
-Class D (`CV-V2b`) is not a bug in the same sense: JavaScript cannot observe the
-distinction C6 makes, and the v0.2 RFC never stated the rule the vectors encode.
-It is a specification decision — canonicalize v0.2 `threshold` by parsed type
-(C6 as written; requires raw-number-preserving parsers in JavaScript and the
-registry) or by value (integral → integer spelling; changes no published digest;
-Python/Go/Rust change for `1300.0` inputs) — and it stays out of every suite
-until made.
+Class D (`CV-V2b`) was not a bug in the same sense: JavaScript could not observe
+the distinction the old C6 made, and the v0.2 RFC had never stated the rule the
+vectors encoded. It was settled the same day, by value (RFC "Post-freeze
+clarification", C6 above): Python, Go and Rust changed for `1300.0` inputs, no
+published digest changed, and ten boundary vectors (EV-083..EV-092) were added
+to the edge suite, which now has 92 vectors and passes in all four
+implementations and the registry. `candidate-vectors-2026-09-13.json` keeps the
+pre-decision measurement in `implementation_status_2026_09_13`; its expected
+bytes for CV-V2b were updated to the decided rule (see its `note`).
 
 ## Gaps this grammar makes visible (for v0.3, not changed here)
 
@@ -167,6 +177,23 @@ until made.
 - **G2** Sequences are informative (C7) until a vector exercises them.
 - **G3** The grammar bounds nothing about `metric_args` beyond C1–C6; a v0.3
   profile may wish to restrict its depth.
+- **G4** The by-value/float-field rules of C6 are applied at the **root mapping
+  only** by the Python reference and by `check_grammar.py`; JavaScript, Go and
+  Rust apply the v0.1 float hint to any key named `threshold` at any depth. The
+  two agree on every schema-valid manifest (nested `threshold` can only occur
+  inside free-form `metric_args`), so no vector distinguishes them yet. A v0.3
+  vector should.
+- **G5** Go renders non-integral floats from the **raw JSON text** (with `.0`
+  repairs) rather than from the value, on the assumption that the text is the
+  shortest round-trip spelling. Every published vector is generated by Python's
+  `repr`, so the assumption holds today; a JSON producer that writes `0.50` would
+  not be canonicalized to `0.5` by Go. The v0.2 `threshold` path is by value.
+- **G6** The JavaScript `test-vectors` runner (and the registry's
+  `test-canonicalize.js`) preserve big integers with a text-unaware regex that
+  wraps any 16+-digit run in value position — including one inside a `title`
+  string, which turns the vector file into invalid JSON. Vector titles therefore
+  spell large numbers as `2^53-1`, not as digits, until the runner parses
+  strings properly. Found 2026-09-13 while adding EV-086..EV-089.
 
 ## Provenance
 

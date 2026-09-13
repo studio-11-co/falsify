@@ -112,6 +112,22 @@ class FloatRule(unittest.TestCase):
                 cg.render_float(x)
 
 
+class V02ThresholdByValue(unittest.TestCase):
+    """RFC post-freeze clarification (2026-09-13): v0.2 threshold renders by value."""
+
+    def test_rule(self):
+        cases = {1300.0: "1300", 1300: "1300", -0.0: "0", 2.0: "2", 1300.5: "1300.5",
+                 9007199254740991: "9007199254740991", 9007199254740992: "9007199254740992.0",
+                 1e16: "1.0e+16", 10000000000000000: "1.0e+16", 1e-05: "1.0e-05", 0: "0"}
+        for v, want in cases.items():
+            with self.subTest(repr(v)):
+                self.assertEqual(cg.render_scalar(v, "threshold", "prml/0.2"), want)
+
+    def test_v01_unchanged(self):
+        self.assertEqual(cg.render_scalar(1, "threshold", "prml/0.1"), "1.0")
+        self.assertEqual(cg.render_scalar(1300, "threshold", "prml/0.1"), "1300.0")
+
+
 @unittest.skipUnless(CANDIDATES_PATH.exists(), "candidate vectors not present")
 class GrammarReproducesCandidateBattery(unittest.TestCase):
     def test_all_candidates(self):

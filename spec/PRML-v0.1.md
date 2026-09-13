@@ -81,11 +81,11 @@ an implementation written from the grammar alone. What that verification also
 showed is now the open item in its place: the four reference implementations
 agree byte-for-byte on the 21 conformance vectors; a wider 83-input battery
 published the same day found 21 inputs, outside the vectors, on which three of
-them departed from the grammar. They were corrected the same day, and 82 of
-those inputs now run in CI as an edge suite (`spec/test-vectors/edge/`). One
-case is open: a v0.2 `threshold` spelled `1300.0`, because the v0.2 RFC does
-not say whether `threshold` canonicalizes by parsed type or by value, and a
-JavaScript parser cannot observe the former.
+them departed from the grammar. They were corrected the same day; the one
+input that exposed an unstated rule rather than a bug (a v0.2 `threshold`
+spelled `1300.0`) was settled by a post-freeze clarification to the v0.2 RFC
+the same day — `threshold` canonicalizes by value under v0.2. All of it now
+runs in CI as a 92-vector edge suite (`spec/test-vectors/edge/`).
 
 **Implementation status.** All four reference implementations were written by the
 editor, and all public registry records to date originate with the editor. No
@@ -435,13 +435,15 @@ battery of 83 inputs built for that purpose
 showed that three of the four reference implementations departed from the
 grammar on 21 inputs, none of which is covered by a conformance vector (README,
 "Divergences"). The three implementations were corrected the same day to the
-predicate and the float rule as stated, and 82 of the 83 inputs were promoted to
-an **edge suite** ([`spec/test-vectors/edge/`](test-vectors/edge/)) that the
-multi-language CI runs alongside Appendix B. One input remains outside every
-suite: a v0.2 manifest whose `threshold` is spelled `1300.0`. Whether that
-renders as `1300.0` (its parsed type, which a JavaScript JSON or YAML parser
-cannot observe) or as `1300` (its value) is a decision the v0.2 RFC does not
-make; until it does, C6 stands as written and that case is recorded, not tested.
+predicate and the float rule as stated. The one input that was not a bug but an
+unstated rule — a v0.2 manifest whose `threshold` is spelled `1300.0`, which a
+JavaScript JSON or YAML parser cannot tell from `1300` — was settled the same
+day by a post-freeze clarification to the v0.2 RFC: under `prml/0.2`,
+`threshold` canonicalizes **by value**, an integral value below 2^53 as an
+integer and anything else as a float (C6). All 83 inputs plus ten vectors
+pinning that rule's boundaries now form the **edge suite**
+([`spec/test-vectors/edge/`](test-vectors/edge/), 92 vectors), which the
+multi-language CI runs for all four implementations alongside Appendix B.
 
 ---
 
@@ -840,15 +842,18 @@ Conformance is enforceable via the falsify reference test suite
 >    implementations do not reproduce the reference bytes:** over-quoting `?x`,
 >    `y`, `1e5`; under-quoting `<<`, `1:30`, `1_000`, a lone `-`; Rust rendering
 >    a `threshold` of 1e-05 as `0.00001`; JavaScript unable to distinguish
->    `1300.0` from `1300` under v0.2. All but the last were corrected the same
->    day and the 82 inputs now run in CI as an edge suite
->    (`spec/test-vectors/edge/`); the pre-correction measurement is kept as a
->    dated snapshot in `spec/grammar/candidate-vectors-2026-09-13.json`. The
->    remaining input — `1300.0` under v0.2 — awaits a decision the v0.2 RFC does
->    not make: whether `threshold` canonicalizes by parsed type or by value. The
->    claim this document makes — agreement on the 21 vectors of Appendix B — is
->    unchanged and was re-verified the same day; the four implementations now
->    also agree on the 82 edge vectors.
+>    `1300.0` from `1300` under v0.2. The first three classes were corrected the
+>    same day. The last was not a defect but a rule the v0.2 RFC had never
+>    stated, and was settled the same day by a post-freeze clarification to that
+>    RFC: under `prml/0.2`, `threshold` canonicalizes by value — integral and
+>    below 2^53 as an integer, otherwise as a float. No published digest changes
+>    (no vector spelled an integral threshold as a float). The 83 inputs plus ten
+>    boundary vectors for that rule now run in CI as the edge suite
+>    (`spec/test-vectors/edge/`, 92 vectors); the pre-correction measurement is
+>    kept as a dated snapshot in `spec/grammar/candidate-vectors-2026-09-13.json`.
+>    The claim this document makes — agreement on the 21 vectors of Appendix B —
+>    is unchanged and was re-verified the same day; the four implementations now
+>    also agree on all 92 edge vectors.
 
 ---
 

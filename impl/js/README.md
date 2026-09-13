@@ -38,7 +38,7 @@ Exit codes match the spec: `0` PASS, `2` BAD (bad input/spec), `3` TAMPERED, `10
 
 About 400 lines of Node.js, zero runtime dependencies beyond the Node.js standard library (`fs`, `path`, `crypto`). Optional dependency on `js-yaml` for loading `.yaml` files; not required for `.json` input.
 
-The canonicalizer implements the §3.6 formal grammar: the plain-scalar predicate (`spec/grammar/README.md` §C5) and the float rule (§C4) are transcribed from the specification, not approximated from PyYAML — the 2026-09-13 audit found 21 inputs on which the earlier hand-rolled approximation was wrong. Verified on the 21 conformance vectors and the 82-vector edge suite. It does not use a generic YAML serializer because `js-yaml` (and other YAML libraries) make different plain-scalar quoting decisions than PyYAML, producing canonical bytes that diverge from the v0.1 vectors.
+The canonicalizer implements the §3.6 formal grammar: the plain-scalar predicate (`spec/grammar/README.md` §C5) and the float rule (§C4) are transcribed from the specification, not approximated from PyYAML — the 2026-09-13 audit found 21 inputs on which the earlier hand-rolled approximation was wrong. Verified on the 21 conformance vectors and the 92-vector edge suite. It does not use a generic YAML serializer because `js-yaml` (and other YAML libraries) make different plain-scalar quoting decisions than PyYAML, producing canonical bytes that diverge from the v0.1 vectors.
 
 Input handling is hardened against untrusted manifests:
 

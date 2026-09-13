@@ -119,6 +119,20 @@ def canonicalize(manifest: dict) -> str:
             v = m.get(field)
             if isinstance(v, int) and not isinstance(v, bool):
                 m[field] = float(v)
+    elif m.get("version") == "prml/0.2":
+        # v0.2 `threshold` canonicalizes by VALUE, not by the spelling of the input
+        # (RFC post-freeze clarification, 2026-09-13): an integral value with
+        # |v| < 2**53 renders as an integer, anything else as a float (§3.6 C4).
+        # So `1300.0` and `1300` are one manifest with one hash, and JavaScript —
+        # whose JSON.parse and js-yaml cannot tell them apart — agrees with every
+        # other implementation. 2**53 is the bound because above it the shortest
+        # round-trip digits of an integral float can differ from its exact value.
+        t = m.get("threshold")
+        if isinstance(t, (int, float)) and not isinstance(t, bool):
+            if isinstance(t, float) and t.is_integer() and abs(t) < 2**53:
+                m["threshold"] = int(t)
+            elif isinstance(t, int) and abs(t) >= 2**53:
+                m["threshold"] = float(t)
     canonical = yaml.safe_dump(
         m,
         default_flow_style=False,

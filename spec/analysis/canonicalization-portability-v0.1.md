@@ -279,3 +279,12 @@ never made, recorded in the edge suite's README. The empirical claim is therefor
 now: **four implementations agree byte-for-byte on 21 conformance vectors and 82
 edge vectors** — still not "on arbitrary input", but on a corpus that for the
 first time includes the inputs a grammar says are hard.
+
+**Addendum 2 (2026-09-13, evening).** Class D was settled by a post-freeze
+clarification to the v0.2 RFC: `threshold` canonicalizes **by value** under v0.2
+(integral and below 2^53 → integer digits; otherwise C4 float). Python, Go and Rust
+changed for `1300.0` inputs; JavaScript and the registry already behaved this way.
+No published digest changed. Ten boundary vectors were added; the edge suite is 92
+and passes in all four implementations. Two further latent assumptions were written
+down as gaps rather than fixed (grammar README G4: nested-`threshold` depth; G5: Go's
+raw-text float path) because no schema-valid manifest can reach them today.
