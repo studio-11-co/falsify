@@ -31,7 +31,7 @@ numbers follow [Semantic Versioning](https://semver.org).
   sequence plus constraints C1–C7, normative. Verified in both directions by
   `spec/grammar/check_grammar.py`, an emitter and recogniser written from the
   grammar alone (no PyYAML): 21/21 conformance vectors reproduced byte-for-byte,
-  14 malformed canonical texts rejected. `tests/test_grammar.py` runs the same
+  16 malformed canonical texts rejected. `tests/test_grammar.py` runs the same
   checks in CI. No canonical byte or digest changes.
 - `spec/grammar/candidate-vectors-2026-09-13.json`: 83 inputs at the edges of
   the plain-scalar predicate and the float rule, with expected bytes and hash

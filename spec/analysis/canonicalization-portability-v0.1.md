@@ -232,7 +232,7 @@ grammar — was carried out on 2026-09-13: PRML-v0.1.md §3.6 now points to
 `spec/grammar/prml-canonical.abnf` and constraints C1–C7. It was verified in both
 directions by `spec/grammar/check_grammar.py`, an emitter and recogniser that
 imports neither PyYAML nor the reference canonicalizer: 21/21 conformance vectors
-reproduced byte-for-byte, 14 malformed texts rejected. No canonical byte or digest
+reproduced byte-for-byte, 16 malformed texts rejected. No canonical byte or digest
 changed.
 
 Stating the plain-scalar predicate exactly (C5) made it possible to build inputs at

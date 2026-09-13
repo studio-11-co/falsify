@@ -28,12 +28,13 @@ verification below is the proof.
 1. **21 conformance vectors** (13 v0.1 + 8 v0.2): the from-grammar emitter
    reproduces the published `canonical` bytes and `hash` for every one, and the
    from-grammar recogniser accepts every one.
-2. **14 deliberately malformed canonical texts** are rejected by the recogniser:
+2. **16 deliberately malformed canonical texts** are rejected by the recogniser:
    CRLF, missing final LF, trailing space, three-space indent, root and nested
    key-order violations, root and nested duplicate keys, an integer `threshold`
    under v0.1, a non-canonical float spelling (`0.850`), a quoted scalar the
    predicate says should be plain, a plain scalar the predicate says should be
-   quoted, a tab character.
+   quoted, a tab character, and — for the v0.2 by-value rule — an integral
+   `threshold` spelled `1300.0` and a `threshold` of 2^53 spelled as an integer.
 3. **83 candidate vectors**: the from-grammar emitter reproduces the expected
    bytes for all 83.
 

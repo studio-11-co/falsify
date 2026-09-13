@@ -22,14 +22,21 @@ import yaml
 
 
 def canonicalize(spec):
-    """Match falsify._canonicalize exactly."""
-    return yaml.safe_dump(
-        spec,
-        sort_keys=True,
-        default_flow_style=False,
-        allow_unicode=True,
-        width=4096,
-    )
+    """Delegate to the reference canonicalizer (falsify_prml), so this generator
+    carries every version-aware rule — the v0.1 float coercion and the v0.2
+    by-value threshold rule (RFC post-freeze clarification, 2026-09-13).
+
+    Until 2026-09-13 this was a private safe_dump() copy with no such rules; it
+    happened to agree because no candidate input exercised them. A generator
+    that does not implement the specification is a trap for the next editor.
+    """
+    import sys
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2]
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    import falsify_prml
+    return falsify_prml.canonicalize(spec)
 
 
 def sha256(s: str) -> str:

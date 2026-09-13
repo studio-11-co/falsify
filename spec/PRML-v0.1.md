@@ -424,7 +424,7 @@ The grammar was added on 2026-09-13 and verified in both directions before
 publication: an emitter and a recogniser written from the grammar alone,
 without the reference canonicalizer or its YAML library
 ([`spec/grammar/check_grammar.py`](grammar/check_grammar.py)), reproduce all
-21 conformance vectors byte-for-byte and reject fourteen deliberately malformed
+21 conformance vectors byte-for-byte and reject sixteen deliberately malformed
 canonical texts. Publishing the grammar changes no canonical byte sequence and
 no digest of any valid manifest; it states what the reference canonicalizer
 already emits.
