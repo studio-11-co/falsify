@@ -74,8 +74,10 @@ sit inside one organisation — the anchor remains valid and the assessment can
 still be compromised. This specification binds bytes to a time; it does not
 establish that the criteria were withheld from the party they were meant to test.
 Three statements in
-this document promised normative adoption "with v0.2"; v0.2 froze without them and
-they are re-targeted to the v0.3 cycle (see Errata). §3 has had a formal
+this document promised normative adoption "with v0.2"; v0.2 froze without them,
+and on 2026-09-13 they were dispositioned (see Errata): the metric registry
+withdrawn, the signature sidecar re-scoped to a v0.3 backlog item with a test
+vector, the risk-tier field recast as a deployment obligation. §3 has had a formal
 grammar since 2026-09-13 (§3.6), verified against all 21 conformance vectors by
 an implementation written from the grammar alone. What that verification also
 showed is now the open item in its place: the four reference implementations
@@ -193,10 +195,18 @@ following top-level keys:
 
 #### 2.3.1 `metric`
 
-The `metric` value **MUST** be either:
+The `metric` value is a string and is either:
 
-- A registered identifier from the PRML Metric Registry (forthcoming, §11), or
-- A URI dereferencing to a published definition.
+- a URI dereferencing to a published definition, or
+- a plain identifier such as `accuracy` or `f1_macro`.
+
+A plain identifier is a **local name**. It carries no portability guarantee: two
+producers may mean different things by `accuracy`, and a verifier **MUST NOT**
+assume otherwise. A producer who needs the metric's meaning to travel with the
+manifest **SHOULD** use the URI form. There is no PRML metric registry and none
+is planned; the earlier statement that one would "be established with v0.2" was
+withdrawn on 2026-09-13 (see Errata). This paragraph changes no validation rule
+and no canonical byte.
 
 Examples: `accuracy`, `f1_macro`, `https://example.org/metrics/calibration_ece`.
 
@@ -233,7 +243,15 @@ Verifiers MUST run canonicalization regardless (it is a prerequisite for the
 hash check in §5.2 step 1), so signing over the canonical bytes adds no
 redundant work. Implementations SHOULD store the signature in a sidecar
 file `<claim_id>.prml.sig` alongside the existing `<claim_id>.prml.sha256`
-sidecar. v0.2 normatively adopts this sidecar convention.
+sidecar. The sidecar's format, and what a verifier does with one if present, is
+specified in the v0.3 backlog
+([`v0.3-backlog/06-signature-sidecar.md`](v0.3-backlog/06-signature-sidecar.md),
+disposition of 2026-09-13): presence remains optional; a verifier **MAY** verify
+it and, if it does, **MUST** verify over the canonical bytes, never over the
+hash. Note that a signature carried *inside* the manifest, in this field, cannot
+be a signature over the manifest's own canonical bytes, because those bytes
+include it; that circularity is recorded as an open question in the backlog, and
+the sidecar is the carrier this specification recommends.
 
 > **v0.1 erratum (2026-05-02):** earlier drafts of this spec instructed
 > implementations to sign over the manifest hash. That recommendation is
@@ -607,8 +625,12 @@ public manifest registries, or signed dataset hosts.
 >    The anchor is what the regulator verifies; the manifest is the
 >    provenance.
 >
-> v0.2 will normatively adopt option (3) for the `producer.tier:
-> high-risk` profile. v0.1 deployments choosing not to adopt one of these
+> No manifest field encodes a risk tier, and none will (disposition of
+> 2026-09-13, see Errata): whether a system is high-risk is a fact about its
+> deployment under Annex III, not something a manifest can assert about
+> itself, and a new field would change canonical bytes. Anchoring — option
+> (3) — is therefore a **deployment obligation** in compliance contexts, stated
+> in §2.3.4, not a manifest property. v0.1 deployments choosing not to adopt one of these
 > three mitigations are NOT suitable for EU AI Act Article 12 evidence
 > submission and the producer SHOULD declare so in their accompanying
 > conformity-assessment documentation.
@@ -682,7 +704,8 @@ the security and interoperability considerations of sections 5 and 8.
 The sidecar extension `.prml.sha256` is a convention of this specification
 and is not part of the media type registration.
 
-A PRML Metric Registry will be established with v0.2.
+There is no PRML metric registry and none is planned (disposition of
+2026-09-13; see Errata and §2.3.1).
 
 ---
 
@@ -859,6 +882,30 @@ Conformance is enforceable via the falsify reference test suite
 >    The claim this document makes — agreement on the 21 vectors of Appendix B —
 >    is unchanged and was re-verified the same day; the four implementations now
 >    also agree on all 92 edge vectors.
+
+> **v0.1 erratum (2026-09-13): dispositions of the three v0.2 forward-promises,
+> EDITORIAL.** The erratum of 2026-07-11 re-targeted three statements to "the
+> v0.3 cycle" without deciding them. Decided by the editor on 2026-09-13. None
+> changes a canonical byte, a digest, or a validation rule; all three are text.
+>
+> 1. **Metric Registry (§2.3.1, §11) — withdrawn.** A registry is a governance
+>    body, not a file, and there is no community to constitute one. Plain
+>    identifiers are now defined as local names with no portability guarantee;
+>    the URI form is the portable one.
+>
+> 2. **Signature sidecar (§2.3.3) — re-scoped.** Presence stays optional. The
+>    sidecar's format and the verifier's behaviour when one is present are
+>    specified in `v0.3-backlog/06-signature-sidecar.md`, with an Ed25519 test
+>    vector over TV-001's canonical bytes. A verifier MAY verify; if it does, it
+>    MUST verify over the canonical bytes. The backlog also records that a
+>    signature carried inside the manifest cannot be over bytes that include it
+>    — an open question inherited from §2.3.3 as written.
+>
+> 3. **`producer.tier: high-risk` (§8.1) — recast.** No tier field will be
+>    added: risk classification is a deployment fact, not a manifest assertion,
+>    and `additionalProperties: false` makes any new field a MAJOR change.
+>    Anchoring (option 3) is a deployment obligation in compliance contexts,
+>    already stated in §2.3.4.
 
 ---
 

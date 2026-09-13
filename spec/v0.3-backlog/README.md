@@ -19,3 +19,4 @@ Other deferred items remain in the v0.2 RFC "Proposals deferred to v0.3+"
 list and may or may not promote to this backlog depending on community
 input received after freeze.
 - `05-sealed-disclosure.md` — sealed commitments and field-level selective disclosure (opened 2026-09-03; registry sealed commits exist today, spec unchanged)
+- `06-signature-sidecar.md` — the detached signature sidecar: `prml-sig/0` format, verifier behaviour (MAY verify; MUST verify over canonical bytes), Ed25519 test vector over TV-001 (opened 2026-09-13 by the disposition of the §2.3.3 forward-promise; records the in-manifest `producer.signature` circularity as an open question)
