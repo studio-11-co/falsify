@@ -1,0 +1,137 @@
+; PRML v0.1 — Canonical Serialization, formal grammar
+; Published 2026-09-13 as PRML-v0.1.md §3.6. Normative together with the
+; constraints C1–C7 below, which ABNF cannot express and the prose states.
+;
+; Notation: RFC 5234 ABNF with RFC 7405 case-sensitive strings (%s"...").
+; Numeric character values are Unicode scalar values; the byte sequence is
+; their UTF-8 encoding (§3.3).
+;
+; What this grammar recognises: the exact byte sequence whose SHA-256 is the
+; manifest hash (§4). It is a recogniser for canonical OUTPUT. It is not a
+; grammar for the input document a producer writes, which may use any YAML
+; 1.2 spelling within the §3.1 subset.
+;
+; Verification: spec/grammar/check_grammar.py implements these rules without
+; consulting the reference canonicalizer and reproduces all 21 conformance
+; vectors (13 v0.1 + 8 v0.2) byte-for-byte. See spec/grammar/README.md.
+
+; ---------------------------------------------------------------------------
+; Document
+; ---------------------------------------------------------------------------
+
+canonical-manifest = mapping-0
+   ; C1 (depth): a mapping at depth d renders each of its entries on lines
+   ; that begin with exactly 2*d spaces. Depths 0–2 are spelled out; deeper
+   ; mappings follow the same rule with 6SP, 8SP, ... (free-form
+   ; `metric_args` is the only schema field that can nest that deep).
+   ; C2 (order): entries of a mapping appear in ascending order of the key's
+   ; Unicode scalar values, which for the §3.4 portable set is identical to
+   ; ascending byte order of the key's UTF-8 encoding (§3.2).
+   ; C3 (uniqueness): no two entries of one mapping have the same key (§3.2.1).
+
+mapping-0 = 1*entry-0
+entry-0   = key ":" ( SP scalar LF / LF mapping-1 / LF sequence-0 )
+
+mapping-1 = 1*entry-1
+entry-1   = 2SP key ":" ( SP scalar LF / LF mapping-2 / LF sequence-1 )
+
+mapping-2 = 1*entry-2
+entry-2   = 4SP key ":" ( SP scalar LF / LF mapping-3 / LF sequence-2 )
+
+mapping-3 = 1*entry-3
+entry-3   = 6SP key ":" ( SP scalar LF / LF mapping-4 / LF sequence-3 )
+   ; and so on: entry-N = (2*N)SP key ":" ( ... mapping-(N+1) / sequence-N )
+
+; ---------------------------------------------------------------------------
+; Block sequences — INFORMATIVE (see README: no v0.1/v0.2 schema field is a
+; sequence; this shape is specified from the reference emitter and is not
+; exercised by any conformance vector or by the cross-language CI).
+; ---------------------------------------------------------------------------
+
+sequence-0 = 1*item-0
+item-0     = "-" SP ( scalar LF / seq-mapping-1 )
+   ; A sequence is "indentless": its "-" lines start at the SAME indentation
+   ; as the parent key. A mapping inside an item puts its first entry on the
+   ; "-" line and continues with entries indented two spaces deeper than the "-".
+seq-mapping-1 = key ":" SP scalar LF *entry-1
+
+sequence-1 = 1*item-1
+item-1     = 2SP "-" SP ( scalar LF / seq-mapping-2 )
+seq-mapping-2 = key ":" SP scalar LF *entry-2
+
+sequence-2 = 1*item-2
+item-2     = 4SP "-" SP ( scalar LF / seq-mapping-3 )
+seq-mapping-3 = key ":" SP scalar LF *entry-3
+
+sequence-3 = 1*item-3
+item-3     = 6SP "-" SP scalar LF
+
+; ---------------------------------------------------------------------------
+; Keys and scalars
+; ---------------------------------------------------------------------------
+
+key    = string
+   ; Every key in every v0.1 and v0.2 schema field is a plain identifier
+   ; matching 1*( ALPHA / DIGIT / "_" ). Keys obey the same plain/single-
+   ; quoted rule (C5) as values; a free-form `metric_args` key such as "0" or
+   ; "yes" therefore renders single-quoted.
+
+scalar = null-literal / bool-literal / integer / float / string
+   ; C6 (type): which alternative applies is fixed by the manifest's type
+   ; system, not by the spelling — see README §"Which production applies".
+
+null-literal = %s"null"
+bool-literal = %s"true" / %s"false"
+
+integer = [ "-" ] ( "0" / nz-digit *DIGIT )
+   ; Arbitrary precision: `seed` MAY be any integer in [0, 2^64-1] (§2.1) and
+   ; renders without loss (TV-006 renders 18446744073709551615).
+nz-digit = %x31-39
+
+float   = [ "-" ] ( float-decimal / float-exp )
+   ; C4 (rendering): the digits are the SHORTEST decimal digit string that
+   ; parses back to the same IEEE 754 binary64 value ("shortest round-trip").
+   ; Let e be the decimal exponent of the value written as d.ddd x 10^e with
+   ; 1 <= d < 10 (for zero, e = 0). Then:
+   ;   float-decimal is used when -4 <= e < 16,
+   ;   float-exp     is used when  e < -4 or e >= 16.
+   ; float-exp always carries a "." in the mantissa (so 1e-05 renders as
+   ; 1.0e-05, not 1e-05), always carries an explicit exponent sign, and pads
+   ; the exponent to at least two digits (e-05, e+16, e-324, e+308).
+   ; Non-finite values have no production: they are prohibited (§3.5).
+float-decimal = ( "0" / nz-digit *DIGIT ) "." 1*DIGIT
+float-exp     = DIGIT "." 1*DIGIT %s"e" ( "+" / "-" ) 2*DIGIT
+
+string = plain-scalar / single-quoted
+   ; C5 (style): a string renders as plain-scalar if and only if the
+   ; plain-scalar predicate in README §C5 holds; otherwise single-quoted.
+   ; There is no double-quoted production: every character that would force
+   ; double quoting in the reference emitter is outside the portable set
+   ; (§3.4) and is rejected before emission.
+
+plain-scalar  = pchar-nonsp [ *pchar pchar-nonsp ]
+   ; Shape only. The predicate (C5) additionally excludes strings that
+   ; begin with an indicator, contain ": " or " #", end in ":", or would
+   ; resolve to a non-string type (bool, int, float, null, timestamp, "<<",
+   ; "=") when read back as plain YAML 1.1.
+single-quoted = "'" *( sq-char / "''" ) "'"
+   ; An apostrophe inside the string is written twice.
+
+; ---------------------------------------------------------------------------
+; Character classes — the §3.4 portable set as the reference emitter will
+; write it in plain or single-quoted style (allow_unicode=True).
+; Excluded: C0 controls (00-1F), DEL (7F), C1 controls (80-9F, incl. NEL
+; U+0085), U+2028, U+2029, U+FEFF, the noncharacters U+FFFE/U+FFFF, and
+; U+10FFFF (the last three are not named by §3.4 but force double quoting in
+; the reference emitter — see README §"Gaps").
+; ---------------------------------------------------------------------------
+
+pchar       = %x20-7E / %xA0-2027 / %x202A-D7FF / %xE000-FEFE / %xFF00-FFFD / %x10000-10FFFE
+pchar-nonsp = %x21-7E / %xA0-2027 / %x202A-D7FF / %xE000-FEFE / %xFF00-FFFD / %x10000-10FFFE
+sq-char     = %x20-26 / %x28-7E / %xA0-2027 / %x202A-D7FF / %xE000-FEFE / %xFF00-FFFD / %x10000-10FFFE
+
+; Core rules from RFC 5234 Appendix B, repeated for self-containment.
+SP    = %x20
+LF    = %x0A
+DIGIT = %x30-39
+ALPHA = %x41-5A / %x61-7A

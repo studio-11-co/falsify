@@ -211,4 +211,4 @@ jobs:
             echo "    in spec/analysis/canonicalization-portability-v0.1.md."
             exit 1
           fi
-          echo "::notice::All four reference implementations passed all 21 positive vectors byte-for-byte and rejected all 14 reject-vectors."
+          echo "::notice::All four reference implementations passed all 21 positive vectors byte-for-byte and rejected the reject suite (20 vectors from Python and JS; 16 from the JSON-only Go and Rust)."

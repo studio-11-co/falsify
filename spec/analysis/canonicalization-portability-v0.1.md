@@ -222,3 +222,49 @@ each of U+0085 / U+007F / U+2028 / U+2029 / U+FEFF is rejected (a validation vec
 ---
 
 **Postscript (2026-07).** Counts in this analysis reflect its writing date (12 v0.1 normative + 6 candidate vectors). The published suite grew to **13 v0.1 + 8 v0.2 = 21 positive vectors, plus 20 reject vectors**; all four implementations remain byte-for-byte in agreement across the full suite in CI.
+
+---
+
+## Finding 5 (2026-09-13): the grammar exists, and it found 21 divergences the vectors never could
+
+The recommendation in Finding 3 and in "Action items for v0.2" — publish a formal
+grammar — was carried out on 2026-09-13: PRML-v0.1.md §3.6 now points to
+`spec/grammar/prml-canonical.abnf` and constraints C1–C7. It was verified in both
+directions by `spec/grammar/check_grammar.py`, an emitter and recogniser that
+imports neither PyYAML nor the reference canonicalizer: 21/21 conformance vectors
+reproduced byte-for-byte, 14 malformed texts rejected. No canonical byte or digest
+changed.
+
+Stating the plain-scalar predicate exactly (C5) made it possible to build inputs at
+its edges, which the prose never allowed. An 83-input battery
+(`spec/grammar/candidate-vectors-2026-09-13.json`) run through all four reference
+implementations gave **62 agreements and 21 divergences**. None of the 21 is
+covered by a conformance vector, which is why the daily multi-language CI has been
+green throughout. The hand-rolled predicates in JavaScript, Go and Rust — ported
+from one another, as Finding 3 recorded — share the same misreadings of PyYAML:
+
+| Class | Inputs | Departs | Cause |
+|---|---|---|---|
+| over-quoting | `?x` `:x` `y` `n` `Y` `N` `1e5` `1E5` `12e3` `1e-5` `0o17` | JS, Go, Rust | `?`/`:` treated as unconditional indicators; single-letter bools; exponent accepted without `.`; a `0o` octal YAML 1.1 lacks |
+| under-quoting | `-` `<<` `=` `1_000` `1:30` `190:20:30` `0b101` | JS, Go, Rust | merge/value tags, sexagesimal and binary ints, underscore digits, lone-`-` indicator all missing |
+| float notation | `threshold: 1e-05`, `-1e-05` | Rust | reformats only when serde/ryu already chose exponent form; the *e* < −4 rule is never applied (ryu switches at 1e-6, Python at 1e-5) |
+| v0.2 float-ness | `threshold: 1300.0` | JavaScript | `JSON.parse` yields 1300; the C6 distinction cannot be observed |
+
+**What this changes in the empirical claim.** "Four implementations agree
+byte-for-byte on 21 vectors" is true and was re-verified the same day. "Auditors
+get the same hash regardless of toolchain" was never verified and is, on this
+battery, false one time in four. The public surfaces that said the latter were
+narrowed on 2026-09-13 to say the former.
+
+**What happens next.** The candidate vectors are the acceptance test for
+correcting the three implementations. Promoting them into the conformance suite
+before that correction would turn CI red for three of four; promoting them after
+it is the point. That correction is release work — it touches the canonicalizer
+of three languages — and is scheduled for the 0.9.0 line, not done here.
+
+**Why this matters for the specification, not only the code.** The divergences are
+in the *implementations*; the *reference bytes* did not move. That is the property
+a normative grammar is supposed to buy: a fixed target that programs can be wrong
+against. Before 2026-09-13 there was no such target — §3.5 said the program was the
+target — and so there was, strictly, nothing for these three implementations to
+be wrong *against*.

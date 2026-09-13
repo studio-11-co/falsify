@@ -27,6 +27,33 @@ numbers follow [Semantic Versioning](https://semver.org).
   and deliberately omit authoring commands; there is no Go module and no crates.io
   crate, and none is planned for the 0.x line. Previously a reader had to guess.
 - `pyproject.toml` description now says the package also ships `falsify-engine`.
+- **§3.6 Formal Grammar** (`spec/grammar/`): an ABNF for the canonical byte
+  sequence plus constraints C1–C7, normative. Verified in both directions by
+  `spec/grammar/check_grammar.py`, an emitter and recogniser written from the
+  grammar alone (no PyYAML): 21/21 conformance vectors reproduced byte-for-byte,
+  14 malformed canonical texts rejected. `tests/test_grammar.py` runs the same
+  checks in CI. No canonical byte or digest changes.
+- `spec/grammar/candidate-vectors-2026-09-13.json`: 83 inputs at the edges of
+  the plain-scalar predicate and the float rule, with expected bytes and hash
+  and each reference implementation's agreement on 2026-09-13. **Not** in the
+  conformance suite (see below).
+
+### Changed
+- §3.5 no longer calls the reference canonicalizer "normative for this
+  rendering"; constraint C4 of the grammar is normative and the canonicalizer
+  conforms to it. Recorded as a dated erratum in the spec.
+- `multi-lang-conformance.yml` summary notice said "14 reject-vectors"; the
+  suite has 20 (16 for the JSON-only implementations) since 0.3.13.
+
+### Known divergences (published, not fixed here)
+- Running the 83-input battery through all four reference implementations:
+  62 agree, **21 do not** — none covered by a conformance vector, so the daily CI
+  stayed green. JavaScript, Go and Rust over-quote `?x` `:x` `y` `n` `1e5`
+  `0o17` and under-quote `-` `<<` `=` `1_000` `1:30` `0b101`; Rust renders a
+  `threshold` of `1e-05` as `0.00001`; JavaScript cannot distinguish `1300.0`
+  from `1300` under v0.2. Root causes and classes in `spec/grammar/README.md`.
+  Correcting the three implementations is separate release work; the candidate
+  vectors are its acceptance test.
 
 ## [0.3.14] — 2026-08-24
 

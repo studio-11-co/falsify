@@ -1,0 +1,2471 @@
+[
+ {
+  "id": "CV-S00",
+  "title": "notes = '?x'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "?x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: ?x\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "fac9ecb864cd16e8238b8bd9a5f1e0103c9eded446ae557c5173d21410accb35",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S01",
+  "title": "notes = ':x'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": ":x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: :x\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "0a58e1e0ac0622e523a5f77f50147e37a9160450a0621249509e1859f8d5c4e5",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S02",
+  "title": "notes = '-x'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "-x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: -x\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "806e8c15c23a0143e8e55625aae7edf6643650a60f63a29ffa0b54d4b2aad472",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S03",
+  "title": "notes = '-'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "-"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '-'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "3a089d06e2bb2710a496d553f74ee2beb4f5eae06bd59d52ef4ff7a8036ee84e",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S04",
+  "title": "notes = 'y'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "y"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: y\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "351f8f781c9499b93d04b0a8e5ac27140ced94cfd0d7cad2a4f02f4e8368ffe5",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S05",
+  "title": "notes = 'n'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "n"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: n\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "772ab36be7a1da4449b5968f6b5d950a2ba346274a37910dc3c73e15f3ecb46a",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S06",
+  "title": "notes = 'Y'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "Y"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: Y\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "23c74f38609d56bf93b8b23b8946723d3ef778af75f55cea0ae32966ae0130d8",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S07",
+  "title": "notes = 'N'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "N"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: N\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "49e27e0f35ba5514961e5dc163adf3982c944297a704e4aa1026543df3c72cb7",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S08",
+  "title": "notes = 'yes'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "yes"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'yes'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "3660e743ca12e3c48241082c2331fbc97ab8f77ebb6986287f76353b35dd5d09",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S09",
+  "title": "notes = '1e5'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "1e5"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 1e5\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "3ec0cf0e6b54d1b5500b34480c01bc25f4d76d1830127e0beeecf3b4f7682bd2",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S10",
+  "title": "notes = '1E5'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "1E5"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 1E5\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "4713a8f78804b60b9f9e59f52b65d9b5a0962481deeb4063bf1e0a0e9109c34b",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S11",
+  "title": "notes = '12e3'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "12e3"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 12e3\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "817a3f677bf8dab5013b77b999281b65ff735963c432732da8b5cd6fddca7d4c",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S12",
+  "title": "notes = '0o17'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "0o17"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 0o17\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "da18346bcf8759a37be160ea53c0b8731f7642c30d1163ce60bce16f44deca2f",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S13",
+  "title": "notes = '0b101'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "0b101"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '0b101'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "82ed2f0d06ac45dffb2ff0afe9f371d8578e5391ff8095190170c716c141e57f",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S14",
+  "title": "notes = '017'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "017"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '017'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "7849abe86acfcfbe7643b0cf5225151a6ae25ed837e9665aa9d2bbcc3e476e18",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S15",
+  "title": "notes = '0x1f'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "0x1f"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '0x1f'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "aadf20549c9e3e5769f40ac3cc4c45f86f3543436c3510167b9683a6a3a1e81a",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S16",
+  "title": "notes = '1:30'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "1:30"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '1:30'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "60f34ce62b7fbc0983e61957ab0b801f890ab423f84aff11b3065aadedbbfc65",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S17",
+  "title": "notes = '190:20:30'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "190:20:30"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '190:20:30'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "4283e4e5baf39582a0cb7627bcd1264ae591712355263ca86cd884bc7f862a7d",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S18",
+  "title": "notes = '<<'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "<<"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '<<'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "7c09d91a87d56422c801f9e8d8df608d98e864526b69fe54389bf4c34547acd2",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S19",
+  "title": "notes = '='",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "="
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '='\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "8ebc86e524dab3c741070d60754c08c9310d30cabbb07a3ca598ab5b8e026228",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S20",
+  "title": "notes = '=x'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "=x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: =x\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "616f17f44cd85e4de97a3c26ddf0c0a11b483721125a31a793f2505b8c063753",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S21",
+  "title": "notes = '1_000'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "1_000"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '1_000'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "4fa0ca3613a374b46268f61f62c347f644b61efdcbd51c97f540f70ec4fdf51b",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S22",
+  "title": "notes = '.5'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": ".5"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '.5'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "26cce61f8e2f5774c0983ca57de2cfd5e1e0da176f0e52603d2006051e9b35f6",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S23",
+  "title": "notes = '5.'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "5."
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '5.'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "6bfaae42bb3bf64d3fed342d7bd436c086fcba12a26ebcbd26c543425bc602d8",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S24",
+  "title": "notes = '+1'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "+1"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '+1'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "5a9b7731d0e47dbc7d54a0a117a10289bbb72c264fe0bb557a864ba7acc44d27",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S25",
+  "title": "notes = 'a:'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "a:"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'a:'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "46005dae253d4e782641242684a46ac87af2bd3145355d9ece98dd4416de6297",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S26",
+  "title": "notes = 'x: y'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "x: y"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'x: y'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "70d125064e1ce45d260427ef8141fef6d7aee65c197a9440dafdb4006b1c44de",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S27",
+  "title": "notes = 'a #b'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "a #b"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'a #b'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "e897609fee390654be6c724a900373f3aa9da393d4577bf099a1e1577ad08a0d",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S28",
+  "title": "notes = '- x'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "- x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '- x'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "8b7610dca63ff9ecdc0f0051fffec4ed64e9fc48dee5ee50961923e0cd402499",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S29",
+  "title": "notes = '?'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "?"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '?'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "0d4c593620f367e7dd8a042c9c993ebeaa7773927e7d6e6cc2e5579edf898755",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S30",
+  "title": "notes = '2026-05-01'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "2026-05-01"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '2026-05-01'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "e69730cf6e29c6e12e78c388b7c586bae2beb7a2a05d5b8b5d6d2a59f3112a98",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S31",
+  "title": "notes = '2026-5-1'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "2026-5-1"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 2026-5-1\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "446d3ff1db196f8b5f468e4ed636f37731b77cb4053020b7405ebb32702583d9",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S32",
+  "title": "notes = '2026-05-01 12:00:00'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "2026-05-01 12:00:00"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '2026-05-01 12:00:00'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "ec9ed01f81ed2874b4e113164254166aed380ae4ef8ad09aca1f392f35cfac4a",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S33",
+  "title": "notes = '20260501'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "20260501"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '20260501'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "22c3b05affbef8f1eb0696149ed886b47c6ad4011353efd495e3cc58b2541403",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S34",
+  "title": "notes = '.inf'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": ".inf"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '.inf'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "b741fa3a518f1cc7dfada3ef75bda6c4611bd40cc9f0c77efa33501aae1c98b9",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S35",
+  "title": "notes = '~'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "~"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '~'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "ab3d83ec4f69f4eef3032e5a89b197f3190c1666299633c630334e7c4bd9f451",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S36",
+  "title": "notes = ''",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": ""
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: ''\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "d0154660ad0127f08877735dcd77db0fd8de8fffc914d224c253d84938083c7e",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S37",
+  "title": "notes = 'üniversite'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "üniversite"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: üniversite\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "f35634d24312615ed97e3f3132b57f1bbd6fd91da15a4a91103173d83a911692",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S38",
+  "title": "notes = \"it's\"",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "it's"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: it's\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "9dd47eb74cfca208eecb21a903c6d7c556b9e7554815b34ce33126a64e71e41d",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S39",
+  "title": "notes = \"'x\"",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "'x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '''x'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "3e7f60dd17d9ac4124f487bf5a96757380b0572fa33cdbf35c952b18a2106490",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S40",
+  "title": "notes = 'x=y'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "x=y"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: x=y\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "d82cb373d4d2d0995300b0d7fe2eef38bff7d23525aef1debeaffda438e5fd18",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S41",
+  "title": "notes = 'a?'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "a?"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: a?\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "53004d6d53004569d97c2edc924f59d5f445253045417c5ccf291e1583d8f288",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S42",
+  "title": "notes = '-a'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "-a"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: -a\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "48aa908e429969a2004dc43731084b7ede41262031827cf4ae700f34db0a7e68",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S43",
+  "title": "notes = '%x'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "%x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '%x'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "e667cd4a3800500fbf882c06b03b647c9b054e4c45859a899d0a01034d38c7a4",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S44",
+  "title": "notes = '@x'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "@x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '@x'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "2f68e0f039f51569091b158e72548c7a80ba27acf1386ffaf068f08d41d6e660",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S45",
+  "title": "notes = '`x'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "`x"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '`x'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "4ca65aaf175d6e7623a18b0e9398e8e83431dde7d8f1c77e35d2660a701a4062",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S46",
+  "title": "notes = 'a\\xa0b'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "a b"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: a b\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "89bf9ae25041902b0bea714cef6bb479558dd4b6bfa459c21ba1888827703b08",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S47",
+  "title": "notes = '\\xa0a'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": " a"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes:  a\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "2f5fceaa81c12dfb412d4e1eb85a739fa1814d19b1ac9b2cdee3c4feb04b1886",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S48",
+  "title": "notes = 'a  b'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "a  b"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: a  b\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "889dfd8edd56ecc93bc2e20b0b6a09178d575a5d85865293d6d808effab05a25",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S49",
+  "title": "notes = 'null'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "null"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'null'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "352b9773e49e44b8fc9367cfcdf6770d3296ee0718e462b150f9f99b0e202cc7",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S50",
+  "title": "notes = 'Null'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "Null"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'Null'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "aed0096ce26da24aef826ef424cc575c2532c8bda50da0806981fc98c6024a6e",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S51",
+  "title": "notes = 'true'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "true"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'true'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "6f8b968b38aa34318ed73aa86ec4154a90ffa40a81c2e263c186afa4405998b4",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S52",
+  "title": "notes = 'True'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "True"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'True'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "51f116b53d2f8d5caad2e39533b706da781e8e1b2c7ad701c7278daf48f03e37",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S53",
+  "title": "notes = 'on'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "on"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'on'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "ca7f8074f3f6018df1f37d7a1e285b364dce522d279ed97441c73c40779125d7",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S54",
+  "title": "notes = 'off'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "off"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'off'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "7da9f24752a95a607c924c7de40461184f83a55e0e17aade544df1362b3b0d1a",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S55",
+  "title": "notes = 'No'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "No"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 'No'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "e1fae7b20e742bc1104f91cfa9b9c018c86043ca87c6cf58e542e0a51cfe7975",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S56",
+  "title": "notes = '1.5'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "1.5"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '1.5'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "85fc24ef43d64af1061ae53ea6cf78b662c1bf9886e5779bfd7e48fa4f94fa3a",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S57",
+  "title": "notes = '1e-5'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "1e-5"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: 1e-5\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "6270e7009c706986637dae5a0db293bacde917b1df6c6ddc2dfd25c048c4baef",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "DIVERGES",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-S58",
+  "title": "notes = '00'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "00"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '00'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "c5a5074a105bfce179c41801c539d1bb55c4b99251ac178dc3335d82a5276c92",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S59",
+  "title": "notes = '0'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "0"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '0'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "e333c35f3f724c313b2210aeb7030280e56d8d894307c936701eb0d384864b19",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S60",
+  "title": "notes = '-0'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "-0"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '-0'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "ddb240ccedd5412d7f2e1596ae8fdeb74ac878dd92b58244cb6f89efe9e25942",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-S61",
+  "title": "notes = '+0'",
+  "probe_field": "notes",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.85,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   },
+   "notes": "+0"
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nnotes: '+0'\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.85\nversion: prml/0.1\n",
+  "hash": "93efcbe090917a105aee81fe770ebc7824679d79c495a83461634b3125f5c437",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F00",
+  "title": "threshold = 1",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.0\nversion: prml/0.1\n",
+  "hash": "a3d9513595cf64cdc3441c658ef9c0cd8b285d1f839fae32801023fd6e0f4f34",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F01",
+  "title": "threshold = 0",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.0\nversion: prml/0.1\n",
+  "hash": "99df955cfb720ac1ff88450402c9fcd68be886c4eb8888a66e37f90c1dee0b67",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F02",
+  "title": "threshold = 100",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 100,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 100.0\nversion: prml/0.1\n",
+  "hash": "d6b4ea589bd66b10693e962853f15d992648a8b0fbc6ecfdae422022782bd5b9",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F03",
+  "title": "threshold = 0.0001",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.0001,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.0001\nversion: prml/0.1\n",
+  "hash": "d4632814e3967f95c03a724896f2ddd8efa6b2769a385726a40c631c39ff9bca",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F04",
+  "title": "threshold = 1e-05",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1e-05,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.0e-05\nversion: prml/0.1\n",
+  "hash": "0e43d94f566484e16fc267007fcefb6df6ac066d0de7bab13c943e211f743d44",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-F05",
+  "title": "threshold = 1e-06",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1e-06,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.0e-06\nversion: prml/0.1\n",
+  "hash": "cc6183334e2d790b2c299ea6c05d2b0217b5e646a23c46d4943fd28f35a08a72",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F06",
+  "title": "threshold = 1.5e-07",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1.5e-07,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.5e-07\nversion: prml/0.1\n",
+  "hash": "b71ec4282e4b98951f3ee4fb0eed8a9cd6097a4dc3012d069f318f81b5dc7617",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F07",
+  "title": "threshold = 1000000000000000.0",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1000000000000000.0,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1000000000000000.0\nversion: prml/0.1\n",
+  "hash": "d1318aa24065119f5a44aa00bddce993056ce06cc18900a21fcf1c638d1d74e6",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F08",
+  "title": "threshold = 1e+16",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1e+16,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.0e+16\nversion: prml/0.1\n",
+  "hash": "f7722fbf653d600af495dbbd41961a025cbd950d66202c0e5640b8545e8f5984",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F09",
+  "title": "threshold = 1e+17",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1e+17,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.0e+17\nversion: prml/0.1\n",
+  "hash": "c8c27c8b4e48dd4ef86ad5fa8e3ee34be73cf6efbe9f15050d32248e920ff31c",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F10",
+  "title": "threshold = 5e-324",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 5e-324,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 5.0e-324\nversion: prml/0.1\n",
+  "hash": "8f806eba3f43a069b7104867cca2d0958849df0807a93a36213558b7b1d3592d",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F11",
+  "title": "threshold = 1.7976931348623157e+308",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1.7976931348623157e+308,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1.7976931348623157e+308\nversion: prml/0.1\n",
+  "hash": "fb57be47ea3cb4b53e49d9825076f66b19c393067c119aa8afc06a99fab91319",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F12",
+  "title": "threshold = 0.3333333333333333",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.3333333333333333,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.3333333333333333\nversion: prml/0.1\n",
+  "hash": "60389fd9b24b6f6813077dc439ae3f6b568c0f5ab833dd4721631c70a0a08655",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F13",
+  "title": "threshold = 123456789012345.0",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 123456789012345.0,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 123456789012345.0\nversion: prml/0.1\n",
+  "hash": "b6f6ee1beecb13e4a0f3ad6829a86db7d7e660d2be20c0c928cc05e34f20a730",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F14",
+  "title": "threshold = -0.5",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": -0.5,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: -0.5\nversion: prml/0.1\n",
+  "hash": "43eee9bda68aec7ee3033f4a7c0554260eb0554b96a3abd155afc6e4c0a2427c",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F15",
+  "title": "threshold = -1e-05",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": -1e-05,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: -1.0e-05\nversion: prml/0.1\n",
+  "hash": "ee263365894e4712cc420921803b20606ed319c547da491be92083408a0b8cac",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "DIVERGES"
+  }
+ },
+ {
+  "id": "CV-F16",
+  "title": "threshold = 2.5e-08",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 2.5e-08,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 2.5e-08\nversion: prml/0.1\n",
+  "hash": "1e671342cf67407280f7d3b781be0c07826ac7920a982399cd2d4c6971c64094",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F17",
+  "title": "threshold = 0.1",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.1,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.1\nversion: prml/0.1\n",
+  "hash": "4aaecc5b324edd3c86ad5851fd2f1c02ac97b3a39ed1c4c5bda4362528383fbc",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-F18",
+  "title": "threshold = 0.0001",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.1",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 0.0001,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 0.0001\nversion: prml/0.1\n",
+  "hash": "d4632814e3967f95c03a724896f2ddd8efa6b2769a385726a40c631c39ff9bca",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-V2a",
+  "title": "threshold = v0.2 threshold=1300",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1300,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1300\nversion: prml/0.2\n",
+  "hash": "b85235455c4e988f6f529e0542818e6f48cb55eb9c446017601d7875cbca73c3",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "agree",
+   "go": "agree",
+   "rust": "agree"
+  }
+ },
+ {
+  "id": "CV-V2b",
+  "title": "threshold = v0.2 threshold=1300.0",
+  "probe_field": "threshold",
+  "input": {
+   "version": "prml/0.2",
+   "claim_id": "01900000-0000-7000-8000-000000000000",
+   "created_at": "2026-05-01T12:00:00Z",
+   "metric": "accuracy",
+   "comparator": ">=",
+   "threshold": 1300.0,
+   "dataset": {
+    "id": "imagenet-val-2012",
+    "hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+   },
+   "seed": 42,
+   "producer": {
+    "id": "studio-11.co"
+   }
+  },
+  "canonical": "claim_id: 01900000-0000-7000-8000-000000000000\ncomparator: '>='\ncreated_at: '2026-05-01T12:00:00Z'\ndataset:\n  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855\n  id: imagenet-val-2012\nmetric: accuracy\nproducer:\n  id: studio-11.co\nseed: 42\nthreshold: 1300.0\nversion: prml/0.2\n",
+  "hash": "931669d17e8d9611010553e999090065420bf5926bdf8346663c8f461a64d27e",
+  "implementation_status_2026_09_13": {
+   "python": "agree",
+   "javascript": "DIVERGES",
+   "go": "agree",
+   "rust": "agree"
+  }
+ }
+]

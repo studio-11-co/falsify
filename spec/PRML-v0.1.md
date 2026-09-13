@@ -75,9 +75,14 @@ still be compromised. This specification binds bytes to a time; it does not
 establish that the criteria were withheld from the party they were meant to test.
 Three statements in
 this document promised normative adoption "with v0.2"; v0.2 froze without them and
-they are re-targeted to the v0.3 cycle (see Errata). §3 has no formal grammar, so
-an independent implementation must work from the normative prose and the
-conformance vectors.
+they are re-targeted to the v0.3 cycle (see Errata). §3 has had a formal
+grammar since 2026-09-13 (§3.6), verified against all 21 conformance vectors by
+an implementation written from the grammar alone. What that verification also
+showed is now the open item in its place: the four reference implementations
+agree byte-for-byte on the 21 conformance vectors, and a wider 83-input battery
+published the same day found 21 inputs, outside the vectors, on which three of
+them depart from the grammar. Agreement is established on the vectors, not on
+arbitrary input.
 
 **Implementation status.** All four reference implementations were written by the
 editor, and all public registry records to date originate with the editor. No
@@ -389,13 +394,47 @@ comparison against `.nan`. The result is a bar that no experiment can inform,
 which defeats the purpose of fixing one in advance. A manifest whose `threshold`
 is non-finite **MUST** be rejected with exit code `2`.
 
-Floating-point values **MUST** be rendered in the canonical decimal form
-produced by the reference emitter: the shortest decimal that round-trips to the
-same float64, with very small or very large magnitudes in normalized scientific
-notation (for example, `0.000001` renders as `1.0e-06`). The reference
-canonicalizer (§3.3, §10) is normative for this rendering, and the per-language
-canonicalization-portability analysis enumerates the exact rules that all four
-reference implementations reproduce byte-for-byte.
+Floating-point values **MUST** be rendered in the canonical decimal form: the
+shortest decimal that round-trips to the same float64, with very small or very
+large magnitudes in normalized scientific notation (for example, `0.000001`
+renders as `1.0e-06`). The exact rule — which magnitudes take which notation,
+the mantissa and exponent spelling — is constraint C4 of the formal grammar
+(§3.6); the reference canonicalizer (§3.3, §10) is a conforming implementation
+of it. The per-language canonicalization-portability analysis records how each
+reference implementation reproduces the rule and where, outside the conformance
+vectors, one of them does not (finding of 2026-09-13).
+
+### 3.6 Formal Grammar
+
+The canonical byte sequence is specified by the ABNF grammar in
+[`spec/grammar/prml-canonical.abnf`](grammar/prml-canonical.abnf) together with
+the constraints C1–C7 stated in [`spec/grammar/README.md`](grammar/README.md):
+depth (C1), key order (C2), uniqueness (C3), float rendering (C4), the
+plain-scalar predicate (C5), which production a value takes (C6), and block
+sequences (C7, informative). The grammar and constraints C1–C6 are
+**normative**. The reference canonicalizer is one conforming implementation of
+them, not their definition. An implementation that satisfies the grammar and
+C1–C6 produces, for every conformance vector in Appendix B, exactly the
+published canonical bytes and hash.
+
+The grammar was added on 2026-09-13 and verified in both directions before
+publication: an emitter and a recogniser written from the grammar alone,
+without the reference canonicalizer or its YAML library
+([`spec/grammar/check_grammar.py`](grammar/check_grammar.py)), reproduce all
+21 conformance vectors byte-for-byte and reject fourteen deliberately malformed
+canonical texts. Publishing the grammar changes no canonical byte sequence and
+no digest of any valid manifest; it states what the reference canonicalizer
+already emits.
+
+Stating the plain-scalar predicate exactly also made its edges testable. A
+battery of 83 inputs built for that purpose
+([`spec/grammar/candidate-vectors-2026-09-13.json`](grammar/candidate-vectors-2026-09-13.json))
+showed that three of the four reference implementations depart from the grammar
+on 21 inputs, none of which is covered by a conformance vector (README,
+"Divergences"). Those inputs are published as candidate vectors. They are not
+part of the conformance suite, and until they are, cross-language agreement
+between the four reference implementations is established on the 21 vectors of
+Appendix B and not on arbitrary input.
 
 ---
 
@@ -776,6 +815,29 @@ Conformance is enforceable via the falsify reference test suite
 >
 > Reject-suite vectors RJ-015 through RJ-020 (Appendix B) enumerate these three
 > classes normatively, through both the YAML and the JSON door.
+
+> **v0.1 erratum (2026-09-13): formal grammar published, EDITORIAL, with one
+> finding.** §3.6 is added and points to `spec/grammar/`. The grammar was derived
+> from the observable behaviour of the reference canonicalizer and verified in
+> both directions on all 21 conformance vectors by an implementation written
+> from the grammar alone; it changes no canonical byte sequence and no digest.
+> Two consequences are recorded rather than made silently:
+>
+> 1. **§3.5 called the reference canonicalizer "normative for this rendering".**
+>    That sentence is replaced. The grammar's constraint C4 is normative and the
+>    canonicalizer conforms to it. A specification that makes a program
+>    normative is documentation of that program.
+>
+> 2. **The exact plain-scalar predicate (C5) exposed 21 inputs, none covered by a
+>    conformance vector, on which the JavaScript, Go and Rust reference
+>    implementations do not reproduce the reference bytes:** over-quoting `?x`,
+>    `y`, `1e5`; under-quoting `<<`, `1:30`, `1_000`, a lone `-`; Rust rendering
+>    a `threshold` of 1e-05 as `0.00001`; JavaScript unable to distinguish
+>    `1300.0` from `1300` under v0.2. They are published as candidate vectors
+>    (`spec/grammar/candidate-vectors-2026-09-13.json`) and stay outside the
+>    conformance suite until the implementations are corrected. The claim this
+>    document makes — agreement on the 21 vectors of Appendix B — is unchanged
+>    and was re-verified the same day.
 
 ---
 
