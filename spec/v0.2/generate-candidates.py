@@ -21,6 +21,35 @@ import json
 import yaml
 
 
+def _emit(path, text, must_match):
+    """Write only with --write. Otherwise VERIFY against the file on disk.
+
+    2026-09-13: the .json and .md this script produces are FROZEN HISTORICAL
+    artefacts (superseded by the 2026-05-22 freeze). The .md carries hand-written
+    status and licence notes that a regeneration erased once, silently. The
+    .json is the candidate set itself and MUST reproduce byte-for-byte; the .md is
+    documentation and is allowed to differ from what this script would emit."""
+    import os
+    import sys as _sys
+    if "--write" in _sys.argv:
+        with open(path, "w") as f:
+            f.write(text)
+        print(f"  wrote {path}")
+        return
+    if not os.path.exists(path):
+        print(f"  MISSING {path} — run with --write to create it")
+        _sys.exit(1)
+    on_disk = open(path, encoding="utf-8").read()
+    if on_disk == text:
+        print(f"  OK      {path} reproduces byte-for-byte")
+    elif must_match:
+        print(f"  DIFFERS {path} — regenerated candidate set does not match the frozen file; investigate before --write")
+        _sys.exit(1)
+    else:
+        print(f"  differs {path} — hand-edited historical notes on disk; NOT overwritten (use --write to force)")
+
+
+
 def canonicalize(spec):
     """Delegate to the reference canonicalizer (falsify_prml), so this generator
     carries every version-aware rule — the v0.1 float coercion and the v0.2
@@ -291,8 +320,7 @@ for v in VECTORS:
         }
     json_data.append(entry)
 
-with open("spec/v0.2/test-vectors-candidates.json", "w") as f:
-    json.dump(json_data, f, indent=2, ensure_ascii=False)
+_emit("spec/v0.2/test-vectors-candidates.json", json.dumps(json_data, indent=2, ensure_ascii=False), must_match=True)
 
 
 # Write markdown
@@ -387,8 +415,7 @@ out.append("")
 out.append("*Working draft, Community Specification License 1.0. Promotion to v0.2 normative on 2026-05-22.*")
 
 text = "\n".join(out) + "\n"
-with open("spec/v0.2/test-vectors-candidates.md", "w") as f:
-    f.write(text)
+_emit("spec/v0.2/test-vectors-candidates.md", text, must_match=False)
 
 print(f"Generated {len(VECTORS)} candidate vectors:")
 for v in VECTORS:
