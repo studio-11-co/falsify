@@ -84,3 +84,9 @@ implementations must agree on byte-for-byte.
   after an incident the question of who authorised what is answered by the record." Same object as
   the envelope above (what was *permitted*), reached from the liability side. Neither paper mentions
   PRML; the connection is ours. Triage record in GAP-EVIDENCE §DK.
+- Commonwealth of Australia, *Agentic AI Harnesses — the layer above the model* (Sep 2026, national
+  cyber-security guidance) — a third source, this time a government one, that names the same layer:
+  "the harness determines which tools are available, enforces permissions and guardrails, and executes
+  approved actions", and asks organisations to "record prompts, responses, tool invocations, approvals,
+  actions". That is the vocabulary an envelope field would have to match if it is ever built. Runtime
+  and logging only; no pre-run commitment, no mention of PRML. Triage in GAP-EVIDENCE §DK.
