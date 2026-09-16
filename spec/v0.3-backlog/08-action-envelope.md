@@ -78,3 +78,9 @@ implementations must agree on byte-for-byte.
 - `07-framework-profile.md` — the other outside-sourced backlog item from the same week
 - Mikkilineni, *From Sandbox Escape to Authority Failure*, 14 Sep 2026, §13; triage record in
   GAP-EVIDENCE §DJ-5
+- Steel, *Attaching liability to agentic identity* (CISES/ETRP policy brief, 14 Sep 2026) — a second,
+  independent source on the same July 2026 incident, framing the fix as a **permissions record**:
+  "the scope an agent is granted and the actions it takes are logged against its identifier, so that
+  after an incident the question of who authorised what is answered by the record." Same object as
+  the envelope above (what was *permitted*), reached from the liability side. Neither paper mentions
+  PRML; the connection is ours. Triage record in GAP-EVIDENCE §DK.
