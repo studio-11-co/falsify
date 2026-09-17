@@ -10,7 +10,7 @@
 <link rel="canonical" href="https://spec.falsify.dev/eu-ai-act/article-12/">
 
 <meta property="og:title" content="EU AI Act Article 12 logging compliance — a working pattern">
-<meta property="og:description" content="A concrete, code-level pattern for the evidence side of Article 12 automated-logging obligations before 2 December 2027, using SHA-256 pre-registered evaluation manifests. Coverage is partial.">
+<meta property="og:description" content="A concrete, code-level pattern for the evidence side of Article 12 automated-logging obligations before 2 December 2027 (Annex III systems), using SHA-256 pre-registered evaluation manifests. Coverage is partial.">
 <meta property="og:url" content="https://spec.falsify.dev/eu-ai-act/article-12/">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://spec.falsify.dev/og.png">
@@ -101,7 +101,7 @@ footer.colophon a { color:var(--ink-3); text-decoration:none; border-bottom:1px 
 
 <h1>EU AI Act Article 12 logging compliance: a working pattern for high-risk providers</h1>
 <p style="margin:0 0 18px;padding:14px 18px;border:1px solid var(--ink-2,#888);border-left-width:3px;font-size:14.5px"><strong>Update (12 August 2026):</strong> Article 12 logging duties apply from <strong>2 December 2027</strong> for Annex III systems (and <strong>2 August 2028</strong> for systems embedded in Annex I regulated products), not August 2026 — the Digital Omnibus (Regulation (EU) 2026/1744) moved the high-risk dates. What did start on 2 August 2026: Article 50 transparency duties and active enforcement by the AI Office. No August 2026 logging deadline was missed.</p>
-<p class="lede">The high-risk obligations in Regulation (EU) 2024/1689 become applicable on <strong>2 December 2027</strong> (deferred from 2 August 2026 by the EU Digital Omnibus). Article 12 is the one that most procurement teams underestimate, because "automated logging" reads like a checkbox and turns out to be a system design decision. This page is the technical pattern we use.</p>
+<p class="lede">The high-risk obligations in Regulation (EU) 2024/1689 become applicable on <strong>2 December 2027</strong> for Annex III systems, and on 2 August 2028 for systems embedded in Annex I regulated products (deferred from 2 August 2026 and 2 August 2027 by the EU Digital Omnibus). Article 12 is the one that most procurement teams underestimate, because "automated logging" reads like a checkbox and turns out to be a system design decision. This page is the technical pattern we use.</p>
 <aside class="disclaimer"><strong>Interpretive mapping, not legal advice.</strong> This crosswalk is published by Cüneyt Öztürk as an engineering pattern. It is not a legal opinion, a regulatory certification, or a conformity assessment. Article 12 obligations apply to the high-risk AI system as a whole; PRML is an evidence artefact that may support specific logging controls. Verify scope, applicability, and sufficiency with qualified counsel and your notified body before relying on it for compliance decisions.</aside>
 
 <h2>What Article 12 actually requires</h2>
@@ -183,7 +183,7 @@ reason: |
 <p>Pair PRML with whatever inference-logging stack you already trust. The two layers don't overlap.</p>
 
 <h2>What to do now</h2>
-<p>The high-risk applicability date is <strong>2 December 2027</strong> (deferred from 2 August 2026 by the EU Digital Omnibus). The work does not get smaller by waiting. Concretely:</p>
+<p>The Annex III high-risk applicability date is <strong>2 December 2027</strong>; systems embedded in Annex I regulated products follow on 2 August 2028 (both deferred by the EU Digital Omnibus). The work does not get smaller by waiting. Concretely:</p>
 <ol>
   <li>Identify every high-risk system you place on the EU market under Annex III. CV screening, credit scoring, biometric ID, critical infrastructure, education access — the list is enumerated.</li>
   <li>For each, list the named evaluation claims (accuracy, F1, calibration, latency SLA, fairness metric) that you would defend in writing today.</li>

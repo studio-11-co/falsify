@@ -22,7 +22,7 @@ This document maps fields of the **Pre-Registered ML Manifest (PRML) v0.1** spec
 
 It is **not legal advice**. It is an editorial position by the spec author about which obligations the format mechanically supports and which it does not.
 
-> **Reading note.** Article references are to the consolidated text of Regulation (EU) 2024/1689 published in the Official Journal on 12 July 2024, with general entry into force 1 August 2024 and high-risk obligations originally set for 2 August 2026 under Article 113, deferred to 2 December 2027 by the EU Digital Omnibus (agreed May 2026).
+> **Reading note.** Article references are to the consolidated text of Regulation (EU) 2024/1689 published in the Official Journal on 12 July 2024, with general entry into force 1 August 2024 and high-risk obligations originally set for 2 August 2026 under Article 113, deferred to 2 December 2027 for Annex III systems and to 2 August 2028 for systems embedded in Annex I regulated products by the EU Digital Omnibus (Regulation (EU) 2026/1744, OJ L 24 July 2026).
 
 ---
 
