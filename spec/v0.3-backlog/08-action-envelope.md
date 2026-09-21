@@ -90,3 +90,9 @@ implementations must agree on byte-for-byte.
   approved actions", and asks organisations to "record prompts, responses, tool invocations, approvals,
   actions". That is the vocabulary an envelope field would have to match if it is ever built. Runtime
   and logging only; no pre-run commitment, no mention of PRML. Triage in GAP-EVIDENCE §DK.
+
+- Kara, Z., *Improving Frontier AI Incident Reporting Regimes* (GovAI policy brief, Sep 2026) — recommends that
+  agent action logs be tamper-proof ("subsequent changes or deletions are detectable"), keyed by a per-instance
+  identifier with timestamps, model version and operating environment, so that a later investigator can attribute
+  an action. Same evidentiary shape as the action envelope; it does not address evaluation criteria or pre-run
+  commitment.
