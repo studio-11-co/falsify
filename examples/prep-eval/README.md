@@ -33,9 +33,9 @@ So the appendix has everything a pre-registration needs except the registration.
 |---|---|---|
 | 1.2 technical objectives, success criteria | `metric`, `comparator`, `threshold` in the manifest | the exact bar, byte for byte |
 | 2.3 analysis specification (data, estimator) | `dataset.id`, `dataset.hash`, `seed` | the test items and seed the bar referred to |
-| 3.2 pre-register evaluation | `preregistration-v1.prml.yaml` + `.sha256` sidecar (+ registry receipt, optional) | this manifest existed no later than the receipt time and has not changed |
+| 3.2 pre-register evaluation | `preregistration-v1.prml.yaml` + `.sha256` sidecar + public receipt | this manifest existed no later than the receipt time and has not changed |
 | 4.1 pilot → "document all changes" | `preregistration-v2.prml.yaml` + `deviation-2026-09-22.md` | what changed (dataset bytes), what did not (the threshold) |
-| 4.2 full data collection | `linkage-start.yaml` (prml-linkage/0) | a run was declared against manifest v2 before it finished |
+| 4.2 full data collection | `linkage-start.yaml` (prml-linkage/0) + public receipt | a run was declared against manifest v2, on the public record, before it finished |
 | 5.2 planned analysis | `linkage-final.yaml`, `result.json` | observed value, result digest, verdict, chained to the start record |
 | 6.4 complete the registration | `final-report.md` | the report cites hashes, not adjectives |
 
@@ -48,8 +48,8 @@ preregistration-v1.prml.yaml     phase 3.2 manifest        sha256 2282ae19…2db
 preregistration-v2.prml.yaml     revised manifest           sha256 f38e1825…de8b7
 *.prml.prml.sha256               sidecars written by `falsify lock`
 deviation-2026-09-22.md          the 6.4 deviation record, both hashes side by side
-linkage-start.yaml               prml-linkage/0 start record (run declared against v2)
-linkage-final.yaml               prml-linkage/0 final record (observed 0.88, exit 0)
+linkage-start.yaml               prml-linkage/0 start record (run declared against v2; committed before the run finished)
+linkage-final.yaml               prml-linkage/0 final record (observed 0.88, exit 0; committed after)
 result.json                      the raw result artefact whose digest is in the final record
 final-report.md                  the 6.4 report
 run.sh                           re-verifies everything offline
@@ -63,16 +63,25 @@ run.sh                           re-verifies everything offline
 
 It recomputes both manifest hashes, checks the v2 dataset bytes against `dataset.hash`, evaluates the predicate against the observed value, and verifies the linkage chain (tier L2: final → start → manifest). No network, no account. Expected last line: `PREP-Eval example: all checks passed`.
 
-## Publishing the commitment (optional, not done in this directory)
+## The public receipts
 
-The receipts that make the timestamp independent of the producer come from the public registry:
+The receipts that make the timestamp independent of the producer come from the public registry. All four records in this directory are committed (22 September 2026); each receipt is Ed25519-signed by the registry, countersigned by an RFC 3161 timestamp authority, and mirrored to the Rekor transparency log.
+
+| Record | Registry permalink | Registry time (UTC) | RFC 3161 | Rekor index |
+|---|---|---|---|---|
+| manifest v1 | [2282ae19…2db8fa](https://registry.falsify.dev/2282ae19876aeb7936b4561751c857aec20dc982bf910115acee36f57a2db8fa) | 2026-09-22 14:57:34.816 | 14:57:35 | 120937935 |
+| manifest v2 | [f38e1825…de8b7](https://registry.falsify.dev/f38e1825ae4f7ba7e6469026f054503bb6dfe0f0f3bdcb70d8af0053261de8b7) | 2026-09-22 14:57:40.168 | 14:57:40 | 120937972 |
+| linkage start (run `prep-eval-e-run-2`) | [4c9f2320…ccd14](https://registry.falsify.dev/4c9f2320af616b18489c099fae4f7652753c39f6d000f07a371e5e0d90bccd14) | 2026-09-22 14:57:46.437 | 14:57:46 | 120938028 |
+| linkage final | [27d21333…d14eb](https://registry.falsify.dev/27d21333df989fcad6fe2bcdcc9d1d1475595cd53ea63a0ed613a93a15ed14eb) | 2026-09-22 14:58:14.787 | 14:58:15 | 120938456 |
+
+Read the order off the registry's clock, not ours: v1 → v2 → start record → the run finished (`finished_at` 14:57:54.239 in `linkage-final.yaml`) → final record. The start record, which carries manifest v2's hash, was on the public record eight seconds before the run finished. That is what prml-linkage/0 calls tier L3. The offline verifier in `run.sh` does not fetch the registry, so it reports tier L2 (chain and hashes); anyone who wants L3 compares the registry time of the start record with `finished_at` themselves. Append `.receipt.json`, `.tsr` or `.rekor` to a permalink for the signed receipt, the raw RFC 3161 token, or the Rekor inclusion proof.
+
+To commit your own:
 
 ```bash
 curl -X POST https://registry.falsify.dev/commit -H "content-type: text/yaml" --data-binary @preregistration-v1.prml.yaml
 # sealed variant (bar withheld until you reveal it): add -H "X-PRML-Sealed: 1"
 ```
-
-At the time of writing, the manifests in this directory have **not** been committed to the registry; the example is complete offline. If they are committed later, the receipt URLs belong in `final-report.md`, section "Verification".
 
 ## What this shows, and what it does not
 
@@ -82,7 +91,7 @@ At the time of writing, the manifests in this directory have **not** been commit
 
 Three ways a producer could still mislead, and how the workflow handles each:
 
-1. **Run first, look, then lock a bar the number clears.** Not caught by a receipt alone. Caught, at tier L3, if the start record is committed to the registry before the run finishes, because the start record carries the manifest hash and the registry's time.
+1. **Run first, look, then lock a bar the number clears.** Not caught by a receipt alone. Caught, at tier L3, if the start record is committed to the registry before the run finishes, because the start record carries the manifest hash and the registry's time. This directory does that (see the receipts table); it is still process evidence, since the runner reports its own `finished_at`.
 2. **Lock many manifests, report the one that passed.** Not prevented. The registry is public and receipts carry `producer.id`; the party relying on the report should ask for the producer id and look at sibling receipts, and the acceptance owner can require one manifest per evaluation in the project plan (3.1).
 3. **Keep the threshold, change the grader or the scoring instructions.** Caught only if the grader is part of what was hashed. PRML's required fields cover the metric name, the test items (`dataset.hash`) and the seed; a grader prompt is not a required field. Put grader instructions inside the dataset artefact, or record them in a separate manifest, and say which one the report relies on.
 
