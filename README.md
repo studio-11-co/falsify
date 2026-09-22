@@ -65,8 +65,6 @@ Deterministic exit codes are the API. CI gates on them. Humans read the audit tr
 
 *Click for the live looping version, or watch the [MP4](https://spec.falsify.dev/demo/demo.mp4). Full storyboard in [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md).*
 
-[**▶ Watch the longer 90-second walkthrough on YouTube**](https://youtu.be/vVZTNeak5PA) (lock, run, tamper, CI block).
-
 ---
 
 ## Why this matters
