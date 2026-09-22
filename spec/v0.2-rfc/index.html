@@ -7,7 +7,7 @@
 <meta name="description" content="PRML v0.2 — ten changes and five open questions (streaming variant, runner attestation, revocation, conformance vectors, patent grant placement, and others). Comment window closed 2026-05-22 (frozen).">
 <meta name="author" content="Cüneyt Öztürk">
 <link rel="canonical" href="https://spec.falsify.dev/v0.2-rfc/">
-<link rel="alternate" type="text/markdown" href="https://spec.falsify.dev/v0.2-rfc/PRML-v0.2-RFC.md" title="Markdown source">
+<link rel="alternate" type="text/markdown" href="https://spec.falsify.dev/PRML-v0.2-RFC.md" title="Markdown source">
 <meta property="og:title" content="PRML v0.2 — frozen 2026-05-22 (RFC closed)">
 <meta property="og:description" content="Five proposals, 14-day comment window, full v0.1 backwards compatibility. Community Specification License 1.0.">
 <meta property="og:url" content="https://spec.falsify.dev/v0.2-rfc/">
@@ -253,16 +253,16 @@ footer.colophon a:hover { color: var(--ink); }
   <strong style="color: var(--ink); font-weight: 600;">RFC — comment window closed (frozen).</strong> v0.2 is frozen. Comments were accepted through <strong>2026-05-22 23:59 UTC</strong> via <a href="https://github.com/studio-11-co/falsify/issues" style="color: var(--ink); text-decoration: underline; text-underline-offset: 3px;">GitHub issues with label <code>rfc-v0.2</code></a> or email <a href="mailto:hello@falsify.dev?subject=%5Bv0.2%20RFC%5D" style="color: var(--ink);">hello@falsify.dev</a> with subject prefix <code>[v0.2 RFC]</code>. v0.1 remains the current spec at <a href="https://spec.falsify.dev/v0.1" style="color: var(--ink-2);">spec.falsify.dev/v0.1</a>; v0.2 is fully backwards-compatible with v0.1 hashes.
 </aside>
 
-<article id="content" data-prerendered="sha256:bf19ab2c491a1ac44e71a19f29e89e5b1b1917f58daba8afadfb82ea3e3f556b">
-<!-- prerender: v0.2-rfc/PRML-v0.2-RFC.md · marked 12.0.2 · scripts/spec-prerender.mjs — ÜRETİLMİŞ, elle düzeltme; .md düzelt ve --write koş -->
+<article id="content" data-prerendered="sha256:1007de1aa1ca46818ca39066bdd28c24b3dcd4cd69634d6325177ef38ec1d640">
+<!-- prerender: PRML-v0.2-RFC.md · marked 12.0.2 · scripts/spec-prerender.mjs — ÜRETİLMİŞ, elle düzeltme; .md düzelt ve --write koş -->
 <h1>PRML v0.2 — RFC</h1>
-<p><strong>Status:</strong> Frozen — v0.2.0 (2026-05-22). The comment window has closed.
+<p><strong>Status:</strong> Frozen RFC (comment window closed 2026-05-22). Promotion to final deferred until external reviewers exist; the three open questions (P-01, P-02, P-03) remain open and will NOT be resolved unilaterally.
 <strong>Editor:</strong> Cüneyt Öztürk · <a href="mailto:hello@falsify.dev">hello@falsify.dev</a>
 <strong>Comment window:</strong> 2026-05-08 → 2026-05-22 (14 days)
 <strong>Freeze date:</strong> 2026-05-22, 23:59 UTC
-<strong>Final draft expected:</strong> 2026-05-29
+<strong>Promotion to final:</strong> deferred; no date set (status line re-dated 2026-07-11, superseding the earlier &quot;final draft expected 2026-05-29&quot;)
 <strong>Spec home:</strong> spec.falsify.dev/v0.2-rfc (this document)
-<strong>License:</strong> Community Specification License 1.0 — same as v0.1 (changed from CC BY 4.0 on 2026-08-29; copies distributed before that date remain available under CC BY 4.0)</p>
+<strong>License:</strong> <a href="/LICENSE.md">Community Specification License 1.0</a> — same as v0.1 (changed from CC BY 4.0 on 2026-08-29; copies distributed before that date remain available under CC BY 4.0)</p>
 <hr>
 <h2>How to comment</h2>
 <ol>
@@ -285,7 +285,6 @@ footer.colophon a:hover { color: var(--ink); }
 <p>A conforming v0.2 implementation MUST verify any v0.1 manifest as if it were a v0.2 manifest with all v0.2 optional fields absent. The hash of a v0.1 manifest, computed with v0.2 canonicalisation rules, MUST equal the hash computed with v0.1 rules. We will publish a conformance vector set that exercises this property.</p>
 </blockquote>
 <p>This is non-negotiable. If any proposed v0.2 change breaks v0.1 hash-equivalence for v0.1-shaped manifests, that proposal is rejected before consideration.</p>
-<p>The conformance vector set that exercises this property is shipped at <code>spec/test-vectors/v0.2/test-vectors.json</code> (TV-013 through TV-020, eight vectors). TV-013 specifically demonstrates a v0.1-shaped manifest hashing identically under v0.2 rules. All four reference implementations (Python, JS, Go, Rust) pass 21/21 vectors byte-for-byte as of 2026-05-15.</p>
 <h2>Proposals open for comment</h2>
 <h3>P-01 — Streaming / continuous-eval variant</h3>
 <p><strong>Problem.</strong> Live systems (Chatbot Arena, A/B-tested production models, drift monitors) cannot pre-register a single threshold because the threshold <em>is</em> the live measurement.</p>
@@ -295,68 +294,45 @@ footer.colophon a:hover { color: var(--ink); }
 <li><code>value</code> is replaced by <code>value_method</code> — a string identifier of the aggregation rule (e.g. <code>&quot;mean_over_window&quot;</code>, <code>&quot;trimmed_mean_5pct&quot;</code>, <code>&quot;elo_rating&quot;</code>)</li>
 <li><code>sample_size</code> becomes a minimum, not an exact figure</li>
 </ul>
-<p><strong>Example</strong> (matches conformance vector TV-014 byte-for-byte; this is the canonical shape — <code>version: prml/0.2</code>, <code>comparator</code> not <code>threshold_direction</code>, <code>dataset</code> as a mapping, <code>model.id</code> not <code>model_version</code>):</p>
-<pre><code class="language-yaml">claim_id: 01900000-0000-7000-8000-000000000014
-comparator: &#39;&gt;=&#39;
-dataset:
-  hash: n/a-streaming
-  id: lmsys-arena-live
+<p><strong>Example:</strong></p>
+<pre><code class="language-yaml">version: prml/0.2
+prml_mode: streaming
 metric: elo_rating
+value_method: lmsys_anonymous_chat_arena_v1
+threshold: 1300
+comparator: &quot;&gt;=&quot;
+dataset:
+  id: lmsys-arena-live
+  hash: n/a-streaming
 model:
   id: claude-3.5-sonnet@2025-10-01
-pre_registered_from: &#39;2026-05-01T00:00:00Z&#39;
-pre_registered_to: &#39;2026-06-01T00:00:00Z&#39;
-prml_mode: streaming
 producer:
   id: falsify.dev
-sample_size: 1000
+sample_size: 1000  # minimum
 seed: null
-threshold: 1300
-value_method: lmsys_anonymous_chat_arena_v1
-version: prml/0.2
+pre_registered_from: &quot;2026-05-01T00:00:00Z&quot;
+pre_registered_to: &quot;2026-06-01T00:00:00Z&quot;
 </code></pre>
-<p>Streaming mode also relaxes <code>threshold</code> from v0.1&#39;s strict float64 to <code>int | float</code>, since natural streaming metrics (ELO, vote counts, request totals) are integer-valued. Integer thresholds canonicalise as plain integers under v0.2 and as <code>&lt;n&gt;.0</code> under v0.1; verification tools MUST pick the float-field set by inspecting the manifest&#39;s <code>version</code> field. All four reference implementations enforce this split as of 2026-05-15.</p>
 <p><strong>Open question.</strong> Is <code>value_method</code> a free-form string (interoperability through community convention) or a controlled vocabulary (smaller set of canonical methods, with a registry)?</p>
 <h3>P-02 — Optional runner attestation field</h3>
 <p><strong>Problem.</strong> A determined publisher can hash a clean evaluation set, run on a contaminated one, and report the hash of the clean set. v0.1&#39;s hash commits to <em>what was claimed</em>, not proof of <em>what was run</em>.</p>
 <p><strong>Proposal.</strong> Add an optional <code>runner_attestation</code> field that, when present, points to an out-of-band attestation of the eval execution environment. Value is an opaque URI, not interpreted by PRML itself.</p>
-<p><strong>Example</strong> (matches conformance vector TV-015 byte-for-byte):</p>
-<pre><code class="language-yaml">claim_id: 01900000-0000-7000-8000-000000000015
-comparator: &#39;&gt;=&#39;
-created_at: &#39;2026-05-08T20:00:00Z&#39;
-dataset:
-  hash: f1e2d3c4b5a6978878695a4b3c2d1e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d
-  id: harmbench-v1
-metric: refusal_rate
-model:
-  id: claude-3.5-sonnet@2025-10-01
-producer:
-  id: falsify.dev
-runner_attestation: sigstore://rekor.sigstore.dev/api/v1/log/entries/24296fb24b8ad77a
-seed: 42
-threshold: 0.95
-version: prml/0.2
+<p><strong>Example:</strong></p>
+<pre><code class="language-yaml">version: &quot;prml/0.2&quot;
+metric: &quot;refusal_rate&quot;
+# ... v0.1 fields ...
+runner_attestation: &quot;sigstore://rekor.sigstore.dev/api/v1/log/entries/24296fb24b8ad77a...&quot;
 </code></pre>
 <p><strong>Non-goal.</strong> PRML does not specify what makes an attestation valid — that is the domain of Sigstore, in-toto, AWS Nitro, etc. PRML simply records that one was emitted.</p>
 <p><strong>Open question.</strong> Should <code>runner_attestation</code> be a single URI or a list? Multiple attestations from different layers (TEE + signing + provenance) are common in production.</p>
 <h3>P-03 — Revocation primitive</h3>
 <p><strong>Problem.</strong> A pre-registered manifest may need to be retracted (e.g. the underlying dataset is found contaminated; the model build is recalled). v0.1 has no in-spec revocation.</p>
 <p><strong>Proposal.</strong> Add an optional <code>revoked_at</code> field (RFC 3339 timestamp) and an optional <code>revocation_reason</code> field (one of <code>&quot;dataset_compromised&quot;</code>, <code>&quot;model_recalled&quot;</code>, <code>&quot;author_request&quot;</code>, <code>&quot;other&quot;</code>). A revoked manifest&#39;s hash MUST still verify; verification tools MUST surface revocation status separately from hash status.</p>
-<p><strong>Example</strong> (matches conformance vector TV-016 byte-for-byte):</p>
-<pre><code class="language-yaml">claim_id: 01900000-0000-7000-8000-000000000016
-comparator: &#39;&gt;=&#39;
-created_at: &#39;2026-04-01T12:00:00Z&#39;
-dataset:
-  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-  id: imagenet-val-2012
-metric: accuracy
-producer:
-  id: falsify.dev
-revocation_reason: dataset_compromised
-revoked_at: &#39;2026-05-15T10:00:00Z&#39;
-seed: 42
-threshold: 0.92
-version: prml/0.2
+<p><strong>Example:</strong></p>
+<pre><code class="language-yaml">version: &quot;prml/0.2&quot;
+# ... original fields ...
+revoked_at: &quot;2026-05-15T10:00:00Z&quot;
+revocation_reason: &quot;dataset_compromised&quot;
 </code></pre>
 <p><strong>Registry semantics.</strong> A registry MAY mark manifests revoked. A revoked manifest&#39;s permalink remains; the badge endpoint emits <code>revoked</code> status alongside <code>valid</code>.</p>
 <p><strong>Open question.</strong> Should revocation require a separate <code>revocation_signature</code> field for non-repudiation? Adding signatures pulls in PKI choices that v0.1 deliberately avoided.</p>
@@ -392,6 +368,44 @@ version: prml/0.2
 <li><p><strong>P-02 <code>attestation_uri</code> distinction (contributed by Ceri John, Topeuph AI / ValiChord).</strong> The P-02 field note distinguishes between <em>execution attestation</em> (who ran the eval and when, e.g. Sigstore as documented in Cookbook Pattern 11) and <em>independence attestation</em> (verdicts produced by parties that could not coordinate outcomes, e.g. blind commit-reveal as documented in Cookbook Pattern 13). Both address different parts of the §8.1 gap and are complementary, not alternative. The distinction surfaces during v0.2 review on Discussion #11 and lands here verbatim; Pattern 13 ships in the cookbook as a co-authored entry.</p>
 </li>
 </ol>
+<h2>Post-freeze clarification (2026-09-13): canonical rendering of <code>threshold</code></h2>
+<p>The frozen text never said how <code>threshold</code> renders under <code>prml/0.2</code>. The v0.2
+ROADMAP (#3) had proposed &quot;always at least one decimal place&quot;; the frozen
+candidate vectors went the other way and render <code>1300</code> for an integer input;
+neither document stated a rule, and the schema says only <code>number</code>. The gap was
+found on 2026-09-13 when the §3.6 formal grammar made it testable: for a
+threshold spelled <code>1300.0</code>, Python, Go and Rust rendered <code>1300.0</code> (the parsed
+type) while JavaScript and the public registry rendered <code>1300</code> — because neither
+<code>JSON.parse</code> nor js-yaml can distinguish the two spellings.</p>
+<p><strong>Rule (normative for <code>prml/0.2</code>).</strong> The canonical rendering of <code>threshold</code> is
+determined by its <strong>value</strong>, not by the spelling or type of the input:</p>
+<ul>
+<li>if the value is an integer and its magnitude is below 2^53 (9 007 199 254 740 992),
+it renders as the <code>integer</code> production of §3.6 — its decimal digits, with
+negative zero rendering as <code>0</code>;</li>
+<li>otherwise it renders as the <code>float</code> production under constraint C4 (shortest
+round-trip digits; decimal form for −4 ≤ e &lt; 16, exponent form otherwise).</li>
+</ul>
+<p>So <code>1300</code>, <code>1300.0</code> and <code>1.3e3</code> are one v0.2 manifest with one hash; <code>1300.5</code>
+renders <code>1300.5</code>; <code>9007199254740992</code> (2^53) renders <code>9007199254740992.0</code>; <code>1e16</code>
+and <code>10000000000000000</code> both render <code>1.0e+16</code>; <code>1e-05</code> renders <code>1.0e-05</code>.</p>
+<p><strong>Why 2^53.</strong> Above it the shortest round-trip decimal of an integral binary64
+can differ from its exact integer value (<code>1e23</code> is exactly 99999999999999991611392
+but its shortest spelling is <code>1e+23</code>), so &quot;its decimal digits&quot; stops being one
+string. Below it every integral value is exactly representable and the two
+coincide; 2^53 is also the bound of JavaScript&#39;s safe integers, so no
+implementation needs arbitrary-precision arithmetic to comply.</p>
+<p><strong>Why by value.</strong> Canonicalization exists so that the same claim yields the same
+bytes regardless of who wrote it or with what; making the bytes depend on
+whether a producer typed <code>1300</code> or <code>1300.0</code> would import a distinction that
+YAML, JSON and half the reference implementations do not carry. v0.1 already
+renders <code>threshold</code> by value (always float, §3.5); v0.2 continues that principle
+with the integer case admitted.</p>
+<p><strong>Compatibility.</strong> No published v0.2 candidate vector spelled an integral
+threshold as a float, so no published digest changes. The rule is pinned by ten
+vectors in the edge suite (<code>spec/test-vectors/edge/</code>, EV-083..EV-092) and is
+implemented in all four reference implementations and the registry as of this
+date. Constraint C6 in <code>spec/grammar/README.md</code> states the same rule.</p>
 <h2>Comment summary template</h2>
 <p>When you comment, please use this format:</p>
 <pre><code>Proposal: P-0X
@@ -404,7 +418,7 @@ Suggested edit (optional): [diff]
 <h2>Editor&#39;s notes</h2>
 <p>The smallest possible change set is a feature. v0.2 is intended to be a 1-week implementation diff for any of the four reference implementations. If a proposal here cannot be implemented in that envelope, it belongs in v0.3 or later.</p>
 <p>A list of comments received and their disposition will be published as <code>spec.falsify.dev/v0.2-comments</code> after the freeze.</p>
-<p>— Cüneyt Öztürk, 2026-05-08 (last editorial pass: 2026-05-15)</p>
+<p>— Cüneyt Öztürk, 2026-05-08</p>
 <!-- /prerender -->
 </article>
 
@@ -447,7 +461,7 @@ Suggested edit (optional): [diff]
 (async function () {
   const target = document.getElementById('content');
   const sources = [
-    'PRML-v0.2-RFC.md',
+    '/PRML-v0.2-RFC.md',  // single source since 23 Sep 2026; the /v0.2-rfc/ copy had drifted since June
     'https://raw.githubusercontent.com/studio-11-co/falsify/main/spec/PRML-v0.2-RFC.md'
   ];
 
@@ -474,6 +488,8 @@ Suggested edit (optional): [diff]
 
   // Rewrite raw README path links to GitHub if any leak in
   document.querySelectorAll('article a[href^="/Users/"]').forEach(a => a.removeAttribute('href'));
+  // The markdown lives at the site root, so its ./relative links resolve from "/", not from /v0.2-rfc/.
+  target.querySelectorAll('a[href^="./"]').forEach(a => a.setAttribute('href', '/' + a.getAttribute('href').slice(2)));
 })();
 </script>
 <script>(function(){try{var i=new Image();i.src="https://registry.falsify.dev/_t?h="+encodeURIComponent(location.host)+"&p="+encodeURIComponent(location.pathname)+"&r="+encodeURIComponent(document.referrer||"")}catch(e){}})();</script></body>

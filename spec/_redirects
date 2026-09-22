@@ -7,3 +7,5 @@
 # v0.2 is frozen as the RFC content
 /v0.2/  /v0.2-rfc  301
 /v0.2   /v0.2-rfc  301
+# 23 Eyl 2026: /v0.2-rfc/ altındaki kopya Haziran'dan beri kökteki asıl metinden ayrışmıştı; tek kaynak kök.
+/v0.2-rfc/PRML-v0.2-RFC.md  /PRML-v0.2-RFC.md  301
