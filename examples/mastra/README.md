@@ -13,5 +13,5 @@ The scorer is real `@mastra/core/evals` (`createScorer().generateScore()`, judge
 locally, no API key). The hashing is the real `falsify-js` reference — byte-equivalent with the
 Python, Go and Rust implementations.
 
-What it proves: the bar existed, in exactly this form, before the results did.
+What it proves: the bar existed, in exactly this form, no later than the receipt time, and has not changed since. It does not by itself prove the run happened after that time (see prml-linkage/0).
 What it does not prove: that the scores are right — that stays with the scorer.

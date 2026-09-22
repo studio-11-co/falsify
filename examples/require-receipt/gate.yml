@@ -2,8 +2,11 @@
 #
 # Drop this into the repository that RECEIVES submissions (a leaderboard,
 # benchmark, model marketplace, or review process). Every PR must carry a
-# PRML manifest whose bar was locked — and publicly receipted — BEFORE the
-# submitted results existed. Post-hoc goalpost edits exit 3 and block merge.
+# PRML manifest whose bar was locked — and publicly receipted — at a stated
+# time T, before the entry is accepted: the receipt shows this exact bar
+# existed no later than T and has not changed since. It does not by itself
+# show that the run happened after T (that ordering is prml-linkage/0).
+# Post-hoc goalpost edits exit 3 and block merge.
 #
 # What each step proves:
 #   verify   — the manifest is valid PRML and matches its committed hash

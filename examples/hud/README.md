@@ -13,5 +13,5 @@ python3 hud_to_prml.py --job-json my_job.json --threshold 0.8
 Needs `pip install hud falsify`. No HUD account or API key: `Task` is pure data by hud's
 design, and the bridge reads a Job export (a faithful built-in sample ships in the file).
 
-What it proves: the bar existed, in exactly this form, before the results did.
+What it proves: the bar existed, in exactly this form, no later than the receipt time, and has not changed since. It does not by itself prove the run happened after that time (see prml-linkage/0).
 What it does not prove: that the rewards are correct — that stays with hud's grading.

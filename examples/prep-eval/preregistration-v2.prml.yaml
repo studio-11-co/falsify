@@ -1,0 +1,16 @@
+# Revision after the phase 4.1 pilot: one translated query was corrected, so the
+# dataset bytes (and hash) changed. Metric, comparator, threshold and seed are
+# unchanged. The reason and approval are recorded in deviation-2026-09-22.md;
+# v1 stays on record — a revision never edits a locked manifest, it adds one.
+version: prml/0.1
+claim_id: 01a0c98f-d00d-79b2-8fdd-90a8b40d574d
+created_at: '2026-09-22T14:40:40Z'
+metric: instruction_set_accuracy
+comparator: '>='
+threshold: 0.85
+dataset:
+  id: cphos-en-sample-v2
+  hash: e4c01b52f9853a32142a484d1c4b7fe12cf740fec094353d839e05a0b7547bb0
+seed: 7
+producer:
+  id: falsify.dev/examples/prep-eval

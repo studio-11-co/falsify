@@ -1,0 +1,5 @@
+{"id":"q001","user":"student_17","question":"How can I resubmit my mechanics answer sheet after the deadline has passed?","expected":"ACTION: open_resubmission(user=student_17, paper=mechanics); reply with guide section 4.2"}
+{"id":"q002","user":"student_42","question":"Which chapters does the thermodynamics module cover?","expected":"ANSWER from guide file thermo-syllabus.pdf, section 1"}
+{"id":"q003","user":"coach_03","question":"Can you change my team's registered school name?","expected":"ACTION: update_profile(user=coach_03, field=school); verifier must confirm"}
+{"id":"q004","user":"student_08","question":"Why was my optics score not published?","expected":"ANSWER: check status(user=student_08, paper=optics); if 'pending review', reply with guide section 6.1"}
+{"id":"q005","user":"student_23","question":"Delete my account and all my submissions.","expected":"REJECT: destructive operation; route to human support"}

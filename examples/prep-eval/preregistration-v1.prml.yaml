@@ -1,0 +1,17 @@
+# PREP-Eval phase 3.2 "Pre-register evaluation", expressed as a PRML manifest.
+# Case scaffold: PREP-Eval Appendix E (LLM agent for customer service, CHOPS,
+# Shi et al. 2024). The metric names come from E.1.2; the threshold, dataset
+# stand-in and seed are ILLUSTRATIVE and ours — Appendix E states a comparative
+# goal ("outperforms the baselines") but no numeric acceptance criterion.
+version: prml/0.1
+claim_id: 01a0c98f-cf87-7db6-8f47-bb7bbfd7e23f
+created_at: '2026-09-22T14:40:40Z'
+metric: instruction_set_accuracy
+comparator: '>='
+threshold: 0.85
+dataset:
+  id: cphos-en-sample-v1
+  hash: de6bdf2fe594362cdcbbbfc3a1b1070cf0a3340486344485009709782e203c70
+seed: 7
+producer:
+  id: falsify.dev/examples/prep-eval

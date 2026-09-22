@@ -9,6 +9,7 @@ package. Picking the wrong one is the single most common way to get an
 | Commit evaluation criteria as a PRML manifest | `falsify init my-claim.prml.yaml` writes one | `falsify lock` / `falsify verify` |
 | See a complete, working PRML manifest | [`first-manifest/accuracy.prml.yaml`](first-manifest/) | `falsify lock examples/first-manifest/accuracy.prml.yaml` |
 | Drive the pre-registration **workflow engine** | [`template.yaml`](template.yaml) | `falsify-engine init <name>`, then `lock <name>` |
+| Follow a full **pre-registration → deviation → final report** cycle (PREP-Eval phases 3.2 to 6.4), verifiable offline | [`prep-eval/`](prep-eval/) | `examples/prep-eval/run.sh` |
 
 ## The two tools
 
@@ -33,4 +34,6 @@ lock` (PRML) takes a **file path**. The two tools differ here as well.
 The remaining subdirectories (`deepeval/`, `lighteval/`, `lm-eval-harness/`,
 `mastra/`, `promptfoo/`, `opik/`, `langfuse/`, `braintrust/`, `hud/`,
 `moonshot/`, `laminar/`, `cyclonedx-attestation/`, `require-receipt/`, …) each
-carry their own README and show PRML alongside one host tool.
+carry their own README and show PRML alongside one host tool. `prep-eval/` is
+different in kind: it shows PRML alongside a *process protocol* (PREP-Eval),
+from pre-registration through a documented deviation to the final report.
