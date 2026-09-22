@@ -1,0 +1,5 @@
+# spec.falsify.dev — güvenlik başlıkları (SEO/GEO denetimi, 23 Eyl 2026). nosniff ve Referrer-Policy Pages varsayılanı.
+/*
+  Strict-Transport-Security: max-age=15552000
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()

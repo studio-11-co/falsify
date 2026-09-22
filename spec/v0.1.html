@@ -7,6 +7,7 @@
 <meta name="description" content="PRML defines a content-addressed serialization format for pre-registered machine learning evaluation claims. Working draft, public review.">
 <meta name="author" content="Cüneyt Öztürk">
 <link rel="canonical" href="https://spec.falsify.dev/v0.1">
+<link rel="alternate" type="text/markdown" href="https://spec.falsify.dev/PRML-v0.1.md" title="Markdown source">
 <meta property="og:title" content="PRML v0.1 — Pre-Registered ML Manifest Specification">
 <meta property="og:description" content="A cryptographic primitive for verifiable ML evaluation claims. Working draft.">
 <meta property="og:url" content="https://spec.falsify.dev/v0.1">
@@ -239,8 +240,984 @@ footer.colophon a:hover { color: var(--ink); }
   <figcaption style="margin-top: 10px; font-size: 13px; color: var(--ink-3, #5a6677); font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: 0.02em;">60-second walkthrough &mdash; commit the criteria before a run, get a SHA-256 receipt, record later revisions on the amendment chain. Live demo at <a href="https://spec.falsify.dev/demo/" style="color: var(--ink-2);">/demo</a>.</figcaption>
 </figure>
 
-<article id="content">
-<p class="loading">Loading specification…</p>
+<article id="content" data-prerendered="sha256:80380a1f643dbd54b954619f6f16cb79176856a58756792ec946604fec48faef">
+<!-- prerender: PRML-v0.1.md · marked 12.0.2 · scripts/spec-prerender.mjs — ÜRETİLMİŞ, elle düzeltme; .md düzelt ve --write koş -->
+<h1 id="prml-pre-registered-ml-manifest-specification">PRML — Pre-Registered ML Manifest Specification</h1>
+<p><strong>Version:</strong> 0.1 (Draft)
+<strong>Date:</strong> 2026-05-01
+<strong>Status:</strong> Frozen working draft (2026-05-22) — not a finished standard
+<strong>Editor:</strong> Cüneyt Öztürk &lt;<a href="mailto:hello@falsify.dev">hello@falsify.dev</a>&gt;
+<strong>Reference Implementation:</strong> <a href="https://github.com/studio-11-co/falsify">falsify</a> (MIT)
+<strong>Canonical URL:</strong> <a href="https://spec.falsify.dev/v0.1">https://spec.falsify.dev/v0.1</a>
+<strong>License:</strong> <a href="./LICENSE.md">Community Specification License 1.0</a> — see <a href="./Scope.md">Scope.md</a> and <a href="./Notices.md">Notices.md</a></p>
+<blockquote>
+<p><strong>Correction, 2026-09-11.</strong> §2.3.4 previously read &quot;a registry receipt proves
+the bar was locked before the run&quot;. That overstates what a receipt establishes,
+and it contradicts both the paragraph that follows it and the threat model in
+§8.1: <code>created_at</code> defends against retroactive editing, anchoring defends
+against back-dating, and neither establishes that the evaluation ran after the
+commitment. The sentence has been narrowed to what a receipt does evidence —
+existence no later than the anchored time, and non-substitution since. No
+requirement, field, algorithm or conformance vector is affected, and no
+implementation needs to change.</p>
+</blockquote>
+<blockquote>
+<p><strong>Licence change, 2026-08-29.</strong> This specification was previously published
+under CC BY 4.0, which grants copyright permissions only and expressly grants
+no patent rights — the wrong instrument for a document meant to be
+implemented by third parties. It is now published under the Community
+Specification License 1.0, which grants both, irrevocably, within the declared
+Scope. Copies distributed before this date remain available under CC BY 4.0;
+that grant is irrevocable and is not withdrawn here. No normative text changed
+with this licence change.</p>
+</blockquote>
+<hr>
+<h2 id="abstract">Abstract</h2>
+<p>PRML defines a content-addressed serialization format for pre-registered machine
+learning evaluation claims. A PRML manifest binds a metric, a numeric threshold,
+a dataset content hash, and a random seed to a SHA-256 digest produced <strong>before</strong>
+the experiment runs. After the experiment, an independent verifier recomputes the
+hash, executes the evaluation against the pre-registered parameters, and emits a
+deterministic verdict.</p>
+<p>The format is designed to be implementable in any language, transmittable as a
+plain text artifact, and verifiable without network access. PRML is <strong>not</strong> an
+experiment-tracking platform; it is a primitive intended to underlie such
+platforms and to satisfy regulatory audit-trail obligations under regimes
+including the EU AI Act (Regulation 2024/1689) Articles 12 and 18.</p>
+<hr>
+<h2 id="status-of-this-memo">Status of This Memo</h2>
+<p>This document is <strong>not</strong> a finished standard. It is published under the Community
+Specification License 1.0 by a single editor; no standards body has adopted it,
+and it carries no presumption of conformity with any regulation.</p>
+<p><strong>Settled.</strong> §3 canonicalization has not changed since the freeze on 2026-05-22.
+Three defect reports accepted on 2026-08-23 added rejection requirements for
+invalid input; they changed no canonical byte sequence and no digest of any valid
+manifest. The four reference implementations (Python, JavaScript, Go, Rust) agree
+byte-for-byte on 21 conformance vectors. All four reject the 16 negative-conformance
+cases that are not YAML-specific; the two implementations that parse YAML reject
+all 20. The media type <code>application/vnd.prml+yaml</code> was registered with IANA on
+2026-09-03; registration is not endorsement.</p>
+<p><strong>Not settled.</strong> A manifest and its digest carry no evidence of time on their own.
+Only a time-anchored record — a digest countersigned by an independent timestamp
+authority or entered in a public transparency log — can establish that a criteria
+object existed no later than the anchored time. Even then it does not establish
+that the evaluation ran afterwards: this specification does not bind a criteria
+record to the execution it describes. Execution linkage is out of scope for v0.1
+and is the main open gap. A time-anchored record is also silent on who held the
+criteria before the run: if the party that sets the criteria and the party whose
+work is assessed can communicate outside the record — the ordinary case when both
+sit inside one organisation — the anchor remains valid and the assessment can
+still be compromised. This specification binds bytes to a time; it does not
+establish that the criteria were withheld from the party they were meant to test.
+Three statements in
+this document promised normative adoption &quot;with v0.2&quot;; v0.2 froze without them,
+and on 2026-09-13 they were dispositioned (see Errata): the metric registry
+withdrawn, the signature sidecar re-scoped to a v0.3 backlog item with a test
+vector, the risk-tier field recast as a deployment obligation. §3 has had a formal
+grammar since 2026-09-13 (§3.6), verified against all 21 conformance vectors by
+an implementation written from the grammar alone. What that verification also
+showed is now the open item in its place: the four reference implementations
+agree byte-for-byte on the 21 conformance vectors; a wider 83-input battery
+published the same day found 21 inputs, outside the vectors, on which three of
+them departed from the grammar. They were corrected the same day; the one
+input that exposed an unstated rule rather than a bug (a v0.2 <code>threshold</code>
+spelled <code>1300.0</code>) was settled by a post-freeze clarification to the v0.2 RFC
+the same day — <code>threshold</code> canonicalizes by value under v0.2. All of it now
+runs in CI as a 92-vector edge suite (<code>spec/test-vectors/edge/</code>).</p>
+<p><strong>Implementation status.</strong> All four reference implementations were written by the
+editor, and all public registry records to date originate with the editor. No
+independent implementation is known to the editor. Independent interoperability
+therefore remains unproven.</p>
+<p>A manifest is interpreted under the rules identified by its <code>version</code> field, so
+valid v0.1 manifests continue to verify under v0.1 rules as later revisions are
+developed. The compatibility and deprecation commitments for this specification,
+its conformance corpus, the packaged implementations and the public registry are
+stated in <a href="COMPATIBILITY.md">COMPATIBILITY.md</a> (adopted 2026-09-13). The v0.2 RFC froze on 2026-05-22 and its formal comment window is
+closed; promotion to final is deferred until external reviewers exist, and its
+three open questions will not be resolved unilaterally. General feedback and
+defect reports remain welcome at
+<code>github.com/studio-11-co/falsify/discussions</code> or at <code>hello@falsify.dev</code>.</p>
+<hr>
+<h2 id="1-introduction">1. Introduction</h2>
+<h3 id="11-motivation">1.1 Motivation</h3>
+<p>Machine learning evaluations suffer from a credibility gap that conventional
+experiment-tracking tools do not close. The metric, threshold, dataset, and seed
+that a team claims to have committed to <em>before</em> a training run are typically
+recorded only after results are observed, if at all. Post-hoc revision of these
+parameters — moving a threshold from 0.85 to 0.83, swapping a held-out split,
+re-rolling a seed — is mechanically indistinguishable from honest reporting in
+the absence of a cryptographic pre-commitment.</p>
+<p>Three contemporary forces make this gap urgent:</p>
+<ol>
+<li><p><strong>Regulatory.</strong> The EU AI Act&#39;s logging (Article 12) and recordkeeping
+(Article 18) obligations for high-risk systems under Annex III apply from
+2 December 2027, following the deferral enacted by Regulation (EU) 2026/1744.
+High-risk AI providers must demonstrate that performance claims attached to a
+deployed model are the same claims registered prior to deployment.</p>
+<blockquote>
+<p><strong>v0.1 erratum (2026-08-28):</strong> this section previously stated that
+Articles 12 and 18 obligations &quot;enter force August 2, 2026&quot;. Regulation
+(EU) 2026/1744 (OJ, 24 July 2026) defers Sections 1–3 of Chapter III —
+which include both articles — to 2 December 2027 for systems classified
+high-risk under Article 6(2) and Annex III. The original text reflected
+the pre-Omnibus timetable and was correct when written (1 May 2026).</p>
+</blockquote>
+</li>
+<li><p><strong>Scientific.</strong> Benchmark contamination, data leakage, and selective
+reporting consistently degrade the informativeness of public evaluations.</p>
+</li>
+<li><p><strong>Commercial.</strong> Capability claims attached to frontier model releases are
+frequently disputed precisely because no public, tamper-evident record of the
+evaluation contract exists.</p>
+</li>
+</ol>
+<p>PRML proposes the smallest sufficient primitive to close this gap: a hash-bound
+manifest, written before the run, verified after.</p>
+<h3 id="12-conventions-and-terminology">1.2 Conventions and Terminology</h3>
+<p>The key words <strong>MUST</strong>, <strong>MUST NOT</strong>, <strong>REQUIRED</strong>, <strong>SHALL</strong>, <strong>SHALL NOT</strong>,
+<strong>SHOULD</strong>, <strong>SHOULD NOT</strong>, <strong>RECOMMENDED</strong>, <strong>MAY</strong>, and <strong>OPTIONAL</strong> in this
+document are to be interpreted as described in [RFC 2119].</p>
+<p>The following terms have specific meaning in this specification:</p>
+<ul>
+<li><strong>Manifest</strong> — A document conforming to §2 that pre-registers an evaluation
+claim.</li>
+<li><strong>Canonical bytes</strong> — The byte sequence produced by serializing a manifest
+according to §3.</li>
+<li><strong>Manifest hash</strong> — <code>SHA-256(canonical bytes)</code>, encoded as 64 lowercase
+hexadecimal characters.</li>
+<li><strong>Producer</strong> — The party that creates and publishes a manifest before the
+evaluation runs.</li>
+<li><strong>Verifier</strong> — Any party (including the producer) that independently
+recomputes the manifest hash and the evaluation outcome.</li>
+<li><strong>Audit log</strong> — The append-only sequence of manifests covering successive
+amendments to a registered claim (§6).</li>
+</ul>
+<hr>
+<h2 id="2-manifest-structure">2. Manifest Structure</h2>
+<h3 id="21-required-fields">2.1 Required Fields</h3>
+<p>A PRML manifest is a YAML 1.2 document. Implementations <strong>MUST</strong> populate the
+following top-level keys:</p>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>version</code></td>
+<td>string</td>
+<td>Spec version. <strong>MUST</strong> equal <code>&quot;prml/0.1&quot;</code> for this revision.</td>
+</tr>
+<tr>
+<td><code>claim_id</code></td>
+<td>string</td>
+<td>UUIDv7 identifier for the claim. <strong>MUST</strong> be unique per producer.</td>
+</tr>
+<tr>
+<td><code>created_at</code></td>
+<td>string</td>
+<td>RFC 3339 timestamp in UTC, second precision.</td>
+</tr>
+<tr>
+<td><code>metric</code></td>
+<td>string</td>
+<td>Identifier of the metric being claimed. See §2.3.1.</td>
+</tr>
+<tr>
+<td><code>comparator</code></td>
+<td>string</td>
+<td>One of <code>&gt;=</code>, <code>&gt;</code>, <code>==</code>, <code>&lt;=</code>, <code>&lt;</code>. See §5.1.</td>
+</tr>
+<tr>
+<td><code>threshold</code></td>
+<td>number</td>
+<td>Real number the metric is compared against.</td>
+</tr>
+<tr>
+<td><code>dataset</code></td>
+<td>mapping</td>
+<td>Identifier and content hash of the dataset. See §2.3.2.</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td>integer</td>
+<td>Non-negative 64-bit integer.</td>
+</tr>
+<tr>
+<td><code>producer</code></td>
+<td>mapping</td>
+<td>Identity of the manifest producer. See §2.3.3.</td>
+</tr>
+</tbody></table>
+<h3 id="22-optional-fields">2.2 Optional Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>metric_args</code></td>
+<td>mapping</td>
+<td>Free-form arguments parameterizing the metric.</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>mapping</td>
+<td>Identifier of the model under test, if known pre-run.</td>
+</tr>
+<tr>
+<td><code>code</code></td>
+<td>mapping</td>
+<td>Identifier of the code (e.g., git commit) used to evaluate.</td>
+</tr>
+<tr>
+<td><code>prior_hash</code></td>
+<td>string</td>
+<td>Manifest hash of the previous claim in an amendment chain (§6).</td>
+</tr>
+<tr>
+<td><code>notes</code></td>
+<td>string</td>
+<td>Human-readable annotation. <strong>MUST NOT</strong> affect verification.</td>
+</tr>
+</tbody></table>
+<h3 id="23-field-semantics">2.3 Field Semantics</h3>
+<h4 id="231-metric">2.3.1 <code>metric</code></h4>
+<p>The <code>metric</code> value is a string and is either:</p>
+<ul>
+<li>a URI dereferencing to a published definition, or</li>
+<li>a plain identifier such as <code>accuracy</code> or <code>f1_macro</code>.</li>
+</ul>
+<p>A plain identifier is a <strong>local name</strong>. It carries no portability guarantee: two
+producers may mean different things by <code>accuracy</code>, and a verifier <strong>MUST NOT</strong>
+assume otherwise. A producer who needs the metric&#39;s meaning to travel with the
+manifest <strong>SHOULD</strong> use the URI form. There is no PRML metric registry and none
+is planned; the earlier statement that one would &quot;be established with v0.2&quot; was
+withdrawn on 2026-09-13 (see Errata). This paragraph changes no validation rule
+and no canonical byte.</p>
+<p>Examples: <code>accuracy</code>, <code>f1_macro</code>, <code>https://example.org/metrics/calibration_ece</code>.</p>
+<h4 id="232-dataset">2.3.2 <code>dataset</code></h4>
+<pre><code class="language-yaml">dataset:
+  id: &lt;human-readable identifier&gt;
+  hash: &lt;hex SHA-256 of canonical dataset bytes&gt;
+  uri: &lt;optional retrieval URI&gt;
+</code></pre>
+<p>The <code>hash</code> field <strong>MUST</strong> be the SHA-256 digest of the dataset&#39;s canonical byte
+representation. The canonical representation is dataset-format-specific and
+<strong>SHOULD</strong> be documented in the dataset&#39;s accompanying datasheet.</p>
+<h4 id="233-producer">2.3.3 <code>producer</code></h4>
+<pre><code class="language-yaml">producer:
+  id: &lt;DNS-name, ORCID, or GitHub handle&gt;
+  signature: &lt;optional detached PGP or minisign signature&gt;
+</code></pre>
+<p>The <code>signature</code> field, when present, <strong>MUST</strong> be a detached signature over the
+<strong>canonical bytes</strong> of the manifest (the same byte sequence whose SHA-256 is
+the manifest hash). This matches standard cryptographic practice (Sigstore
+detached signatures, minisign, PGP <code>--detach-sign</code>) and protects against
+a second-preimage scenario where an adversary substitutes a different
+canonical byte sequence yielding an identical hash: under hash-only signing,
+such a substitution would still verify; under bytes-signing, it does not.</p>
+<p>Verifiers MUST run canonicalization regardless (it is a prerequisite for the
+hash check in §5.2 step 1), so signing over the canonical bytes adds no
+redundant work. Implementations SHOULD store the signature in a sidecar
+file <code>&lt;claim_id&gt;.prml.sig</code> alongside the existing <code>&lt;claim_id&gt;.prml.sha256</code>
+sidecar. The sidecar&#39;s format, and what a verifier does with one if present, is
+specified in the v0.3 backlog
+(<a href="v0.3-backlog/06-signature-sidecar.md"><code>v0.3-backlog/06-signature-sidecar.md</code></a>,
+disposition of 2026-09-13): presence remains optional; a verifier <strong>MAY</strong> verify
+it and, if it does, <strong>MUST</strong> verify over the canonical bytes, never over the
+hash. Note that a signature carried <em>inside</em> the manifest, in this field, cannot
+be a signature over the manifest&#39;s own canonical bytes, because those bytes
+include it; that circularity is recorded as an open question in the backlog, and
+the sidecar is the carrier this specification recommends.</p>
+<blockquote>
+<p><strong>v0.1 erratum (2026-05-02):</strong> earlier drafts of this spec instructed
+implementations to sign over the manifest hash. That recommendation is
+withdrawn. Existing v0.1 implementations that signed over the hash should
+re-sign over the canonical bytes before any regulatory submission.</p>
+</blockquote>
+<h4 id="created-at">2.3.4 <code>created_at</code> — declared time vs. anchor time</h4>
+<p>The <code>created_at</code> field is the time the <strong>producer declares</strong> to have authored
+the manifest. It is part of the canonical bytes and therefore part of the
+hash: any change to <code>created_at</code> changes the hash. This is sufficient to
+prevent a producer from retroactively editing the timestamp on a published
+manifest without breaking the signature chain.</p>
+<p>It is <strong>not</strong> sufficient to prove the manifest existed at the declared time.
+A producer can write any RFC 3339 string into <code>created_at</code> at any moment;
+the spec has no way to constrain that string against a wall clock the
+producer does not control.</p>
+<p>Audit-strength timestamps come from <strong>anchor mechanisms</strong> external to the
+manifest:</p>
+<ul>
+<li>Git commit author/committer timestamps in a public repository,</li>
+<li>Registry receipt timestamps (e.g. <code>registry.falsify.dev</code> records the
+server-side wall clock at which it first observed a given manifest hash),</li>
+<li>RFC 3161 timestamping authorities,</li>
+<li>Sigstore Rekor transparency log entries,</li>
+<li>arXiv submission timestamps and DOI registration dates,</li>
+<li>CI run timestamps recorded in public workflow logs.</li>
+</ul>
+<p>A verifier evaluating &quot;when was this committed?&quot; <strong>MUST</strong> treat the
+<code>created_at</code> field as a producer-side claim and look to one or more anchor
+mechanisms for the authoritative answer. A v0.1-conforming producer
+<strong>SHOULD</strong> anchor every published manifest in at least one such mechanism
+and document the choice. v0.2 makes this a normative SHOULD; v0.1 leaves
+the choice informative.</p>
+<p><strong>These anchor mechanisms are not equally strong</strong> <em>(updated 2026-07-11)</em>.
+Git commit timestamps, RFC 3161 timestamping authorities, and Sigstore
+Rekor entries provide <em>independent non-repudiation</em>: a third party, not the
+producer, vouches for the time, and the record cannot be silently
+withdrawn. <code>registry.falsify.dev</code> sits in between. Since June 2026 its
+receipts are Ed25519-signed over the manifest hash and the server-side
+timestamp (public key at <code>registry.falsify.dev/pubkey</code>), which gives
+non-repudiation of issuance: the operator cannot later deny having issued a
+receipt. Since 2026-07-11 the registry validates PRML manifests at commit
+time and stores the full manifest rather than a preview. Since 2026-07-12
+every receipt is additionally countersigned by an independent RFC 3161
+timestamp authority (timestamp.sigstore.dev): the token, served raw at
+<code>registry.falsify.dev/&lt;hash&gt;.tsr</code>, signs the manifest hash with the TSA&#39;s
+key and verifies offline with OpenSSL against the TSA&#39;s published chain,
+so the <em>time</em> claim no longer rests on the registry operator alone.
+(Records committed before that date were backfilled; their token time is
+later than their receipt time, and the permalink says so.) Since the same date,
+records that store their full manifest are also mirrored to Sigstore&#39;s
+public Rekor v2 transparency log (the per-record inclusion proof is served
+at <code>registry.falsify.dev/&lt;hash&gt;.rekor</code>), which adds append-only,
+non-equivocation evidence for those records; the registry itself remains a
+signed store, not a log. It is useful for in-browser verification
+and as corroboration, but it <strong>SHOULD NOT</strong> be relied on as the sole
+audit-grade anchor for high-risk or regulatory use; select at least one
+additional independent mechanism from the list above. In every case a
+registry receipt evidences that a specific criteria object existed no later
+than the anchored time and is unchanged since. It does <strong>not</strong> evidence that
+the evaluation ran afterwards — establishing that order requires a separate
+execution-side record, dated independently of this one — and it never proves
+the result.</p>
+<p>This distinction matters for §8.1 threat-model analysis: the
+threat that <code>created_at</code> defends against is the producer <strong>retroactively
+editing</strong> a published manifest. The threat that anchoring defends against is
+the producer <strong>back-dating</strong> a manifest that was authored after the fact.
+The two are different and require different mechanisms.</p>
+<p>There is a third limit, and it is the boundary of what any receipt can carry.
+Anchoring establishes that the committed bytes existed <strong>no later than</strong> the
+anchor time and have not changed since. That the evaluation ran <em>after</em> that
+point — and therefore that the bar preceded the result — follows from using the
+mechanism as intended: anchor first, then run. A receipt encountered in
+isolation, with no independent evidence of when the run began, bounds the
+commitment in time but does not by itself order it against the run.</p>
+<hr>
+<h2 id="3-canonical-serialization">3. Canonical Serialization</h2>
+<h3 id="31-yaml-subset">3.1 YAML Subset</h3>
+<p>A PRML manifest <strong>MUST</strong> be expressible in the following YAML subset:</p>
+<ul>
+<li>Block-style mappings only (no flow-style).</li>
+<li>Plain scalars, double-quoted scalars, and integers.</li>
+<li>No anchors, aliases, or tags beyond <code>!!str</code>, <code>!!int</code>, <code>!!float</code>.</li>
+<li>UTF-8 throughout; string scalars and keys are restricted to the portable character set of §3.4.</li>
+</ul>
+<h3 id="32-key-ordering">3.2 Key Ordering</h3>
+<p>For canonicalization, all mappings <strong>MUST</strong> be reserialized with keys in
+lexicographic byte order. Nested mappings are ordered recursively.</p>
+<h3 id="321-duplicate-keys">3.2.1 Duplicate Keys</h3>
+<p>A mapping <strong>MUST NOT</strong> contain the same key twice, at any nesting level. Common
+YAML and JSON parsers resolve a repeated key last-wins with no diagnostic, which
+means the manifest a human reads and the manifest the hash binds can carry
+different values for the same field — a tamper channel inside a tamper-evident
+format. RFC 7493 (I-JSON) §2.3 prohibits duplicate names for the same reason. An
+implementation <strong>MUST</strong> detect duplicates in the input document, before or during
+parsing, and reject the manifest with exit code <code>2</code>. Detecting them only after
+parsing is insufficient: by then the duplicate has already been discarded.</p>
+<h3 id="33-whitespace-and-encoding">3.3 Whitespace and Encoding</h3>
+<ul>
+<li>Canonical output <strong>MUST</strong> be UTF-8 encoded.</li>
+<li>Indentation <strong>MUST</strong> be exactly two spaces per level.</li>
+<li>Each key-value line <strong>MUST</strong> terminate with a single LF (<code>0x0A</code>).</li>
+<li>The canonical byte sequence <strong>MUST</strong> end with a single LF.</li>
+<li>Trailing whitespace is <strong>PROHIBITED</strong>.</li>
+<li>Comments are <strong>PROHIBITED</strong> in canonical form.</li>
+</ul>
+<p>A reference canonicalizer is provided by the falsify implementation and produces
+output byte-equivalent to the rules above for any conforming input.</p>
+<h3 id="34-portable-character-set">3.4 Portable Character Set</h3>
+<p>To guarantee byte-identical canonicalization across implementations, every
+string scalar and every mapping key <strong>MUST NOT</strong> contain any of the following
+code points:</p>
+<ul>
+<li>U+0000–U+001F (C0 control characters)</li>
+<li>U+007F (DELETE) and U+0080–U+009F (C1 control characters)</li>
+<li>U+2028 (LINE SEPARATOR) and U+2029 (PARAGRAPH SEPARATOR)</li>
+<li>U+FEFF (BYTE ORDER MARK / ZERO WIDTH NO-BREAK SPACE)</li>
+</ul>
+<p>These code points serialize ambiguously or invisibly and would let two
+visually identical manifests hash differently. A manifest containing any of
+them <strong>MUST</strong> be rejected — it <strong>MUST NOT</strong> be locked or hashed — and the
+implementation <strong>MUST</strong> exit with code <code>2</code> (bad input). The control-character
+vectors in the reject suite (Appendix B) enumerate this class normatively.</p>
+<p>Additionally, every string scalar and every mapping key <strong>MUST</strong> be in Unicode
+Normalization Form C (NFC). The same text in NFC and in NFD is identical to a
+reader and different to SHA-256, so a claim authored on a platform that composes
+differently would lock to a different hash than the same claim authored
+elsewhere. A manifest containing a non-NFC string <strong>MUST</strong> be rejected with exit
+code <code>2</code>; an implementation <strong>MUST NOT</strong> normalize it silently, because doing so
+would change the bytes the author believes they locked. All other UTF-8 is
+permitted in string values.</p>
+<h3 id="35-numeric-rendering">3.5 Numeric Rendering</h3>
+<p><code>threshold</code> is a float64 (§2.3). An integer-valued threshold <strong>MUST</strong>
+canonicalize as a float — <code>1</code> renders as <code>1.0</code> — so that <code>1</code> and <code>1.0</code> produce
+the same hash. <code>seed</code> is an integer and renders with no decimal point.</p>
+<p><code>threshold</code> <strong>MUST</strong> be finite. The IEEE 754 special values — positive and
+negative infinity and NaN, spelled <code>.inf</code>, <code>-.inf</code> and <code>.nan</code> in YAML — are
+<strong>PROHIBITED</strong>. Such a manifest locks and verifies cleanly while asserting
+nothing: every observation satisfies <code>&lt;= .inf</code>, and no observation satisfies any
+comparison against <code>.nan</code>. The result is a bar that no experiment can inform,
+which defeats the purpose of fixing one in advance. A manifest whose <code>threshold</code>
+is non-finite <strong>MUST</strong> be rejected with exit code <code>2</code>.</p>
+<p>Floating-point values <strong>MUST</strong> be rendered in the canonical decimal form: the
+shortest decimal that round-trips to the same float64, with very small or very
+large magnitudes in normalized scientific notation (for example, <code>0.000001</code>
+renders as <code>1.0e-06</code>). The exact rule — which magnitudes take which notation,
+the mantissa and exponent spelling — is constraint C4 of the formal grammar
+(§3.6); the reference canonicalizer (§3.3, §10) is a conforming implementation
+of it. The per-language canonicalization-portability analysis records how each
+reference implementation reproduces the rule and where, outside the conformance
+vectors, one of them does not (finding of 2026-09-13).</p>
+<h3 id="36-formal-grammar">3.6 Formal Grammar</h3>
+<p>The canonical byte sequence is specified by the ABNF grammar in
+<a href="grammar/prml-canonical.abnf"><code>spec/grammar/prml-canonical.abnf</code></a> together with
+the constraints C1–C7 stated in <a href="grammar/README.md"><code>spec/grammar/README.md</code></a>:
+depth (C1), key order (C2), uniqueness (C3), float rendering (C4), the
+plain-scalar predicate (C5), which production a value takes (C6), and block
+sequences (C7, informative). The grammar and constraints C1–C6 are
+<strong>normative</strong>. The reference canonicalizer is one conforming implementation of
+them, not their definition. An implementation that satisfies the grammar and
+C1–C6 produces, for every conformance vector in Appendix B, exactly the
+published canonical bytes and hash.</p>
+<p>The grammar was added on 2026-09-13 and verified in both directions before
+publication: an emitter and a recogniser written from the grammar alone,
+without the reference canonicalizer or its YAML library
+(<a href="grammar/check_grammar.py"><code>spec/grammar/check_grammar.py</code></a>), reproduce all
+21 conformance vectors byte-for-byte and reject sixteen deliberately malformed
+canonical texts. Publishing the grammar changes no canonical byte sequence and
+no digest of any valid manifest; it states what the reference canonicalizer
+already emits.</p>
+<p>Stating the plain-scalar predicate exactly also made its edges testable. A
+battery of 83 inputs built for that purpose
+(<a href="grammar/candidate-vectors-2026-09-13.json"><code>spec/grammar/candidate-vectors-2026-09-13.json</code></a>)
+showed that three of the four reference implementations departed from the
+grammar on 21 inputs, none of which is covered by a conformance vector (README,
+&quot;Divergences&quot;). The three implementations were corrected the same day to the
+predicate and the float rule as stated. The one input that was not a bug but an
+unstated rule — a v0.2 manifest whose <code>threshold</code> is spelled <code>1300.0</code>, which a
+JavaScript JSON or YAML parser cannot tell from <code>1300</code> — was settled the same
+day by a post-freeze clarification to the v0.2 RFC: under <code>prml/0.2</code>,
+<code>threshold</code> canonicalizes <strong>by value</strong>, an integral value below 2^53 as an
+integer and anything else as a float (C6). All 83 inputs plus ten vectors
+pinning that rule&#39;s boundaries now form the <strong>edge suite</strong>
+(<a href="test-vectors/edge/"><code>spec/test-vectors/edge/</code></a>, 92 vectors), which the
+multi-language CI runs for all four implementations alongside Appendix B.</p>
+<p>An implementer starting from this specification alone should begin with
+<a href="IMPLEMENTERS-GUIDE.md"><code>IMPLEMENTERS-GUIDE.md</code></a>: where each rule is stated, the
+corpus to check against, the commands, and the errors the reference
+implementations themselves made.</p>
+<hr>
+<h2 id="4-hash-algorithm">4. Hash Algorithm</h2>
+<p>The manifest hash <strong>MUST</strong> be computed as:</p>
+<pre><code>hash = lowercase_hex(SHA-256(canonical_bytes))
+</code></pre>
+<p>Implementations <strong>MUST NOT</strong> strip a trailing newline, normalize line endings to
+CRLF, or otherwise alter <code>canonical_bytes</code> before hashing.</p>
+<p>The hash <strong>SHOULD</strong> be published alongside the manifest in a sidecar file
+named <code>&lt;claim_id&gt;.prml.sha256</code>.</p>
+<hr>
+<h2 id="verification-protocol">5. Verification Semantics</h2>
+<h3 id="51-comparison-operators">5.1 Comparison Operators</h3>
+<table>
+<thead>
+<tr>
+<th><code>comparator</code></th>
+<th>Pass condition</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&gt;=</code></td>
+<td>observed ≥ threshold</td>
+</tr>
+<tr>
+<td><code>&gt;</code></td>
+<td>observed &gt; threshold</td>
+</tr>
+<tr>
+<td><code>==</code></td>
+<td>abs(observed - threshold) &lt; tolerance</td>
+</tr>
+<tr>
+<td><code>&lt;=</code></td>
+<td>observed ≤ threshold</td>
+</tr>
+<tr>
+<td><code>&lt;</code></td>
+<td>observed &lt; threshold</td>
+</tr>
+</tbody></table>
+<p>The <code>==</code> comparator&#39;s tolerance defaults to <code>1e-9</code>. Producers <strong>MAY</strong> override
+this by setting <code>metric_args.tolerance</code>.</p>
+<h3 id="52-passfail-determination">5.2 Pass/Fail Determination</h3>
+<p>A verifier <strong>MUST</strong>:</p>
+<ol>
+<li>Recompute the manifest hash from <code>canonical_bytes</code> and verify it matches the
+published hash.</li>
+<li>If the verifier holds the dataset content the producer hashed, recompute
+its digest and verify it matches <code>dataset.hash</code>. PRML v0.1 does not
+standardize a dataset preimage or hashing procedure, so <code>dataset.hash</code> is a
+producer-declared content digest; a verifier without the exact bytes (or
+without the producer&#39;s documented procedure) cannot recompute it, and for
+dynamically generated eval data it may not be recomputable at all. The
+reference CLI implements the single-file case via <code>verify --dataset &lt;path&gt;</code>.</li>
+<li>Execute the evaluation using the manifest&#39;s <code>metric</code>, <code>metric_args</code>, <code>seed</code>,
+and dataset.</li>
+<li>Apply the comparator from §5.1.</li>
+<li>Emit a verdict per §7.</li>
+</ol>
+<h3 id="53-tampering-detection">5.3 Tampering Detection</h3>
+<p>If the recomputed manifest hash does not match the published hash, the verifier
+<strong>MUST</strong> abort verification and <strong>MUST NOT</strong> emit a Pass or Fail verdict.
+Implementations <strong>MUST</strong> signal tampering distinctly from evaluation failure
+(see §7).</p>
+<hr>
+<h2 id="6-amendment-protocol">6. Amendment Protocol</h2>
+<p>PRML treats every claim as immutable once hashed. Honest revision is supported
+through an explicit, append-only amendment chain.</p>
+<h3 id="61-forward-only-audit-log">6.1 Forward-Only Audit Log</h3>
+<p>A producer who needs to change any field of a previously-registered claim
+<strong>MUST</strong> create a new manifest whose <code>prior_hash</code> field equals the manifest
+hash of the previous claim. The new manifest <strong>MUST</strong> retain the <code>claim_id</code> of
+the previous claim.</p>
+<p>The full sequence of manifests sharing a <code>claim_id</code>, ordered by <code>created_at</code>
+and verified by the <code>prior_hash</code> chain, constitutes the audit log for that
+claim.</p>
+<h3 id="62-amendment-semantics">6.2 Amendment Semantics</h3>
+<ul>
+<li>The previous manifest is <strong>NOT</strong> deleted, overwritten, or revoked.</li>
+<li>Verifiers <strong>MUST</strong> treat the latest manifest in the chain as the operative
+one, but <strong>MUST</strong> also expose the full chain when requested.</li>
+<li>Hash-equality of two claims with identical content but different <code>created_at</code>
+values <strong>MUST NOT</strong> occur; canonicalization includes the timestamp.</li>
+</ul>
+<h3 id="63-amendment-chain-hash">6.3 Amendment Chain Hash</h3>
+<p>An aggregate identifier for the full chain, suitable for public posting, is:</p>
+<pre><code>chain_hash = SHA-256(concat(canonical_bytes_1, canonical_bytes_2, ..., canonical_bytes_n))
+</code></pre>
+<p>where the manifests are concatenated in <code>created_at</code> order.</p>
+<hr>
+<h2 id="7-exit-code-specification">7. Exit Code Specification</h2>
+<p>Reference implementations <strong>MUST</strong> signal verification outcomes via the
+following exit codes:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>0</code></td>
+<td>Pass — manifest verified, evaluation satisfies comparator.</td>
+</tr>
+<tr>
+<td><code>10</code></td>
+<td>Fail — manifest verified, evaluation does not satisfy comparator.</td>
+</tr>
+<tr>
+<td><code>3</code></td>
+<td>Tampered — manifest hash mismatch, verification aborted.</td>
+</tr>
+<tr>
+<td><code>11</code></td>
+<td>Guard violation — manifest is well-formed but a producer-declared invariant (e.g., dataset-hash mismatch, seed out of range) failed.</td>
+</tr>
+<tr>
+<td><code>2</code></td>
+<td>Usage error — invalid command-line arguments or unreadable manifest.</td>
+</tr>
+<tr>
+<td><code>1</code></td>
+<td>Unspecified runtime error.</td>
+</tr>
+</tbody></table>
+<p>Codes other than <code>0</code>, <code>1</code>, <code>2</code>, <code>3</code>, <code>10</code>, <code>11</code> are <strong>RESERVED</strong>.</p>
+<hr>
+<h2 id="8-security-considerations">8. Security Considerations</h2>
+<h3 id="threat-model">8.1 Threat Model</h3>
+<p>PRML protects against <strong>silent post-hoc revision</strong> of a registered claim. It
+does <strong>NOT</strong> protect against:</p>
+<ul>
+<li>A producer who never publishes the manifest at all.</li>
+<li>A producer who publishes a manifest privately, runs the evaluation, then
+publishes only on Pass (selective publication).</li>
+<li>A producer colluding with the dataset host to alter dataset content while
+preserving its declared hash (broken hash function).</li>
+<li>A producer signing a manifest with a key the verifier cannot validate.</li>
+</ul>
+<p>Mitigations require external mechanisms: timestamping services (RFC 3161),
+public manifest registries, or signed dataset hosts.</p>
+<blockquote>
+<p><strong>v0.1 erratum on selective publication (2026-05-02).</strong> For regulatory use
+— particularly EU AI Act Annex III high-risk system audits — selective
+publication is the most likely real-world adversary, not the theoretical
+ones above. The cryptographic protocol is satisfied by a producer who
+publishes only Pass results; the regulatory purpose is not. v0.1
+implementations used in compliance contexts MUST adopt one of the
+following deployment-level mitigations, none of which v0.1 enforces but
+all of which are compatible with the v0.1 manifest format:</p>
+<ol>
+<li><p><strong>Publish-before-run discipline.</strong> The manifest URL is committed to a
+public registry (a Git tag, an RFC 3161 timestamping authority, or an
+immutable S3 object with public-read) <strong>before</strong> the evaluation runs,
+not after. The registrar&#39;s timestamp becomes the publication-time
+proof; the manifest itself remains regulator-verifiable offline.</p>
+</li>
+<li><p><strong>Sequential <code>claim_id</code> allocation.</strong> A producer&#39;s <code>claim_id</code>
+sequence is published as a monotonic chain (each <code>claim_id</code> is the
+successor of the previous, regardless of outcome). A regulator can
+detect missing entries in the sequence and demand explanation.</p>
+</li>
+<li><p><strong>External pre-registration anchor.</strong> The manifest hash is committed
+to a third-party pre-registration registry (OSF, ClinicalTrials.gov
+pattern adapted, or an in-house immutable log) before any evaluation.
+The anchor is what the regulator verifies; the manifest is the
+provenance.</p>
+</li>
+</ol>
+<p>No manifest field encodes a risk tier, and none will (disposition of
+2026-09-13, see Errata): whether a system is high-risk is a fact about its
+deployment under Annex III, not something a manifest can assert about
+itself, and a new field would change canonical bytes. Anchoring — option
+(3) — is therefore a <strong>deployment obligation</strong> in compliance contexts, stated
+in §2.3.4, not a manifest property. v0.1 deployments choosing not to adopt one of these
+three mitigations are NOT suitable for EU AI Act Article 12 evidence
+submission and the producer SHOULD declare so in their accompanying
+conformity-assessment documentation.</p>
+</blockquote>
+<h3 id="82-hash-algorithm-agility">8.2 Hash Algorithm Agility</h3>
+<p>This revision fixes SHA-256 as the hash algorithm. Future revisions <strong>MAY</strong>
+introduce algorithm agility via a <code>hash_algorithm</code> field defaulting to
+<code>sha-256</code>. Verifiers conforming to v0.1 <strong>MUST</strong> reject manifests declaring any
+other algorithm.</p>
+<h3 id="83-canonical-form-attacks">8.3 Canonical Form Attacks</h3>
+<p>A producer who serializes a manifest non-canonically and publishes the
+non-canonical hash is detectable: any verifier recanonicalizing the manifest
+will compute a different hash and emit Tampered (exit 3). This places
+canonicalization correctness on the verifier, not the trust path.</p>
+<hr>
+<h2 id="9-compliance-mapping-informative">9. Compliance Mapping (Informative)</h2>
+<p>This section is non-normative.</p>
+<h3 id="91-eu-ai-act-regulation-20241689">9.1 EU AI Act (Regulation 2024/1689)</h3>
+<table>
+<thead>
+<tr>
+<th>Article</th>
+<th>Obligation</th>
+<th>PRML coverage</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>12</td>
+<td>Automatic recording of events over the system&#39;s lifetime</td>
+<td>A PRML chain is the record of evaluation events with a tamper-evident hash chain.</td>
+</tr>
+<tr>
+<td>18</td>
+<td>Documentation retention for 10 years post-market</td>
+<td>PRML manifests are plain text artifacts &lt;1 KB; retention is trivial.</td>
+</tr>
+<tr>
+<td>17</td>
+<td>Quality management system covering performance</td>
+<td>Pre-registered thresholds satisfy the &quot;objective performance metric&quot; requirement.</td>
+</tr>
+<tr>
+<td>50</td>
+<td>Transparency obligations for deployers</td>
+<td>Public manifest hashes provide the receipt deployers need.</td>
+</tr>
+</tbody></table>
+<h3 id="92-nist-ai-risk-management-framework">9.2 NIST AI Risk Management Framework</h3>
+<p>PRML directly supports the <strong>MEASURE</strong> and <strong>MANAGE</strong> functions: pre-registered
+manifests establish the metric framework before deployment and provide the
+evidence trail for ongoing monitoring.</p>
+<h3 id="93-isoiec-42001-ai-management-system">9.3 ISO/IEC 42001 (AI Management System)</h3>
+<p>PRML manifests are admissible as objective evidence under §8.4 (Operational
+Planning and Control) of ISO/IEC 42001:2023.</p>
+<hr>
+<h2 id="10-reference-implementation">10. Reference Implementation</h2>
+<p>The <a href="https://github.com/studio-11-co/falsify">falsify</a> project provides a
+reference implementation in Python. Conformance to this specification is
+defined as:</p>
+<ol>
+<li>Producing canonical bytes byte-equivalent to the falsify reference for the
+PRML test vector suite (Appendix B).</li>
+<li>Computing manifest hashes byte-equivalent to the reference.</li>
+<li>Emitting exit codes per §7 for the test vector suite.</li>
+</ol>
+<p>A conformance test harness will be published with v0.2.</p>
+<hr>
+<h2 id="11-iana-considerations">11. IANA Considerations</h2>
+<p>The media type <code>application/vnd.prml+yaml</code> is registered with IANA in the
+vendor tree (registered 2026-09-03; entry at
+<a href="https://www.iana.org/assignments/media-types/application/vnd.prml+yaml">https://www.iana.org/assignments/media-types/application/vnd.prml+yaml</a>).
+The registration records the file extensions <code>.prml</code> and <code>.prml.yaml</code>,
+encoding <code>binary</code> (UTF-8, NFC, no BOM; transports MUST NOT re-encode), and
+the security and interoperability considerations of sections 5 and 8.</p>
+<p>The sidecar extension <code>.prml.sha256</code> is a convention of this specification
+and is not part of the media type registration.</p>
+<p>There is no PRML metric registry and none is planned (disposition of
+2026-09-13; see Errata and §2.3.1).</p>
+<hr>
+<h2 id="12-references">12. References</h2>
+<h3 id="normative">Normative</h3>
+<ul>
+<li>[RFC 2119] Bradner, S., &quot;Key words for use in RFCs to Indicate Requirement Levels&quot;, March 1997.</li>
+<li>[RFC 3339] Klyne, G., &quot;Date and Time on the Internet: Timestamps&quot;, July 2002.</li>
+<li>[FIPS 180-4] NIST, &quot;Secure Hash Standard&quot;, August 2015.</li>
+<li>[YAML 1.2] YAML Specification, October 2009.</li>
+</ul>
+<h3 id="informative">Informative</h3>
+<ul>
+<li>[EU 2024/1689] Regulation (EU) 2024/1689 (AI Act), June 2024.</li>
+<li>[NIST AI RMF] NIST AI Risk Management Framework 1.0, January 2023.</li>
+<li>[ISO 42001] ISO/IEC 42001:2023, AI Management System.</li>
+<li>[Gelman 2018] Gelman, A. &amp; Loken, E., &quot;The garden of forking paths&quot;.</li>
+<li>[Ioannidis 2005] Ioannidis, J., &quot;Why most published research findings are false&quot;.</li>
+</ul>
+<hr>
+<h2 id="appendix-a-minimal-example-manifest">Appendix A — Minimal Example Manifest</h2>
+<pre><code class="language-yaml">version: &quot;prml/0.1&quot;
+claim_id: &quot;01900000-0000-7000-8000-000000000000&quot;
+created_at: &quot;2026-05-01T12:00:00Z&quot;
+metric: &quot;accuracy&quot;
+comparator: &quot;&gt;=&quot;
+threshold: 0.85
+dataset:
+  id: &quot;imagenet-val-2012&quot;
+  hash: &quot;e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855&quot;
+seed: 42
+producer:
+  id: &quot;falsify.dev&quot;
+</code></pre>
+<p>Canonical bytes hash (verify with the reference implementation — <code>falsify hash</code>):</p>
+<pre><code>47f9956b3b9c495b3bf03b67398f54d0aa2133a2faf9b0522a9efa90bb109466
+</code></pre>
+<hr>
+<h2 id="appendix-b-test-vectors">Appendix B — Test Vectors</h2>
+<p>A conformance suite of <strong>12 test vectors</strong> is published alongside this
+specification at:</p>
+<blockquote>
+<p><code>https://github.com/studio-11-co/falsify/tree/main/spec/test-vectors/v0.1/</code></p>
+</blockquote>
+<p>Each vector defines:</p>
+<ol>
+<li>An <strong>input manifest</strong> (logical YAML mapping; key order irrelevant).</li>
+<li>The <strong>canonical UTF-8 byte sequence</strong> the canonicalizer MUST produce.</li>
+<li>The <strong>lowercase hex SHA-256</strong> of those bytes.</li>
+</ol>
+<p>An implementation conforms to PRML v0.1 if and only if it reproduces all
+13 vectors exactly. The vectors cover:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Property exercised</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>TV-001</td>
+<td>Minimal valid manifest (matches Appendix A)</td>
+</tr>
+<tr>
+<td>TV-002</td>
+<td>Key-ordering invariance — random insertion order produces same hash</td>
+</tr>
+<tr>
+<td>TV-003</td>
+<td>Single-bit-of-content sensitivity — <code>0.85</code> vs <code>0.86</code> produces different hash</td>
+</tr>
+<tr>
+<td>TV-004</td>
+<td>Optional fields populated (<code>model.id</code>, <code>model.hash</code>, <code>dataset.uri</code>)</td>
+</tr>
+<tr>
+<td>TV-005</td>
+<td>Unicode in <code>producer.id</code> (UTF-8 byte handling)</td>
+</tr>
+<tr>
+<td>TV-006</td>
+<td>Maximum seed value (<code>2⁶⁴ - 1</code>)</td>
+</tr>
+<tr>
+<td>TV-007</td>
+<td>Minimum seed value (<code>0</code>)</td>
+</tr>
+<tr>
+<td>TV-008</td>
+<td>Equality comparator (<code>==</code> with integer-valued threshold)</td>
+</tr>
+<tr>
+<td>TV-009</td>
+<td>Amendment with <code>prior_hash</code> linkage to TV-001</td>
+</tr>
+<tr>
+<td>TV-010</td>
+<td><code>pass@k</code> metric with model fields</td>
+</tr>
+<tr>
+<td>TV-011</td>
+<td>AUROC with strict-greater comparator (<code>&gt;</code>)</td>
+</tr>
+<tr>
+<td>TV-012</td>
+<td>Regression metric (<code>mae</code>) with <code>&lt;=</code> minimization</td>
+</tr>
+</tbody></table>
+<p>Vectors are regeneratable via
+<code>python3 spec/test-vectors/v0.1/generate.py</code>. Once v0.1 is frozen
+(2026-05-22), the vectors and their hashes are immutable. Any change
+requires a v0.2 spec bump.</p>
+<p>Conformance is enforceable via the falsify reference test suite
+(<code>tests/test_prml_vectors.py</code>); CI fails if any vector diverges.</p>
+<hr>
+<h2 id="change-log">Change Log</h2>
+<ul>
+<li><strong>v0.1 (2026-05-01)</strong> — Initial public draft.</li>
+<li><strong>v0.1 (2026-05-01)</strong> — Test vector suite (13 vectors) published in
+<code>spec/test-vectors/v0.1/</code>; Appendix B finalized.</li>
+<li><strong>v0.1 errata (2026-07-11):</strong> three v0.2 forward-promises corrected
+below. Documentation only; zero normative changes, no effect on
+canonicalization or on any published hash.</li>
+<li><strong>v0.1 errata (2026-08-23), TECHNICAL:</strong> three defect reports closed with
+new normative constraints (§3.2.1, §3.4, §3.5). Unlike the 2026-07-11
+errata, these <strong>do</strong> change conformance: they narrow what an implementation
+may accept. No canonical rendering changes and <strong>no already-published hash
+changes</strong> — every manifest that was valid and free of these defects hashes
+exactly as before.</li>
+</ul>
+<blockquote>
+<p><strong>v0.1 erratum (2026-07-11): v0.2 forward-promises.</strong> Three statements in
+this document promised normative adoption &quot;with v0.2&quot;. The v0.2 RFC froze
+on 2026-05-22 without adopting them. Each item quotes the original
+wording and states the correction. Nothing else in this document changes.</p>
+<ol>
+<li><p>§2.3.1 / §11 promised: &quot;A PRML Metric Registry will be established
+with v0.2.&quot; Correction: deferred; re-targeted to the v0.3 cycle. Until
+then, the URI option in §2.3.1 is the only registered-identifier path.</p>
+</li>
+<li><p>§2.3.3 promised: &quot;v0.2 normatively adopts this sidecar convention&quot;
+(the <code>.prml.sig</code> signature sidecar). Correction: deferred; re-targeted
+to the v0.3 cycle. The sidecar remains a SHOULD-level recommendation.</p>
+</li>
+<li><p>§8.1 promised: &quot;v0.2 will normatively adopt option (3) for the
+<code>producer.tier: high-risk</code> profile.&quot; Correction: deferred; re-targeted
+to the v0.3 cycle. The three §8.1 deployment-level mitigations remain
+available and recommended; none is normatively required by v0.2.</p>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<p><strong>v0.1 erratum (2026-08-23): three defect reports, TECHNICAL.</strong> Each was
+reproduced against the reference implementation before being written up; each
+narrows the set of manifests an implementation may accept. Manifests already
+published that do not exhibit these defects are unaffected, and no canonical
+byte sequence or hash changes.</p>
+<ol>
+<li><p><strong>Non-finite <code>threshold</code> accepted (§3.5).</strong> <code>comparator: &quot;&lt;=&quot;</code> with
+<code>threshold: .inf</code> locked cleanly and verified <code>PASS</code> (exit <code>0</code>) against an
+observation of <code>0.01</code>. The manifest was cryptographically sound and
+epistemically empty. Correction: <code>threshold</code> MUST be finite; <code>.inf</code>,
+<code>-.inf</code> and <code>.nan</code> MUST be rejected with exit <code>2</code>.</p>
+</li>
+<li><p><strong>Duplicate keys silently resolved last-wins (§3.2.1).</strong> A manifest with
+<code>metric</code> twice parsed without a diagnostic, so the value a reader saw and
+the value the hash bound differed. Correction: duplicates MUST be detected
+in the input document and rejected with exit <code>2</code>.</p>
+</li>
+<li><p><strong>Unicode normalization unconstrained (§3.4).</strong> The same producer name in
+NFC and NFD both validated and produced different hashes, breaking
+reproducibility for honest users moving a manifest between platforms.
+Correction: all strings and keys MUST be NFC; non-NFC input MUST be
+rejected, never silently normalized.</p>
+</li>
+</ol>
+<p>Reject-suite vectors RJ-015 through RJ-020 (Appendix B) enumerate these three
+classes normatively, through both the YAML and the JSON door.</p>
+</blockquote>
+<blockquote>
+<p><strong>v0.1 erratum (2026-09-13): formal grammar published, EDITORIAL, with one
+finding.</strong> §3.6 is added and points to <code>spec/grammar/</code>. The grammar was derived
+from the observable behaviour of the reference canonicalizer and verified in
+both directions on all 21 conformance vectors by an implementation written
+from the grammar alone; it changes no canonical byte sequence and no digest.
+Two consequences are recorded rather than made silently:</p>
+<ol>
+<li><p><strong>§3.5 called the reference canonicalizer &quot;normative for this rendering&quot;.</strong>
+That sentence is replaced. The grammar&#39;s constraint C4 is normative and the
+canonicalizer conforms to it. A specification that makes a program
+normative is documentation of that program.</p>
+</li>
+<li><p><strong>The exact plain-scalar predicate (C5) exposed 21 inputs, none covered by a
+conformance vector, on which the JavaScript, Go and Rust reference
+implementations do not reproduce the reference bytes:</strong> over-quoting <code>?x</code>,
+<code>y</code>, <code>1e5</code>; under-quoting <code>&lt;&lt;</code>, <code>1:30</code>, <code>1_000</code>, a lone <code>-</code>; Rust rendering
+a <code>threshold</code> of 1e-05 as <code>0.00001</code>; JavaScript unable to distinguish
+<code>1300.0</code> from <code>1300</code> under v0.2. The first three classes were corrected the
+same day. The last was not a defect but a rule the v0.2 RFC had never
+stated, and was settled the same day by a post-freeze clarification to that
+RFC: under <code>prml/0.2</code>, <code>threshold</code> canonicalizes by value — integral and
+below 2^53 as an integer, otherwise as a float. No published digest changes
+(no vector spelled an integral threshold as a float). The 83 inputs plus ten
+boundary vectors for that rule now run in CI as the edge suite
+(<code>spec/test-vectors/edge/</code>, 92 vectors); the pre-correction measurement is
+kept as a dated snapshot in <code>spec/grammar/candidate-vectors-2026-09-13.json</code>.
+The claim this document makes — agreement on the 21 vectors of Appendix B —
+is unchanged and was re-verified the same day; the four implementations now
+also agree on all 92 edge vectors.</p>
+</li>
+</ol>
+</blockquote>
+<blockquote>
+<p><strong>v0.1 erratum (2026-09-13): dispositions of the three v0.2 forward-promises,
+EDITORIAL.</strong> The erratum of 2026-07-11 re-targeted three statements to &quot;the
+v0.3 cycle&quot; without deciding them. Decided by the editor on 2026-09-13. None
+changes a canonical byte, a digest, or a validation rule; all three are text.</p>
+<ol>
+<li><p><strong>Metric Registry (§2.3.1, §11) — withdrawn.</strong> A registry is a governance
+body, not a file, and there is no community to constitute one. Plain
+identifiers are now defined as local names with no portability guarantee;
+the URI form is the portable one.</p>
+</li>
+<li><p><strong>Signature sidecar (§2.3.3) — re-scoped.</strong> Presence stays optional. The
+sidecar&#39;s format and the verifier&#39;s behaviour when one is present are
+specified in <code>v0.3-backlog/06-signature-sidecar.md</code>, with an Ed25519 test
+vector over TV-001&#39;s canonical bytes. A verifier MAY verify; if it does, it
+MUST verify over the canonical bytes. The backlog also records that a
+signature carried inside the manifest cannot be over bytes that include it
+— an open question inherited from §2.3.3 as written.</p>
+</li>
+<li><p><strong><code>producer.tier: high-risk</code> (§8.1) — recast.</strong> No tier field will be
+added: risk classification is a deployment fact, not a manifest assertion,
+and <code>additionalProperties: false</code> makes any new field a MAJOR change.
+Anchoring (option 3) is a deployment obligation in compliance contexts,
+already stated in §2.3.4.</p>
+</li>
+</ol>
+</blockquote>
+<hr>
+<p><em>Editor&#39;s note: This document is intended to be readable, implementable, and
+boring. Excitement is reserved for what gets built on top of it.</em></p>
+<!-- /prerender -->
 </article>
 
 <aside class="related" style="margin: 60px 0 24px; padding: 24px 0; border-top: 1px solid #e5e3dc; border-bottom: 1px solid #e5e3dc;">
@@ -298,6 +1275,7 @@ footer.colophon a:hover { color: var(--ink); }
   }
 
   if (!md) {
+    if (target.dataset.prerendered) return;  // keep the pre-rendered copy rather than an error
     target.innerHTML = '<p class="loading">Could not load spec. <a href="https://github.com/studio-11-co/falsify/blob/main/spec/PRML-v0.1.md">View on GitHub</a>.</p>';
     return;
   }

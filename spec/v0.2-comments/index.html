@@ -7,6 +7,7 @@
 <meta name="description" content="Disposition record of every comment received during the PRML v0.2 RFC window (2026-05-08 to 2026-05-22): what was accepted, what remains open, and what promotion still requires.">
 <meta name="author" content="Cüneyt Öztürk">
 <link rel="canonical" href="https://spec.falsify.dev/v0.2-comments/">
+<link rel="alternate" type="text/markdown" href="https://spec.falsify.dev/v0.2-comments/COMMENTS.md" title="Markdown source">
 <meta property="og:title" content="PRML v0.2 RFC — comment disposition record">
 <meta property="og:description" content="One external commenter, two accepted contributions, three questions still open. The honest freeze record. Community Specification License 1.0.">
 <meta property="og:url" content="https://spec.falsify.dev/v0.2-comments/">
@@ -251,8 +252,97 @@ footer.colophon a:hover { color: var(--ink); }
   <strong style="color: var(--ink); font-weight: 600;">This page fulfils a freeze-record commitment.</strong> The frozen RFC promised that "a list of comments received and their disposition will be published as spec.falsify.dev/v0.2-comments after the freeze." Published 2026-08-13. The frozen RFC text is unchanged at <a href="https://spec.falsify.dev/v0.2-rfc/" style="color: var(--ink);">spec.falsify.dev/v0.2-rfc</a>.
 </aside>
 
-<article id="content">
-<p class="loading">Loading specification…</p>
+<article id="content" data-prerendered="sha256:37deebf17ea8be55562c0d80e94489dca16dd96e6712e9564718121dffd98077">
+<!-- prerender: v0.2-comments/COMMENTS.md · marked 12.0.2 · scripts/spec-prerender.mjs — ÜRETİLMİŞ, elle düzeltme; .md düzelt ve --write koş -->
+<h1>PRML v0.2 RFC — comments received and their disposition</h1>
+<p><strong>Status:</strong> published 2026-08-13, fulfilling the freeze-record commitment (&quot;a
+list of comments received and their disposition will be published as
+<code>spec.falsify.dev/v0.2-comments</code> after the freeze&quot;).
+<strong>Comment window:</strong> 2026-05-08 → 2026-05-22 23:59 UTC (14 days)
+<strong>Channels:</strong> GitHub Discussion #11 · issues with label <code>rfc-v0.2</code> · email <code>[v0.2 RFC]</code>
+<strong>Editor:</strong> Cüneyt Öztürk · <a href="mailto:hello@falsify.dev">hello@falsify.dev</a> · Falsify OÜ (reg. 17574308, Estonia)</p>
+<hr>
+<h2>Honest tally</h2>
+<p>One external commenter participated in the window: <strong>Ceri John (Topeuph AI /
+ValiChord)</strong>, via <a href="https://github.com/studio-11-co/falsify/discussions/11">Discussion #11</a>.
+No comments arrived via labelled issues or email. No institutional comments
+(JTC 21, AISI, audit firms) were received. This page does not pretend
+otherwise — the disposition record below is short because the input was.</p>
+<h2>Comments and dispositions</h2>
+<h3>C-1 — P-02: execution vs independence attestation (Ceri John, 2026-05-20)</h3>
+<p><strong>Position:</strong> support, with a distinction.
+<strong>Substance:</strong> P-02&#39;s <code>runner_attestation</code> conflated two different things:
+<em>execution attestation</em> (who ran the eval and when — Sigstore territory,
+Cookbook Pattern 11) and <em>independence attestation</em> (verdicts produced by
+parties that could not coordinate outcomes — commit-reveal territory).
+These address different parts of the §8.1 gap and are complementary.
+<strong>Disposition: ACCEPTED.</strong> Landed verbatim, with attribution, as freeze-day
+decision 5 in the frozen RFC. Follow-on: Pattern 13 (blind commit-reveal
+validation) shipped in the cookbook as a co-authored entry (Öztürk &amp; John,
+CC0-1.0), and Pattern 11 gained the same attribution metadata block.</p>
+<h3>C-2 — v0.3 claim-tree: <code>samples_total</code> analog (Ceri John, 2026-05-22)</h3>
+<p><strong>Position:</strong> cross-pollination for the deferred claim-tree proposal.
+<strong>Substance:</strong> ValiChord&#39;s <code>valichord_attestation</code> Merkle bundles commit a
+<code>samples_total</code> count upfront, before any leaf is revealed — the same move
+answers the claim-tree open question on partial-publication detection
+(<code>leaves_total</code> committed before leaves).
+<strong>Disposition: ACCEPTED into the v0.3 backlog</strong> (not v0.2 — arrived on
+freeze day against a deferred proposal). Recorded in
+<code>spec/v0.3-backlog/01-claim-tree.md</code> (commit <code>efcf86f</code>) with attribution,
+citing ValiChord v0.5.3 / <code>valichord_attestation</code> 1.2.0.</p>
+<h2>Proposal-by-proposal state after the freeze</h2>
+<table>
+<thead>
+<tr>
+<th>Proposal</th>
+<th>State</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P-01 streaming variant</td>
+<td><strong>OPEN</strong></td>
+<td>The <code>value_method</code> vocabulary question received no comments. Not resolved unilaterally; carried to promotion review.</td>
+</tr>
+<tr>
+<td>P-02 runner attestation</td>
+<td><strong>OPEN</strong>, sharpened</td>
+<td>Single-vs-list question received no comments. The execution/independence distinction (C-1) is in the freeze record. <code>prml-linkage/0</code> (draft, 2026-08-13) is a concrete candidate for what an execution-side URI points to — see below.</td>
+</tr>
+<tr>
+<td>P-03 revocation</td>
+<td><strong>OPEN</strong></td>
+<td>The revocation-signature question received no comments. Carried.</td>
+</tr>
+<tr>
+<td>P-04 conformance vector format</td>
+<td><strong>IMPLEMENTED</strong> (2026-08-13)</td>
+<td>The vector directory format now exists at <code>spec/test-vectors/v0.1/vectors/</code> (13 vectors as <code>&lt;id&gt;/manifest.yaml</code> + <code>&lt;id&gt;/expected_hash.txt</code>), and the CLI grew the proposed command: <code>falsify conform &quot;&lt;target&gt;&quot;</code> runs every vector through a target implementation and reports byte/hash equivalence. Informative, as proposed.</td>
+</tr>
+<tr>
+<td>P-05 patent grant placement</td>
+<td><strong>ACCEPTED, pending promotion</strong></td>
+<td>Uncontroversial editorial move (Appendix C → §1.5 preamble). It applies to the v0.2 <em>final</em> text, which does not exist yet; it will be executed at promotion, not patched into the frozen RFC.</td>
+</tr>
+</tbody></table>
+<h2>What promotion still requires</h2>
+<p>The frozen RFC&#39;s own rule stands: P-01, P-02, P-03 are not resolved
+unilaterally. Promotion to v0.2-final waits for external reviewers with
+implementation stakes — eval-framework maintainers, auditors, or standards
+bodies. Until then v0.1 remains the stable spec, and v0.2 remains a frozen
+RFC whose backwards-compatibility guarantee (v0.1 hash-equivalence) is
+already exercised by the conformance suite.</p>
+<h2>Related work since the freeze (context, not comments)</h2>
+<ul>
+<li><strong><code>prml-linkage/0</code> draft</strong> (2026-08-13): adapter-independent execution
+linkage — start/final record chaining with strength tiers L1–L3.
+Addresses the &quot;already ran&quot; gap named in P-02 review and by the Andes
+interoperability assessment. <code>spec/linkage/prml-linkage-0.md</code>.</li>
+<li><strong>v0.3.x integrity releases</strong> (July 2026): YAML parse parity across
+implementations, RFC 3161 + Rekor anchoring on the registry — these
+strengthen the anchor-timestamp semantics that freeze decision 3 leans on.</li>
+</ul>
+<!-- /prerender -->
 </article>
 
 <aside class="related" style="margin: 60px 0 24px; padding: 24px 0; border-top: 1px solid #e5e3dc; border-bottom: 1px solid #e5e3dc;">
@@ -292,6 +382,7 @@ footer.colophon a:hover { color: var(--ink); }
   }
 
   if (!md) {
+    if (target.dataset.prerendered) return;  // keep the pre-rendered copy rather than an error
     target.innerHTML = '<p class="loading">Could not load spec. <a href="https://github.com/studio-11-co/falsify/blob/main/spec/PRML-v0.1.md">View on GitHub</a>.</p>';
     return;
   }

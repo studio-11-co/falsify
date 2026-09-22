@@ -7,6 +7,7 @@
 <meta name="description" content="PRML v0.2 — ten changes and five open questions (streaming variant, runner attestation, revocation, conformance vectors, patent grant placement, and others). Comment window closed 2026-05-22 (frozen).">
 <meta name="author" content="Cüneyt Öztürk">
 <link rel="canonical" href="https://spec.falsify.dev/v0.2-rfc/">
+<link rel="alternate" type="text/markdown" href="https://spec.falsify.dev/v0.2-rfc/PRML-v0.2-RFC.md" title="Markdown source">
 <meta property="og:title" content="PRML v0.2 — frozen 2026-05-22 (RFC closed)">
 <meta property="og:description" content="Five proposals, 14-day comment window, full v0.1 backwards compatibility. Community Specification License 1.0.">
 <meta property="og:url" content="https://spec.falsify.dev/v0.2-rfc/">
@@ -252,8 +253,159 @@ footer.colophon a:hover { color: var(--ink); }
   <strong style="color: var(--ink); font-weight: 600;">RFC — comment window closed (frozen).</strong> v0.2 is frozen. Comments were accepted through <strong>2026-05-22 23:59 UTC</strong> via <a href="https://github.com/studio-11-co/falsify/issues" style="color: var(--ink); text-decoration: underline; text-underline-offset: 3px;">GitHub issues with label <code>rfc-v0.2</code></a> or email <a href="mailto:hello@falsify.dev?subject=%5Bv0.2%20RFC%5D" style="color: var(--ink);">hello@falsify.dev</a> with subject prefix <code>[v0.2 RFC]</code>. v0.1 remains the current spec at <a href="https://spec.falsify.dev/v0.1" style="color: var(--ink-2);">spec.falsify.dev/v0.1</a>; v0.2 is fully backwards-compatible with v0.1 hashes.
 </aside>
 
-<article id="content">
-<p class="loading">Loading specification…</p>
+<article id="content" data-prerendered="sha256:bf19ab2c491a1ac44e71a19f29e89e5b1b1917f58daba8afadfb82ea3e3f556b">
+<!-- prerender: v0.2-rfc/PRML-v0.2-RFC.md · marked 12.0.2 · scripts/spec-prerender.mjs — ÜRETİLMİŞ, elle düzeltme; .md düzelt ve --write koş -->
+<h1>PRML v0.2 — RFC</h1>
+<p><strong>Status:</strong> Frozen — v0.2.0 (2026-05-22). The comment window has closed.
+<strong>Editor:</strong> Cüneyt Öztürk · <a href="mailto:hello@falsify.dev">hello@falsify.dev</a>
+<strong>Comment window:</strong> 2026-05-08 → 2026-05-22 (14 days)
+<strong>Freeze date:</strong> 2026-05-22, 23:59 UTC
+<strong>Final draft expected:</strong> 2026-05-29
+<strong>Spec home:</strong> spec.falsify.dev/v0.2-rfc (this document)
+<strong>License:</strong> Community Specification License 1.0 — same as v0.1 (changed from CC BY 4.0 on 2026-08-29; copies distributed before that date remain available under CC BY 4.0)</p>
+<hr>
+<h2>How to comment</h2>
+<ol>
+<li><strong>GitHub issues</strong> at <code>github.com/studio-11-co/falsify/issues</code> with label <code>rfc-v0.2</code>. Preferred for normative concerns.</li>
+<li><strong>Email</strong> the editor at <code>hello@falsify.dev</code> with subject prefix <code>[v0.2 RFC]</code>. Preferred for confidential or institutional comments (JTC 21, AISI, audit firms).</li>
+<li><strong>Pull request</strong> against this document for prose-level edits.</li>
+</ol>
+<p>A comment that lands by <strong>2026-05-22 23:59 UTC</strong> can change the freeze. A comment after that date is logged and rolled into v0.3 unless it identifies a security flaw.</p>
+<h2>Goals of v0.2</h2>
+<p>v0.1 was scoped narrowly: nine fields, one hash, no I/O. v0.2 keeps that core unchanged and adds the smallest possible set of optional extensions to address gaps that surfaced during the v0.1 launch.</p>
+<p><strong>v0.2 explicitly does not aim to:</strong></p>
+<ul>
+<li>Replace v0.1 — every v0.1 manifest remains a valid v0.2 manifest</li>
+<li>Add fields that mandate runtime infrastructure</li>
+<li>Solve selective publication (still §8.1)</li>
+<li>Solve execution-time attestation (deferred to v0.3)</li>
+</ul>
+<h2>Compatibility statement</h2>
+<blockquote>
+<p>A conforming v0.2 implementation MUST verify any v0.1 manifest as if it were a v0.2 manifest with all v0.2 optional fields absent. The hash of a v0.1 manifest, computed with v0.2 canonicalisation rules, MUST equal the hash computed with v0.1 rules. We will publish a conformance vector set that exercises this property.</p>
+</blockquote>
+<p>This is non-negotiable. If any proposed v0.2 change breaks v0.1 hash-equivalence for v0.1-shaped manifests, that proposal is rejected before consideration.</p>
+<p>The conformance vector set that exercises this property is shipped at <code>spec/test-vectors/v0.2/test-vectors.json</code> (TV-013 through TV-020, eight vectors). TV-013 specifically demonstrates a v0.1-shaped manifest hashing identically under v0.2 rules. All four reference implementations (Python, JS, Go, Rust) pass 21/21 vectors byte-for-byte as of 2026-05-15.</p>
+<h2>Proposals open for comment</h2>
+<h3>P-01 — Streaming / continuous-eval variant</h3>
+<p><strong>Problem.</strong> Live systems (Chatbot Arena, A/B-tested production models, drift monitors) cannot pre-register a single threshold because the threshold <em>is</em> the live measurement.</p>
+<p><strong>Proposal.</strong> Add an optional <code>prml_mode</code> field with values <code>static</code> (default, current v0.1 behaviour) or <code>streaming</code>. In streaming mode:</p>
+<ul>
+<li><code>pre_registered</code> becomes a window: <code>pre_registered_from</code> and <code>pre_registered_to</code> (RFC 3339 timestamps)</li>
+<li><code>value</code> is replaced by <code>value_method</code> — a string identifier of the aggregation rule (e.g. <code>&quot;mean_over_window&quot;</code>, <code>&quot;trimmed_mean_5pct&quot;</code>, <code>&quot;elo_rating&quot;</code>)</li>
+<li><code>sample_size</code> becomes a minimum, not an exact figure</li>
+</ul>
+<p><strong>Example</strong> (matches conformance vector TV-014 byte-for-byte; this is the canonical shape — <code>version: prml/0.2</code>, <code>comparator</code> not <code>threshold_direction</code>, <code>dataset</code> as a mapping, <code>model.id</code> not <code>model_version</code>):</p>
+<pre><code class="language-yaml">claim_id: 01900000-0000-7000-8000-000000000014
+comparator: &#39;&gt;=&#39;
+dataset:
+  hash: n/a-streaming
+  id: lmsys-arena-live
+metric: elo_rating
+model:
+  id: claude-3.5-sonnet@2025-10-01
+pre_registered_from: &#39;2026-05-01T00:00:00Z&#39;
+pre_registered_to: &#39;2026-06-01T00:00:00Z&#39;
+prml_mode: streaming
+producer:
+  id: falsify.dev
+sample_size: 1000
+seed: null
+threshold: 1300
+value_method: lmsys_anonymous_chat_arena_v1
+version: prml/0.2
+</code></pre>
+<p>Streaming mode also relaxes <code>threshold</code> from v0.1&#39;s strict float64 to <code>int | float</code>, since natural streaming metrics (ELO, vote counts, request totals) are integer-valued. Integer thresholds canonicalise as plain integers under v0.2 and as <code>&lt;n&gt;.0</code> under v0.1; verification tools MUST pick the float-field set by inspecting the manifest&#39;s <code>version</code> field. All four reference implementations enforce this split as of 2026-05-15.</p>
+<p><strong>Open question.</strong> Is <code>value_method</code> a free-form string (interoperability through community convention) or a controlled vocabulary (smaller set of canonical methods, with a registry)?</p>
+<h3>P-02 — Optional runner attestation field</h3>
+<p><strong>Problem.</strong> A determined publisher can hash a clean evaluation set, run on a contaminated one, and report the hash of the clean set. v0.1&#39;s hash commits to <em>what was claimed</em>, not proof of <em>what was run</em>.</p>
+<p><strong>Proposal.</strong> Add an optional <code>runner_attestation</code> field that, when present, points to an out-of-band attestation of the eval execution environment. Value is an opaque URI, not interpreted by PRML itself.</p>
+<p><strong>Example</strong> (matches conformance vector TV-015 byte-for-byte):</p>
+<pre><code class="language-yaml">claim_id: 01900000-0000-7000-8000-000000000015
+comparator: &#39;&gt;=&#39;
+created_at: &#39;2026-05-08T20:00:00Z&#39;
+dataset:
+  hash: f1e2d3c4b5a6978878695a4b3c2d1e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d
+  id: harmbench-v1
+metric: refusal_rate
+model:
+  id: claude-3.5-sonnet@2025-10-01
+producer:
+  id: falsify.dev
+runner_attestation: sigstore://rekor.sigstore.dev/api/v1/log/entries/24296fb24b8ad77a
+seed: 42
+threshold: 0.95
+version: prml/0.2
+</code></pre>
+<p><strong>Non-goal.</strong> PRML does not specify what makes an attestation valid — that is the domain of Sigstore, in-toto, AWS Nitro, etc. PRML simply records that one was emitted.</p>
+<p><strong>Open question.</strong> Should <code>runner_attestation</code> be a single URI or a list? Multiple attestations from different layers (TEE + signing + provenance) are common in production.</p>
+<h3>P-03 — Revocation primitive</h3>
+<p><strong>Problem.</strong> A pre-registered manifest may need to be retracted (e.g. the underlying dataset is found contaminated; the model build is recalled). v0.1 has no in-spec revocation.</p>
+<p><strong>Proposal.</strong> Add an optional <code>revoked_at</code> field (RFC 3339 timestamp) and an optional <code>revocation_reason</code> field (one of <code>&quot;dataset_compromised&quot;</code>, <code>&quot;model_recalled&quot;</code>, <code>&quot;author_request&quot;</code>, <code>&quot;other&quot;</code>). A revoked manifest&#39;s hash MUST still verify; verification tools MUST surface revocation status separately from hash status.</p>
+<p><strong>Example</strong> (matches conformance vector TV-016 byte-for-byte):</p>
+<pre><code class="language-yaml">claim_id: 01900000-0000-7000-8000-000000000016
+comparator: &#39;&gt;=&#39;
+created_at: &#39;2026-04-01T12:00:00Z&#39;
+dataset:
+  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+  id: imagenet-val-2012
+metric: accuracy
+producer:
+  id: falsify.dev
+revocation_reason: dataset_compromised
+revoked_at: &#39;2026-05-15T10:00:00Z&#39;
+seed: 42
+threshold: 0.92
+version: prml/0.2
+</code></pre>
+<p><strong>Registry semantics.</strong> A registry MAY mark manifests revoked. A revoked manifest&#39;s permalink remains; the badge endpoint emits <code>revoked</code> status alongside <code>valid</code>.</p>
+<p><strong>Open question.</strong> Should revocation require a separate <code>revocation_signature</code> field for non-repudiation? Adding signatures pulls in PKI choices that v0.1 deliberately avoided.</p>
+<h3>P-04 — Conformance vector format</h3>
+<p><strong>Problem.</strong> v0.1&#39;s &quot;13 conformance vectors&quot; are documented in prose. Future implementations cannot mechanically run them.</p>
+<p><strong>Proposal.</strong> Standardise the conformance vector format as a directory of <code>&lt;vector_name&gt;/manifest.yaml</code> and <code>&lt;vector_name&gt;/expected_hash.txt</code>. Tooling SHOULD provide a <code>falsify conform &lt;impl-binary&gt;</code> command that runs every vector through a target implementation and reports byte/hash match.</p>
+<p>This is informative (non-normative) — the spec defines the format, not the test runner.</p>
+<h3>P-05 — Patent grant in spec body</h3>
+<p><strong>Problem.</strong> v0.1&#39;s patent non-assertion grant is published with the spec but appears as an appendix. CEN-CENELEC and other standards bodies have requested the grant text appear in §1 (preamble) of the spec.</p>
+<p><strong>Proposal.</strong> Move the existing grant text from Appendix C into a new §1.5 (preamble). No textual change to the grant itself. Backwards-compatible with v0.1 because the grant text is identical.</p>
+<h2>Proposals deferred to v0.3+</h2>
+<p>The following were considered and deferred. Each is a tracking issue against <code>studio-11-co/falsify</code> with label <code>rfc-v0.3</code>.</p>
+<ul>
+<li><strong>Claim tree / suite manifests</strong> (deferred — multi-metric eval batteries like HELM, Big-Bench, LMSYS Arena, LiveCodeBench need one manifest covering N (metric, dataset) pairs. v0.2 position: represent as N separate v0.1 manifests with a shared <code>claim_group</code> string. v0.3 will design a normative tree structure that hashes deterministically over its leaves.)</li>
+<li><strong>Producer cryptographic binding</strong> (deferred — <code>producer</code> remains a plain string in v0.2 with a non-normative recommendation to anchor via git-commit SHA, Sigstore bundle, or GPG-signed manifest. v0.3 proposal: upgrade to a structured <code>producer: {id, key_id, signature?, sigstore_bundle?}</code> with SHOULD-level identity binding. Identity levels 0–4 are documented in the cookbook before v0.3 opens.)</li>
+<li><strong>Tolerance / epsilon field</strong> (deferred — GPU floating-point non-determinism, CUDA atomic kernels, and <code>flash-attention</code>-class libraries cause sub-permille variance across hardware. A claim locked at <code>&gt;= 0.9400</code> can FAIL on identical code, identical seed, different GPU. v0.3 proposal: optional <code>tolerance</code> numeric or <code>tolerance_method</code> enum. v0.2 explicitly does not include this — a producer who needs slack today must encode it in the threshold.)</li>
+<li><strong>Native Sigstore signing</strong> (deferred — wraps better around than into PRML; see cookbook Pattern 11.)</li>
+<li><strong>Multi-metric manifests</strong> (superseded by claim tree above.)</li>
+<li><strong>Granular field-level permissions</strong> (out of scope — registries can implement.)</li>
+<li><strong>Privacy-preserving variant</strong> (deferred — needs separate threat-model document.)</li>
+</ul>
+<h2>Freeze-day editorial decisions (binding at 2026-05-22 23:59 UTC)</h2>
+<p>These are not new proposals; they are clarifications the editor is locking into the freeze record so that v0.2 readers do not relitigate them downstream.</p>
+<ol>
+<li><p><strong>Selective non-publication remains out of scope.</strong> A producer who locks ten manifests and publishes two is not detectable by PRML alone. v0.1 §8.1 stated this; v0.2 restates it as a freeze-day decision. Publication completeness is a registry-policy, journal-policy, or signed-execution-pipeline concern that sits on top of PRML. PRML is a per-claim commitment primitive, not a publication-integrity system.</p>
+</li>
+<li><p><strong>Multi-metric claims are represented as multiple manifests.</strong> Until the v0.3 claim-tree design lands, an evaluation suite reporting ten metrics is ten v0.1/v0.2 manifests with a shared <code>claim_group</code> identifier. The hash of a suite is the ordered concatenation of leaf hashes; no normative wrapper exists in v0.2.</p>
+</li>
+<li><p><strong>Manifest timestamp is producer-declared. Audit value lives in the anchor timestamp.</strong> The <code>timestamp</code> field inside the manifest is the time the producer claims to have authored the manifest. It is not externally verifiable on its own — a producer can write any ISO-8601 string. The audit-strength timestamp is the <em>anchor</em> timestamp: git commit time, registry receipt time, Sigstore/Rekor log time, arXiv submission time, DOI publication time, or CI run time. When a reviewer asks &quot;when was this committed?&quot;, the answer is the anchor, not the manifest field. See §3.6 of v0.1.</p>
+</li>
+<li><p><strong><code>producer</code> stays a plain string in v0.2 with SHOULD-level external anchoring.</strong> A v0.2-conforming producer SHOULD anchor manifest identity to at least one externally observable artefact (git commit, registry receipt, signature) and SHOULD document the chosen identity level. The structured <code>producer</code> upgrade is v0.3 territory; v0.2 does not break the string field.</p>
+</li>
+<li><p><strong>P-02 <code>attestation_uri</code> distinction (contributed by Ceri John, Topeuph AI / ValiChord).</strong> The P-02 field note distinguishes between <em>execution attestation</em> (who ran the eval and when, e.g. Sigstore as documented in Cookbook Pattern 11) and <em>independence attestation</em> (verdicts produced by parties that could not coordinate outcomes, e.g. blind commit-reveal as documented in Cookbook Pattern 13). Both address different parts of the §8.1 gap and are complementary, not alternative. The distinction surfaces during v0.2 review on Discussion #11 and lands here verbatim; Pattern 13 ships in the cookbook as a co-authored entry.</p>
+</li>
+</ol>
+<h2>Comment summary template</h2>
+<p>When you comment, please use this format:</p>
+<pre><code>Proposal: P-0X
+Position: support / oppose / clarify
+Rationale: [≤ 200 words]
+Affected impl(s) (if applicable): py / js / go / rust / all
+Suggested edit (optional): [diff]
+</code></pre>
+<p>Comments without a clear position are still useful but slow to act on.</p>
+<h2>Editor&#39;s notes</h2>
+<p>The smallest possible change set is a feature. v0.2 is intended to be a 1-week implementation diff for any of the four reference implementations. If a proposal here cannot be implemented in that envelope, it belongs in v0.3 or later.</p>
+<p>A list of comments received and their disposition will be published as <code>spec.falsify.dev/v0.2-comments</code> after the freeze.</p>
+<p>— Cüneyt Öztürk, 2026-05-08 (last editorial pass: 2026-05-15)</p>
+<!-- /prerender -->
 </article>
 
 <aside class="related" style="margin: 60px 0 24px; padding: 24px 0; border-top: 1px solid #e5e3dc; border-bottom: 1px solid #e5e3dc;">
@@ -308,6 +460,7 @@ footer.colophon a:hover { color: var(--ink); }
   }
 
   if (!md) {
+    if (target.dataset.prerendered) return;  // keep the pre-rendered copy rather than an error
     target.innerHTML = '<p class="loading">Could not load spec. <a href="https://github.com/studio-11-co/falsify/blob/main/spec/PRML-v0.1.md">View on GitHub</a>.</p>';
     return;
   }
