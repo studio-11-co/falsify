@@ -74,7 +74,14 @@ The receipts that make the timestamp independent of the producer come from the p
 | linkage start (run `prep-eval-e-run-2`) | [4c9f2320…ccd14](https://registry.falsify.dev/4c9f2320af616b18489c099fae4f7652753c39f6d000f07a371e5e0d90bccd14) | 2026-09-22 14:57:46.437 | 14:57:46 | 120938028 |
 | linkage final | [27d21333…d14eb](https://registry.falsify.dev/27d21333df989fcad6fe2bcdcc9d1d1475595cd53ea63a0ed613a93a15ed14eb) | 2026-09-22 14:58:14.787 | 14:58:15 | 120938456 |
 
-Read the order off the registry's clock, not ours: v1 → v2 → start record → the run finished (`finished_at` 14:57:54.239 in `linkage-final.yaml`) → final record. The start record, which carries manifest v2's hash, was on the public record eight seconds before the run finished. That is what prml-linkage/0 calls tier L3. The offline verifier in `run.sh` does not fetch the registry, so it reports tier L2 (chain and hashes); anyone who wants L3 compares the registry time of the start record with `finished_at` themselves. Append `.receipt.json`, `.tsr` or `.rekor` to a permalink for the signed receipt, the raw RFC 3161 token, or the Rekor inclusion proof.
+Two separate statements, because they rest on different evidence:
+
+- **Offline verification (`run.sh`): tier L2.** The final record chains to the start record, both match manifest v2, the dataset bytes match, the verdict recomputes. No network is used, so no anchor time is checked and no higher tier is claimed.
+- **Registry-checked ordering (done by hand, from the table above):** anchor(v1) 14:57:34.8 < anchor(v2) 14:57:40.2 < anchor(start) 14:57:46.4. The runner itself reports `started_at` 14:57:45.96 and `finished_at` 14:57:54.24. So the start record, carrying v2's hash, was on third-party clocks 476 ms *after* the runner says it started and 8 s *before* the runner says it finished. prml-linkage/0 §5 defines tier L3 as the start record "anchored before the run completes", which this satisfies; its §4 check 8 instead asks for `anchor(S) ≤ started_at` within a declared tolerance, which this misses by 476 ms with no tolerance declared. The draft is inconsistent on that point (noted in its §7); until it is settled we do not call this L3.
+
+Trust assumptions, stated: the anchor times come from the registry, an RFC 3161 authority and the Rekor log, none of them ours to move. `started_at` and `finished_at` come from the runner, which is us. What the anchors establish is that these exact records existed by those times. They do not establish that the evaluation actually ran between them: a producer who ran first, looked, and then performed the whole lock → start → finish ceremony is not detectable by linkage alone (§6 of the draft says so).
+
+Append `.receipt.json`, `.tsr` or `.rekor` to a permalink for the signed receipt, the raw RFC 3161 token, or the Rekor inclusion proof. A reader who reaches the same conclusions from those files without our help is the test this example has not yet passed.
 
 To commit your own:
 
@@ -91,7 +98,7 @@ curl -X POST https://registry.falsify.dev/commit -H "content-type: text/yaml" --
 
 Three ways a producer could still mislead, and how the workflow handles each:
 
-1. **Run first, look, then lock a bar the number clears.** Not caught by a receipt alone. Caught, at tier L3, if the start record is committed to the registry before the run finishes, because the start record carries the manifest hash and the registry's time. This directory does that (see the receipts table); it is still process evidence, since the runner reports its own `finished_at`.
+1. **Run first, look, then lock a bar the number clears.** Not caught by a receipt alone. Narrowed, not closed, by anchoring the start record before the run completes: the forgery then has to be premeditated before the anchor. This directory anchored its start record 8 s before the runner-reported finish (see "The public receipts" for exactly what that does and does not establish); `finished_at` is still the runner's own word.
 2. **Lock many manifests, report the one that passed.** Not prevented. The registry is public and receipts carry `producer.id`; the party relying on the report should ask for the producer id and look at sibling receipts, and the acceptance owner can require one manifest per evaluation in the project plan (3.1).
 3. **Keep the threshold, change the grader or the scoring instructions.** Caught only if the grader is part of what was hashed. PRML's required fields cover the metric name, the test items (`dataset.hash`) and the seed; a grader prompt is not a required field. Put grader instructions inside the dataset artefact, or record them in a separate manifest, and say which one the report relies on.
 

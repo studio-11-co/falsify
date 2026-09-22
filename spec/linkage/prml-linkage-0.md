@@ -153,6 +153,17 @@ impossible.
    Whether this becomes normative registry behavior (vs adapter-local
    storage) stays open until a second registry exists.
 
+4. **§4 check 8 and §5 L3 disagree on the bound.** Check 8 asks for
+   `anchor(S) ≤ F.run.started_at` (within a tolerance no text declares);
+   §5 defines L3 as the start record anchored "before the run completes",
+   i.e. `anchor(S) < F.result.finished_at`. The first worked example
+   (`examples/prep-eval`, 2026-09-22) anchored its start record 476 ms
+   after the runner-reported `started_at` and 8 s before `finished_at`:
+   L3 under §5, not under check 8. Decide which bound L3 means, declare
+   the tolerance, and make `run.sh`-style verifiers report the anchor
+   comparison separately from the offline tier. Until then the example
+   reports L2 offline and describes the anchor times without naming L3.
+
 ## 8. Relationship to RFC v0.2 P-02
 
 P-02's `runner_attestation` URI records that an out-of-band execution
