@@ -25,7 +25,7 @@ Results: C1 impact ratio (sex) 0.857919 against ≥ 0.80 — pass. C2 accuracy 0
 ./VERIFY.sh
 ```
 
-Needs Python 3 with PyYAML, OpenSSL 3 (the LibreSSL shipped with macOS cannot verify these timestamp tokens; install `openssl@3`), and OpenSSH 8 or later. No network is used. Eight checks: criteria hashes and verdicts, linkage chains, document signatures, seal records, registry hashes, registry receipt signatures, RFC 3161 timestamps, and the order of the timestamps.
+Run it inside a checkout of this repository: it uses the reference implementations at the repository root (`falsify_prml.py`, `falsify.py`). Needs Python 3 with PyYAML, OpenSSL 3 (the LibreSSL shipped with macOS cannot verify these timestamp tokens; install `openssl@3`), and OpenSSH 8 or later. No network is used. Eight checks: criteria hashes and verdicts, linkage chains, document signatures, seal records, registry hashes, registry receipt signatures, RFC 3161 timestamps, and the order of the timestamps.
 
 ## Who did what
 
@@ -58,5 +58,7 @@ receipt-*.json, anchors/                          registry receipts, RFC 3161 to
 keys/allowed_signers                              demo public keys (private keys are not published)
 VERIFY.sh                                         offline verification
 ```
+
+The helper used to write seal files, commit records and build the delivery zip is [`tools/acceptance_record.py`](../../tools/acceptance_record.py).
 
 License: MIT, same as the repository. German Credit data: Hofmann, H. (1994), Statlog (German Credit Data), UCI Machine Learning Repository, https://doi.org/10.24432/C5NC77, CC BY 4.0.
