@@ -105,7 +105,7 @@ Each README states exactly what is real and what is not: the Langfuse and Lamina
 
 **Already producing SBOMs?** [`cyclonedx-attestation`](examples/cyclonedx-attestation/) is a schema-valid CycloneDX 1.6 BOM whose `declarations` block attests one evaluation claim with a PRML receipt as the evidence — hash, RFC 3161 token and Rekor entry carried under the registered `prml` property namespace, re-verifiable offline by the BOM's consumer. A self-attestation on a real registry record, with what the receipt does not prove written into the claim itself.
 
-**Need it locked for one of your published claims?** [`falsify.dev/sprint`](https://falsify.dev/sprint) — Diagnostic Sprint, fixed-scope engagement for regulated AI teams. PRML manifest authored, verifier deployed in CI, audit report shipped. Pricing scoped per client; single-claim review available as a sub-procurement option. Commercial engagements are contracted through Falsify OÜ (reg. 17574308, Tallinn, Estonia).
+**Need this for a real AI delivery?** The [Acceptance Evidence Pack](https://falsify.dev/pricing/#pilot) is a fixed-price first engagement: the signed record of one acceptance decision (plan both sides sign before testing, dated signed report, change conditions, verification statement). A completed, verifiable example is in [`examples/acceptance-record/`](examples/acceptance-record/). Commercial engagements are contracted through Falsify OÜ (reg. 17574308, Tallinn, Estonia).
 
 **Embedding PRML in your platform?** [`docs/EMBED.md`](docs/EMBED.md) — three pure functions (`validate_manifest` / `manifest_hash` / `evaluate_predicate`), a 5-line lock-before-run hook, and an in-toto / ITE-6 attestation bridge (`falsify attest` / `to_intoto_statement`). No CLI required.
 
