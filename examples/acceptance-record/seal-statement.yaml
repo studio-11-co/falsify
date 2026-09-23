@@ -1,0 +1,8 @@
+record: acceptance-record-seal/0
+role: seal of the signed Falsify verification statement (illustrative example, not a client engagement)
+statement_id: VS-2026-001
+report_seal: https://registry.falsify.dev/86f76e446db76babca94cd97e645fafc838e0524f05bd75aa594f77ce98e7759
+documents:
+  4-verification-statement.md: a9d875cdec96b1b342952bf7f9aa03edd214961d48492a6c500389367bdc5f92
+  4-verification-statement.md.falsify.sig: 1bbf319832c79223ed18bdf71317ec4c4f2177dff256c9538d49c74928c45171
+  VERIFY.sh: a7afb47b8ed968232fb7d4ebdea5e55ee467eeccd0e327c1b943eb20d1276022

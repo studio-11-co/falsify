@@ -1,0 +1,14 @@
+record: acceptance-record-seal/0
+role: seal of the signed acceptance report and the signed change and re-review conditions (illustrative example, not a client engagement)
+report_id: AR-2026-001
+conditions_id: CR-2026-001
+plan_seal: https://registry.falsify.dev/da55fc4ac5cc572ce13ad2a913956414b186ec1685849ff1254058b78cb70cb9
+documents:
+  2-acceptance-report.md: 334082eda3844cc77f0e0beab9a35df1efa9c20dd433066f6ded29abb6643a41
+  2-acceptance-report.md.supplier.sig: a87cf6327e1907a4577649212ed8625eb3b9c4045b5e39d6fa2319164d6d8917
+  2-acceptance-report.md.client.sig: 54d1bfa6aa5d16e7070cfae57f279a6cf513d95df7be301152c5c0cafd366420
+  3-change-and-rereview.md: 59df02ff07bd2ec3adecc66bf37c741b4327ed2bf6b507767f8de33c2ba670b4
+  3-change-and-rereview.md.client.sig: 93c6d3120592a52c523199bf94807789de04ba245170bc6b60ee261297b95414
+  3-change-and-rereview.md.supplier.sig: 5b864519a2214ba71f2484e9cdb78bb35b2c79d475c5ae608f4a52fe5c4fbd09
+  result.json: 70e2fd7f287dde840e5a5dadefe56fe9a67da8056ed10366dd47c2cfec8273ff
+  run_acceptance.py: e3d8c19d214f56acc6ce5409eda30043cb298151d8d921b1e36b4ddf00c8ed58

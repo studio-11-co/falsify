@@ -1,0 +1,21 @@
+version: prml/0.1
+claim_id: 01a0ce19-5532-7c91-bed6-1ac1d4c0d689
+created_at: '2026-09-23T11:49:15Z'
+metric: accuracy
+metric_args:
+  split: stratified 70/30 train/test at the manifest seed
+  features: all 20 attributes; categorical one-hot encoded; numeric standardised
+  model_config: scikit-learn LogisticRegression, L2 penalty, C=1.0, max_iter=2000
+  definition: share of correct predictions (good/bad credit) on the held-out test split
+comparator: '>='
+threshold: 0.7
+dataset:
+  id: uci-statlog-german-credit
+  hash: b21f3d81db8071257d5ff1deaeba1fd4303b62712e6fcc9715c7a86202cb5871
+  uri: https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data
+seed: 42
+producer:
+  id: acceptance-record-example.falsify
+model:
+  id: sklearn-logistic-regression-l2-C1.0
+notes: 'Illustrative acceptance record (criterion C2 of plan AP-2026-001). Falsify OU plays both supplier and client roles; not a client engagement.'

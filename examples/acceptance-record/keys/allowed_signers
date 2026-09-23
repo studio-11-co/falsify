@@ -1,0 +1,3 @@
+demo-supplier@acceptance-record.example namespaces="acceptance-record" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIN1riU7zHkJKMB29j45nV+Rn1idG/gkAXMdkdLg2RrvC
+demo-client@acceptance-record.example namespaces="acceptance-record" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBkIGrNM2yUp3ioZpeuqUO/QEpjXAGvbEG1KKOm9CWY3
+demo-falsify@acceptance-record.example namespaces="acceptance-record" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBGOeGMnXIDBZ60TIEvM3EoUu+7qfFupRUaJW21PtpmP

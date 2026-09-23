@@ -1,0 +1,9 @@
+linkage_version: prml-linkage/0
+manifest_hash: 5ce3c9c3484d8db1ffbc67dc4f3958c9a88009a0ae92ce51e045ea6b70258bc3
+receipt: https://registry.falsify.dev/5ce3c9c3484d8db1ffbc67dc4f3958c9a88009a0ae92ce51e045ea6b70258bc3
+run:
+  dataset_hash: b21f3d81db8071257d5ff1deaeba1fd4303b62712e6fcc9715c7a86202cb5871
+  environment: 'illustrative: darwin/python3.9/sklearn1.6.1/cpu'
+  id: acc-demo-01-C1
+  model_version: sklearn-logistic-regression-l2-C1.0
+  started_at: '2026-09-23T11:51:18.178825Z'

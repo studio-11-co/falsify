@@ -1,0 +1,1 @@
+{"receipt_version":"falsify-receipt-v1","algorithm":"Ed25519","message_format":"falsify-receipt-v1\\n<hash>\\n<timestamp>","public_key_jwk":{"kty":"OKP","crv":"Ed25519","x":"BTyVci8M27QphBcr2lEOf1IiTzvpvaSzJnJ9_D97OsM","alg":"EdDSA","use":"sig","key_ops":["verify"],"kid":"34dd3fdfcf92bb13"},"key_history":"/pubkeys"}

@@ -1,0 +1,12 @@
+record: acceptance-record-seal/0
+role: seal of the signed acceptance plan (illustrative example, not a client engagement)
+plan_id: AP-2026-001
+plan_version: v1
+documents:
+  1-acceptance-plan.md: 789a86c6ba5a5b220dac68ba125f4bc0f587339159df381019164ed06165bdb9
+  1-acceptance-plan.md.client.sig: de4d6e479f8c292465e1fd05f72e43f2b2ef77247861303c73b79cb5364c2f69
+  1-acceptance-plan.md.supplier.sig: 3677f9e38fa9efc9e9b792b8fde701dc713ef4e0c94c559af5fd6288cd431678
+criteria_records:
+  C1: https://registry.falsify.dev/5ce3c9c3484d8db1ffbc67dc4f3958c9a88009a0ae92ce51e045ea6b70258bc3
+  C2: https://registry.falsify.dev/464df2bee6b479b742306cca356ce8e4904be22cad09beb5cfee29025c1b1d31
+signers_file_sha256: f2d4a981be766bca94fd1f7e6e86067ca6d5db9155f0b2f270bdfb1f59b92c70

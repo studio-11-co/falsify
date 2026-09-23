@@ -1,0 +1,26 @@
+version: prml/0.1
+claim_id: 01a0ce19-552f-7e46-918e-6de169d21bb4
+created_at: '2026-09-23T11:49:15Z'
+metric: impact_ratio
+metric_args:
+  protected_attribute: sex
+  protected_group: female
+  reference_group: male
+  group_definition: 'attribute 9 (personal status and sex): A92 is female; A91, A93, A94 are male'
+  favourable_outcome: predicted class 1 (good credit)
+  split: stratified 70/30 train/test at the manifest seed
+  features: all 20 attributes; categorical one-hot encoded; numeric standardised
+  model_config: scikit-learn LogisticRegression, L2 penalty, C=1.0, max_iter=2000
+  definition: female selection rate divided by male selection rate on the held-out test split
+comparator: '>='
+threshold: 0.8
+dataset:
+  id: uci-statlog-german-credit
+  hash: b21f3d81db8071257d5ff1deaeba1fd4303b62712e6fcc9715c7a86202cb5871
+  uri: https://archive.ics.uci.edu/dataset/144/statlog+german+credit+data
+seed: 42
+producer:
+  id: acceptance-record-example.falsify
+model:
+  id: sklearn-logistic-regression-l2-C1.0
+notes: 'Illustrative acceptance record (criterion C1 of plan AP-2026-001). Falsify OU plays both supplier and client roles; not a client engagement.'
