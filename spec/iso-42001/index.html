@@ -195,27 +195,33 @@ footer.colophon { margin:80px 0 0; padding-top:24px; border-top:1px solid var(--
   <tr><th>Control</th><th>Text (paraphrased)</th><th>PRML mechanism</th><th>Coverage</th></tr>
   <tr>
     <td class="cell-id">A.6.2.4</td>
-    <td>Validation and verification of AI systems: documented procedures for V&amp;V activities throughout the AI lifecycle.</td>
-    <td>The manifest format <em>is</em> the documented V&amp;V procedure for the evaluation-claim layer. The four reference implementations make the procedure portable across stacks.</td>
-    <td class="cell-cov cov-full">Full</td>
+    <td>AI system verification and validation.</td>
+    <td>A fixed, dated record of the acceptance criteria used in verification and validation. The V&amp;V measures and their execution stay with the organisation.</td>
+    <td class="cell-cov cov-partial">Partial</td>
+  </tr>
+  <tr>
+    <td class="cell-id">A.6.2.5</td>
+    <td>AI system deployment.</td>
+    <td>A recorded criterion with its <code>verdict</code> can be one input to a release decision; the CLI fails closed (exit 10) if the threshold isn't met. The deployment decision stays with the organisation.</td>
+    <td class="cell-cov cov-partial">Partial</td>
   </tr>
   <tr>
     <td class="cell-id">A.6.2.6</td>
-    <td>AI system deployment: documented criteria for deployment readiness.</td>
-    <td>A locked manifest with a passing <code>verdict</code> is exactly that &mdash; a deployment-readiness gate that fails closed (exit 10) if the threshold isn't met.</td>
-    <td class="cell-cov cov-full">Full</td>
+    <td>AI system operation and monitoring.</td>
+    <td>Monitoring itself is out of scope. The amendment chain (<code>prior_hash</code>, <code>reason</code>) can record the criteria of each post-deployment re-evaluation.</td>
+    <td class="cell-cov cov-none">None</td>
   </tr>
   <tr>
     <td class="cell-id">A.6.2.8</td>
-    <td>AI system performance: documented procedures for monitoring and maintaining performance after deployment.</td>
-    <td>The amendment chain records each post-deployment re-evaluation with <code>prior_hash</code> and <code>reason</code>. The auditor reads a single forward-only chain.</td>
-    <td class="cell-cov cov-full">Full</td>
+    <td>AI system recording of event logs.</td>
+    <td>Runtime event logs are a different object from an evaluation-criteria record.</td>
+    <td class="cell-cov cov-none">None</td>
   </tr>
   <tr>
     <td class="cell-id">A.7.4</td>
     <td>Data quality for AI systems: documented information about data sources, quality criteria, and provenance.</td>
-    <td>Manifest <code>dataset.id</code> + <code>dataset.hash</code> bind evaluation to specific dataset content. Any swap fails verification.</td>
-    <td class="cell-cov cov-full">Full</td>
+    <td>Manifest <code>dataset.id</code> + <code>dataset.hash</code> bind evaluation to specific dataset content, so a swap fails verification. The quality of the data itself stays with the organisation.</td>
+    <td class="cell-cov cov-partial">Partial</td>
   </tr>
   <tr>
     <td class="cell-id">A.9.3</td>
