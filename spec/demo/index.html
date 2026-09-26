@@ -2,867 +2,331 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PRML — 60-second demo</title>
-<meta name="description" content="One YAML manifest. One SHA-256. The hash is the protagonist.">
-<meta name="robots" content="noindex">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What your client receives at AI handover — 60-second walkthrough · Falsify</title>
+<meta name="description" content="A 60-second walkthrough of a completed acceptance record: the signed plan, the results, an edit that the record exposes, a stated gap, and offline verification. Every receipt shown is a real public registry record. Illustrative example, demo signatures.">
 <link rel="canonical" href="https://spec.falsify.dev/demo/">
+<meta property="og:title" content="What your client receives at AI handover — 60-second walkthrough">
+<meta property="og:description" content="A completed acceptance record in 60 seconds. Every receipt shown is a real public registry record. Illustrative example, demo signatures.">
+<meta property="og:url" content="https://spec.falsify.dev/demo/">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:wght@400;600&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
 <style>
-/* ─── Registered animatable custom properties ─── */
-@property --reveal { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
-@property --tx { syntax: '<length>'; inherits: false; initial-value: 0px; }
-@property --ty { syntax: '<length>'; inherits: false; initial-value: 0px; }
-@property --strip-y { syntax: '<length>'; inherits: false; initial-value: 0em; }
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg: #0b0f14;
-  --surface: #0f1319;
-  --elevated: #141921;
-  --border: #1a2230;
-  --border-light: #242e3c;
-  --muted: #7D8BA2;
-  --gray: #818B99;
-  --silver: #8a94a0;
-  --light: #c8c9d4;
-  --white: #e8eef2;
-  --signal: #39d98a;
-  --signal-dim: #163126;
-  --caution: #d4a843;
-  --display: 'Space Grotesk','DM Sans',system-ui,sans-serif;
-  --mono: 'JetBrains Mono','SF Mono',Consolas,monospace;
-
-  /* ─── Easing palette (from motion direction) ─── */
-  --ease-spec:    cubic-bezier(0.65, 0.00, 0.35, 1.00);
-  --ease-compute: cubic-bezier(0.30, 0.00, 0.20, 1.00);
-  --ease-emit:    cubic-bezier(0.20, 0.00, 0.00, 1.00);
-  --ease-drift:   cubic-bezier(0.45, 0.05, 0.55, 0.95);
+:root{
+  --black:#0B0F14; --surface:#0F1319; --elevated:#141921;
+  --border:#1A2230; --border-light:#242E3C;
+  --white:#E8EEF2; --light:#c8c9d4; --silver:#8A94A0; --muted:#7D8BA2;
+  --signal:#39D98A; --signal-mid:#2BA86E; --signal-dim:#163126;
+  --danger:#E08585; --danger-dim:#3a1a1a; --caution:#d4a843;
+  --paper:#F3F1EA; --ink:#1B1F24; --ink-soft:#5B6068;
+  --display:'Space Grotesk','DM Sans',system-ui,sans-serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono','SF Mono',monospace;
+  --serif:'Source Serif 4',Georgia,serif;
 }
-
-html, body { height: 100%; background: var(--bg); color: var(--white); font-family: var(--display); }
-body { display: flex; align-items: center; justify-content: center; padding: 32px; }
-
-/* ─── Stage frame (persistent for the whole 60s) ─── */
-.stage {
-  width: 100%;
-  max-width: 1000px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
-  position: relative;
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  grid-template-rows: 44px 1fr 44px;
-  grid-template-areas:
-    "chrome chrome"
-    "rail   theatre"
-    "ruler  ruler";
-  box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(57,217,138,0.06);
-  animation: stage-breathe 12s var(--ease-drift) infinite;
-}
-@keyframes stage-breathe {
-  0%, 100% { box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(57,217,138,0.06); }
-  50%      { box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(57,217,138,0.12); }
-}
-
-/* ─── Browser chrome (persistent) ─── */
-.chrome {
-  grid-area: chrome;
-  display: flex; align-items: center; gap: 12px;
-  padding: 0 18px;
-  background: var(--elevated);
-  border-bottom: 1px solid var(--border);
-  font-family: var(--mono); font-size: 12px;
-  color: var(--silver);
-}
-.chrome .dots { display: flex; gap: 6px; }
-.chrome .dots span { width: 11px; height: 11px; border-radius: 50%; background: var(--muted); }
-.chrome .url {
-  padding: 5px 12px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  flex: 0 1 460px;
-  font-size: 12.5px;
-  display: flex;
-  align-items: center;
-  gap: 1px;
-  overflow: hidden;
-  white-space: nowrap;
-  height: 22px;
-}
-.chrome .url .scheme { color: var(--signal); }
-.chrome .url .path {
-  position: relative;
-  flex: 1;
-  height: 16px;
-}
-.chrome .url .path span {
-  position: absolute;
-  left: 0; top: 0;
-  line-height: 16px;
-  white-space: nowrap;
-  opacity: 0;
-  color: var(--silver);
-}
-.chrome .url .path .u1 { animation: u1 60s linear infinite; }
-.chrome .url .path .u2 { animation: u2 60s linear infinite; }
-.chrome .url .path .u3 { animation: u3 60s linear infinite; color: var(--light); }
-.chrome .url .path .u4 { animation: u4 60s linear infinite; color: var(--light); }
-.chrome .url .path .u4 b { color: var(--signal); }
-/* Tile the full 60s cycle across four URL phases — each act sees a coherent URL state */
-@keyframes u1 {  /* Act 1 (intro): homepage 0-13% */
-  0%, 11% { opacity: 1; }
-  13%, 100% { opacity: 0; }
-}
-@keyframes u2 {  /* Acts 2-3 (paste + compute): /commit  13-50% */
-  0%, 11% { opacity: 0; }
-  14%, 48% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-@keyframes u3 {  /* Act 4 (receipt): /04fa1689…  50-72% */
-  0%, 48% { opacity: 0; }
-  51%, 70% { opacity: 1; }
-  72%, 100% { opacity: 0; }
-}
-@keyframes u4 {  /* Acts 5-6 (badge + tagline): /04fa1689 · locked  72-100% */
-  0%, 70% { opacity: 0; }
-  73%, 100% { opacity: 1; }
-}
-.chrome .url .path .anchor { color: transparent; }
-.chrome .meta {
-  margin-left: auto;
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--gray);
-}
-.chrome .meta b { color: var(--signal); font-weight: 600; }
-
-/* ─── Left rail (J-composition anchor, persistent) ─── */
-.rail {
-  grid-area: rail;
-  border-right: 1px solid var(--border);
-  position: relative;
-  padding: 28px 0 28px 24px;
-  background: linear-gradient(180deg, var(--surface), color-mix(in srgb, var(--surface) 92%, var(--bg)));
-}
-.rail .label {
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--signal);
-  padding: 0;
-  margin-bottom: 10px;
-  display: flex; align-items: center; gap: 9px;
-  position: absolute;
-  top: 28px; left: 24px;
-  opacity: 0;
-}
-.rail .label::before {
-  content: '';
-  width: 5px; height: 5px; border-radius: 50%; background: var(--signal);
-  animation: pulse 1.6s var(--ease-drift) infinite;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 0.35; transform: scale(0.9); }
-  50%      { opacity: 1;    transform: scale(1.4); }
-}
-.rail .lbl-num {
-  position: absolute;
-  top: 64px; left: 24px;
-  font-family: var(--mono);
-  font-size: 72px;
-  font-weight: 200;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--border-light);
-  letter-spacing: -0.04em;
-  line-height: 1;
-  opacity: 0;
-}
-.rail .lbl-act {
-  position: absolute;
-  top: 140px; left: 24px;
-  font-family: var(--display);
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--silver);
-  letter-spacing: 0.01em;
-  line-height: 1.35;
-  max-width: 160px;
-  opacity: 0;
-}
-.rail .spine {
-  position: absolute;
-  top: 220px; left: 24px;
-  width: 1px; height: 280px;
-  background: linear-gradient(180deg, var(--signal) 0%, transparent 90%);
-  opacity: 0.3;
-  animation: spine-flow 4s var(--ease-drift) infinite;
-}
-@keyframes spine-flow {
-  0%, 100% { opacity: 0.2; }
-  50% { opacity: 0.45; }
-}
-
-/* ─── Theatre (where acts happen) ─── */
-.theatre {
-  grid-area: theatre;
-  position: relative;
-  height: 460px;
-  overflow: hidden;
-}
-/* Money-shot flash — brief green wash across the theatre at hash→badge collapse */
-.theatre::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 40% at 35% 60%, rgba(57,217,138,0.22), transparent 70%);
-  opacity: 0;
-  pointer-events: none;
-  z-index: 5;
-  animation: theatre-flash 60s linear infinite;
-}
-@keyframes theatre-flash {
-  0%, 70%   { opacity: 0; }
-  72%       { opacity: 1; }
-  73.5%     { opacity: 0; }
-  100%      { opacity: 0; }
-}
-/* Scanline during compute — subtle CRT-feel horizontal sweep */
-.theatre::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, rgba(57,217,138,0.6), transparent);
-  opacity: 0;
-  pointer-events: none;
-  animation: scanline 60s linear infinite;
-}
-@keyframes scanline {
-  0%, 36%   { opacity: 0; top: 0; }
-  38%       { opacity: 0.8; top: 0; }
-  48%       { opacity: 0.8; top: 100%; }
-  50%, 100% { opacity: 0; top: 100%; }
-}
-.act {
-  position: absolute; inset: 0;
-  padding: 28px 36px;
-  opacity: 0;
-}
-
-h1.headline {
-  font-family: var(--display);
-  font-size: 44px;
-  font-weight: 600;
-  letter-spacing: -0.018em;
-  line-height: 1.08;
-  color: var(--white);
-  max-width: 640px;
-}
-h1.headline .accent { color: var(--signal); }
-p.body {
-  margin-top: 18px;
-  color: var(--silver);
-  font-family: var(--display);
-  font-size: 14.5px;
-  line-height: 1.6;
-  max-width: 540px;
-}
-
-/* ─── YAML block (act 2) ─── */
-.yaml-frame {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 18px 22px;
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.92;
-  color: var(--light);
-  white-space: pre;
-  max-width: 560px;
-  margin-top: 4px;
-  position: relative;
-}
-.yaml-frame::before {
-  content: '';
-  position: absolute;
-  top: 0; bottom: 0; left: 0;
-  width: 2px;
-  background: var(--signal);
-  box-shadow: 0 0 8px rgba(57,217,138,0.4);
-}
-.yaml-frame .k { color: var(--signal); }
-.yaml-frame .s { color: var(--light); }
-.yaml-frame .n { color: var(--caution); }
-
-/* YAML mask-driven reveal (act 2 entrance) + collapse (act 2→3 transition) */
-.yaml-content {
-  display: block;
-  -webkit-mask-image: linear-gradient(to right, black var(--reveal), transparent var(--reveal));
-  mask-image: linear-gradient(to right, black var(--reveal), transparent var(--reveal));
-  animation: yaml-reveal 60s linear infinite;
-}
-@keyframes yaml-reveal {
-  0%, 13%  { --reveal: 0%; }
-  17%, 33% { --reveal: 100%; }
-  /* collapse from right to left at end of act 2 */
-  37%      { --reveal: 0%; }
-  37.01%, 100% { --reveal: 0%; }
-}
-
-/* ─── Hash protagonist — 64 glyphs, persistent across acts 3/4/5 ─── */
-.hash-stage {
-  position: absolute;
-  font-family: var(--mono);
-  font-size: 18.5px;
-  font-weight: 500;
-  letter-spacing: 0.06em;
-  white-space: nowrap;
-  display: inline-flex;
-  filter: drop-shadow(0 0 12px rgba(57,217,138,0.35));
-  animation: hash-position 60s linear infinite;
-}
-@keyframes hash-position {
-  0%, 35%   { opacity: 0; top: 220px; left: 36px; transform: scale(0.98); }
-  39%       { opacity: 1; top: 220px; left: 36px; transform: scale(1);     }
-  49%       { opacity: 1; top: 220px; left: 36px; transform: scale(1);     }
-  /* Act 4 — slides up into receipt row with subtle settle */
-  52%       { opacity: 1; top: 130px; left: 36px; transform: scale(1);     }
-  68%       { opacity: 1; top: 130px; left: 36px; transform: scale(1);     }
-  /* MONEY SHOT — collapse to badge */
-  71.5%     { opacity: 1; top: 130px; left: 36px; transform: scale(0.85);  }
-  73%       { opacity: 0; top: 130px; left: 36px; transform: scale(0.45);  }
-  100%      { opacity: 0; top: 130px; left: 36px; transform: scale(0.45);  }
-}
-
-.glyph {
-  display: inline-block;
-  width: 1ch;
-  height: 1.4em;
-  overflow: hidden;
-  vertical-align: top;
-  position: relative;
-  font-family: var(--mono);
-  animation: glyph-collapse 60s linear infinite;
-}
-@keyframes glyph-collapse {
-  0%, 68%  { transform: translate(0, 0); }
-  73%      { transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(0.4); }
-  100%     { transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(0.4); }
-}
-.glyph .strip {
-  display: block;
-  color: color-mix(in srgb, var(--signal) 55%, transparent);
-  animation: glyph-cycle 0.22s steps(16) infinite;
-}
-.glyph .strip > span {
-  display: block;
-  height: 1.4em;
-  line-height: 1.4em;
-}
-@keyframes glyph-cycle {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-22.4em); /* 16 × 1.4em */ }
-}
-/* Final overlay covers the cycling strip after snap moment.
-   Per-glyph @keyframes injected by JS (different snap percentage per index). */
-.glyph .final {
-  position: absolute;
-  inset: 0;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--mono);
-  color: var(--signal);
-  font-weight: 600;
-  text-shadow: 0 0 8px rgba(57,217,138,0.55), 0 0 2px rgba(57,217,138,0.8);
-  opacity: 0;
-}
-/* Snap halo — brief box-shadow pulse on each glyph at its snap moment */
-.glyph::after {
-  content: '';
-  position: absolute;
-  inset: -2px;
-  border-radius: 2px;
-  box-shadow: 0 0 0 0 rgba(57,217,138, 0);
-  pointer-events: none;
-}
-
-/* Receipt row (act 4) hosts the hash + other metadata */
-.receipt-rows {
-  position: absolute;
-  top: 180px; left: 36px; right: 36px;
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 4px 18px;
-  font-family: var(--mono);
-  font-size: 12.5px;
-  line-height: 1.85;
-  opacity: 0;
-  animation: receipt-rows-in 60s linear infinite;
-}
-@keyframes receipt-rows-in {
-  0%, 51% { opacity: 0; transform: translateY(8px); }
-  54%, 70% { opacity: 1; transform: translateY(0); }
-  72%, 100% { opacity: 0; transform: translateY(-4px); }
-}
-.receipt-rows .lbl { color: var(--gray); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase; align-self: center; }
-.receipt-rows .val { color: var(--white); border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-
-/* ─── Badge box (target of money shot) ─── */
-.badge-box {
-  position: absolute;
-  /* Position the receiving badge where hash glyphs will translate toward */
-  top: 180px; left: 36px;
-  display: inline-flex;
-  align-items: center;
-  background: #1a2230;
-  border-radius: 4px;
-  overflow: hidden;
-  font-family: var(--mono);
-  font-size: 13.5px;
-  opacity: 0;
-  animation: badge-emerge 60s linear infinite;
-}
-@keyframes badge-emerge {
-  0%, 71%   { opacity: 0; transform: scale(0.8); }
-  73%, 91%  { opacity: 1; transform: scale(1); }
-  93%, 100% { opacity: 0; transform: scale(0.9); }
-}
-.badge-box .k { padding: 7px 13px; background: #2a3340; color: var(--light); }
-.badge-box .v { padding: 7px 13px; background: var(--signal); color: var(--bg); font-weight: 700; letter-spacing: 0.02em; }
-
-/* Snippet under badge */
-.snippet {
-  position: absolute;
-  top: 240px; left: 36px; right: 36px;
-  background: var(--bg);
-  border: 1px dashed var(--border);
-  border-radius: 3px;
-  padding: 12px 16px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--silver);
-  word-break: break-all;
-  opacity: 0;
-  animation: snippet-in 60s linear infinite;
-}
-@keyframes snippet-in {
-  0%, 75%   { opacity: 0; transform: translateY(8px); }
-  78%, 91%  { opacity: 1; transform: translateY(0); }
-  93%, 100% { opacity: 0; transform: translateY(-4px); }
-}
-.snippet::before {
-  content: 'Copied';
-  position: absolute;
-  top: -10px; right: 14px;
-  background: var(--signal);
-  color: var(--bg);
-  font-family: var(--display);
-  font-size: 9.5px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 2px;
-  font-weight: 700;
-  opacity: 0;
-  animation: copy-flash 60s linear infinite;
-}
-@keyframes copy-flash {
-  0%, 82% { opacity: 0; transform: translateY(8px); }
-  84%, 87% { opacity: 1; transform: translateY(0); }
-  89%, 100% { opacity: 0; transform: translateY(-4px); }
-}
-
-/* ─── Acts visibility (cross-fade with 600ms = 1% overlap) ─── */
-.act-1 { animation: a1 60s var(--ease-spec) infinite; }
-.act-2 { animation: a2 60s var(--ease-spec) infinite; }
-.act-3 { animation: a3 60s var(--ease-spec) infinite; }
-.act-4 { animation: a4 60s var(--ease-spec) infinite; }
-.act-5 { animation: a5 60s var(--ease-spec) infinite; }
-.act-6 { animation: a6 60s var(--ease-spec) infinite; }
-
-@keyframes a1 { 0%,12% { opacity: 1; } 14%,100% { opacity: 0; } }
-@keyframes a2 { 0%,12% { opacity: 0; } 14%,36% { opacity: 1; } 38%,100% { opacity: 0; } }
-@keyframes a3 { 0%,36% { opacity: 0; } 38%,49% { opacity: 1; } 51%,100% { opacity: 0; } }
-@keyframes a4 { 0%,49% { opacity: 0; } 51%,70% { opacity: 1; } 72%,100% { opacity: 0; } }
-@keyframes a5 { 0%,71% { opacity: 0; } 73%,91% { opacity: 1; } 93%,100% { opacity: 0; } }
-@keyframes a6 { 0%,91% { opacity: 0; } 93%,100% { opacity: 1; } }
-
-/* Rail labels (cross-fade with the acts, but persistent rail container stays) */
-.rail .label.l1, .rail .lbl-num.n1, .rail .lbl-act.t1 { animation: a1 60s var(--ease-spec) infinite; }
-.rail .label.l2, .rail .lbl-num.n2, .rail .lbl-act.t2 { animation: a2 60s var(--ease-spec) infinite; }
-.rail .label.l3, .rail .lbl-num.n3, .rail .lbl-act.t3 { animation: a3 60s var(--ease-spec) infinite; }
-.rail .label.l4, .rail .lbl-num.n4, .rail .lbl-act.t4 { animation: a4 60s var(--ease-spec) infinite; }
-.rail .label.l5, .rail .lbl-num.n5, .rail .lbl-act.t5 { animation: a5 60s var(--ease-spec) infinite; }
-.rail .label.l6, .rail .lbl-num.n6, .rail .lbl-act.t6 { animation: a6 60s var(--ease-spec) infinite; }
-
-/* ─── Bottom ruler with act tick marks ─── */
-.ruler {
-  grid-area: ruler;
-  background: var(--elevated);
-  border-top: 1px solid var(--border);
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 0 18px;
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.16em;
-  color: var(--gray);
-  text-transform: uppercase;
-}
-.ruler .progress-fill {
-  position: absolute;
-  top: 0; left: 0; height: 2px;
-  background: var(--signal);
-  box-shadow: 0 0 12px rgba(57,217,138,0.6);
-  width: 0;
-  animation: progress-fill 60s linear infinite;
-}
-@keyframes progress-fill {
-  0% { width: 0; }
-  100% { width: 100%; }
-}
-.ruler .tick {
-  position: absolute;
-  top: 0;
-  width: 1px; height: 8px;
-  background: var(--gray);
-  animation: tick-pass 60s linear infinite;
-}
-.ruler .tick.t1 { left: 13%; animation-delay: -52.2s; } /* fires at t=7.8s */
-.ruler .tick.t2 { left: 37%; animation-delay: -37.8s; } /* fires at t=22.2s */
-.ruler .tick.t3 { left: 50%; animation-delay: -30s; }   /* fires at t=30s */
-.ruler .tick.t4 { left: 73%; animation-delay: -16.2s; } /* fires at t=43.8s */
-@keyframes tick-pass {
-  0%, 99.5% { background: var(--gray); height: 8px; box-shadow: none; }
-  99.6%     { background: var(--signal); height: 14px; box-shadow: 0 0 12px rgba(57,217,138,0.8); }
-  99.8%, 100% { background: var(--gray); height: 8px; box-shadow: none; }
-}
-
-.ruler .steps {
-  display: flex; gap: 18px;
-}
-.ruler .step { display: flex; align-items: center; gap: 6px; }
-.ruler .step .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
-.ruler .end {
-  margin-left: auto;
-  color: var(--muted);
-  font-size: 10px;
-}
-
-/* Step highlights aligned with acts */
-.ruler .step.s1 { animation: s-act 60s var(--ease-spec) infinite; --in: 13%; --out: 37%; }
-.ruler .step.s2 { animation: s2 60s var(--ease-spec) infinite; }
-.ruler .step.s3 { animation: s3 60s var(--ease-spec) infinite; }
-.ruler .step.s4 { animation: s4 60s var(--ease-spec) infinite; }
-@keyframes s-act {
-  0%,12% { color: var(--gray); }
-  14%,36% { color: var(--signal); }
-  38%,100% { color: var(--gray); }
-}
-@keyframes s2 {
-  0%,36% { color: var(--gray); }
-  38%,49% { color: var(--signal); }
-  51%,100% { color: var(--gray); }
-}
-@keyframes s3 {
-  0%,49% { color: var(--gray); }
-  51%,70% { color: var(--signal); }
-  72%,100% { color: var(--gray); }
-}
-@keyframes s4 {
-  0%,71% { color: var(--gray); }
-  73%,91% { color: var(--signal); }
-  93%,100% { color: var(--gray); }
-}
-
-/* ─── Compute label / spinner ─── */
-.compute-line {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--silver);
-  margin-top: 4px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.compute-line .spinner {
-  width: 14px; height: 14px;
-  border: 2px solid var(--border);
-  border-top-color: var(--signal);
-  border-radius: 50%;
-  animation: spin 0.9s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Tagline */
-.act-6 { display: flex; flex-direction: column; justify-content: center; }
-.act-6 h1 { font-size: 56px; text-align: left; letter-spacing: -0.022em; }
-.act-6 h1 .accent { color: var(--signal); filter: drop-shadow(0 0 18px rgba(57,217,138,0.4)); }
-.act-6 .links {
-  margin-top: 28px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--gray);
-}
-.act-6 .links a { color: var(--signal); text-decoration: none; border-bottom: 1px dotted var(--signal); margin-right: 10px; }
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--black);color:var(--white);overflow:hidden}
+body{display:flex;align-items:center;justify-content:center;font-family:var(--sans)}
+#stage{position:relative;width:1280px;height:720px;flex:none;transform-origin:center center;background:var(--black);overflow:hidden;cursor:pointer}
+.abs{position:absolute}
+.mono{font-family:var(--mono)}
+.mono,.hdr,.note,.stamp,.tbl,.term,.code,.cmp,.ev,#rail .rt,.foot{font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0}
+.hdr{left:56px;top:34px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase}
+.hdr b{color:var(--signal);font-weight:500}
+.note{right:56px;top:34px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--caution);text-transform:uppercase}
+.step{left:56px;top:78px;font-family:var(--display);font-weight:600;font-size:30px;letter-spacing:-.01em;color:var(--white)}
+.step .n{color:var(--signal);margin-right:14px}
+.cap{left:56px;top:124px;width:760px;font-size:17px;line-height:1.5;color:var(--light)}
+/* timeline rail */
+#rail{left:900px;top:78px;width:330px;height:560px;border-left:1px solid var(--border-light);padding-left:22px}
+#rail .rt{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;margin-bottom:18px}
+.ev{display:flex;gap:12px;align-items:baseline;height:46px;font-family:var(--mono);font-size:12.5px;color:#3a4556;transition:none}
+.ev .tm{width:66px;flex:none}
+.ev .lb{flex:1;font-family:var(--sans);font-size:14px}
+.ev .hx{display:block;font-family:var(--mono);font-size:11px;margin-top:3px}
+.ev .dot{position:absolute;left:-27px;width:9px;height:9px;border-radius:50%;background:var(--border-light);margin-top:4px}
+.ev{position:relative}
+/* paper document */
+.doc{background:var(--paper);color:var(--ink);border-radius:3px;box-shadow:0 18px 50px rgba(0,0,0,.45);font-family:var(--serif)}
+.doc h3{font-family:var(--serif);font-weight:600;font-size:20px;margin-bottom:4px}
+.doc .sub{font-family:var(--sans);font-size:12px;color:var(--ink-soft);letter-spacing:.04em;margin-bottom:18px}
+.doc .row{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid #d9d5c9;padding:11px 0;font-size:16px}
+.doc .row .k{font-family:var(--mono);font-size:13px;color:var(--ink-soft);width:44px}
+.doc .row .v{flex:1}
+.doc .row .th{font-family:var(--mono);font-size:15px}
+.sig{display:flex;gap:22px;margin-top:16px;font-family:var(--sans);font-size:12.5px;color:var(--ink-soft)}
+.sig span{border-top:1px solid #b9b4a5;padding-top:6px;flex:1}
+.sig i{font-style:normal;color:#1f7a4c;font-weight:500}
+.stamp{font-family:var(--mono);font-size:12.5px;color:var(--signal);letter-spacing:.02em}
+.stamp .l{color:var(--muted)}
+/* results table */
+.tbl{font-family:var(--mono);font-size:15px}
+.tbl .tr{display:grid;grid-template-columns:60px 250px 150px 120px 90px;height:46px;align-items:center;border-bottom:1px solid var(--border)}
+.tbl .h{color:var(--muted);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase}
+.pass{color:var(--signal)}
+.fail{color:var(--danger)}
+/* terminal */
+.term{background:#070A0E;border:1px solid var(--border-light);border-radius:6px;font-family:var(--mono);font-size:12.5px;line-height:1.66;color:var(--light);padding:18px 22px;white-space:pre-wrap}
+.term .ln{min-height:1.66em}
+.term .ln.h{padding-left:40px;text-indent:-40px}
+.term .p{color:var(--signal)}
+.term .ok{color:var(--signal)}
+.term .dim{color:var(--muted)}
+/* tamper */
+.code{background:#070A0E;border:1px solid var(--border-light);border-radius:6px;font-family:var(--mono);font-size:15px;line-height:1.9;color:var(--light);padding:18px 24px;white-space:pre}
+.code .k{color:var(--muted)}
+.hl{border-radius:3px;padding:0 3px}
+.cmp{font-family:var(--mono);font-size:14px;line-height:2}
+.cmp .l{display:inline-block;width:124px;color:var(--muted)}
+.big{font-family:var(--display);font-weight:600;letter-spacing:-.02em}
+.foot{left:56px;bottom:30px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:#4a5566}
+#bar{left:0;bottom:0;height:2px;background:var(--signal);width:0}
 </style>
 </head>
 <body>
+<div id="stage" aria-label="60-second walkthrough of an illustrative acceptance record. Click to pause.">
+  <div class="abs hdr">falsify · <b>acceptance record AP-2026-001</b></div>
+  <div class="abs note">illustrative · Falsify plays both roles · demo signatures</div>
 
-<div class="stage">
-
-  <!-- ──── Browser chrome (persistent) ──── -->
-  <div class="chrome">
-    <div class="dots"><span></span><span></span><span></span></div>
-    <div class="url"><span class="scheme">https://</span><span class="path"><span class="u1">registry.falsify.dev</span><span class="u2">registry.falsify.dev/commit</span><span class="u3">registry.falsify.dev/04fa1689ac552fb1…</span><span class="u4">registry.falsify.dev/04fa1689 <b>· locked</b></span></span></div>
-    <div class="meta"><b>PRML</b> &middot; v0.1 &middot; Community Spec License 1.0</div>
+  <!-- persistent record timeline (RFC 3161 times, 23 Sep 2026 UTC) -->
+  <div id="rail" class="abs">
+    <div class="rt">The record · 23 Sep 2026 · UTC</div>
+    <div class="ev" data-at="7.2"><span class="dot"></span><span class="tm">11:50:23</span><span class="lb">Criterion C1 recorded<span class="hx">5ce3c9c3484d</span></span></div>
+    <div class="ev" data-at="8.0"><span class="dot"></span><span class="tm">11:50:28</span><span class="lb">Criterion C2 recorded<span class="hx">464df2bee6b4</span></span></div>
+    <div class="ev" data-at="12.6"><span class="dot"></span><span class="tm">11:50:42</span><span class="lb">Signed plan sealed<span class="hx">da55fc4ac5cc</span></span></div>
+    <div class="ev" data-at="18.2"><span class="dot"></span><span class="tm">11:51:18</span><span class="lb">Run start, C1 · C2<span class="hx">14bc38f2bd35 · 231970705630</span></span></div>
+    <div class="ev" data-at="19.6"><span class="dot"></span><span class="tm">11:51:37</span><span class="lb">Run final, C1 · C2<span class="hx">86c224c760c7 · 74415372626b</span></span></div>
+    <div class="ev" data-at="23.4"><span class="dot"></span><span class="tm">11:52:20</span><span class="lb">Signed report sealed<span class="hx">86f76e446db7</span></span></div>
+    <div class="ev" data-at="41.0"><span class="dot"></span><span class="tm">11:55:31</span><span class="lb">Verification statement sealed<span class="hx">fbec1be1aa3a</span></span></div>
+    <div id="railnote" class="abs mono" style="left:22px;top:392px;width:300px;font-size:11px;line-height:1.6;color:var(--muted)">Each line: a public registry record with a signed receipt, an RFC 3161 timestamp and a Rekor transparency-log entry.</div>
   </div>
 
-  <!-- ──── Left rail (J-composition anchor) ──── -->
-  <div class="rail">
-    <div class="label l1">Pre-registered ML manifest</div>
-    <div class="label l2">Step 1 · Paste</div>
-    <div class="label l3">Step 2 · Compute</div>
-    <div class="label l4">Step 3 · Receipt</div>
-    <div class="label l5">Step 4 · Badge</div>
-    <div class="label l6">Open spec · Community Spec License 1.0</div>
-    <div class="lbl-num n1">00</div>
-    <div class="lbl-num n2">01</div>
-    <div class="lbl-num n3">02</div>
-    <div class="lbl-num n4">03</div>
-    <div class="lbl-num n5">04</div>
-    <div class="lbl-num n6">05</div>
-    <div class="lbl-act t1">Lock the threshold before the data.</div>
-    <div class="lbl-act t2">12 YAML fields. UTF-8. PRML §3 canonical bytes.</div>
-    <div class="lbl-act t3">SHA-256 over the canonical bytes. Steps timing, not typewriter.</div>
-    <div class="lbl-act t4">The hash is the protagonist. Any retroactive edit breaks it.</div>
-    <div class="lbl-act t5">A re-derivable claim. No producer trust required.</div>
-    <div class="lbl-act t6">The threshold, before the data.</div>
-    <div class="spine"></div>
+  <!-- S0 title -->
+  <div id="s0" class="abs" style="left:56px;top:0;width:800px;height:720px">
+    <div class="abs big" style="left:0;top:250px;width:800px;font-size:50px;line-height:1.08">What your client receives<br>at AI handover.</div>
+    <div class="abs" style="left:0;top:388px;width:700px;font-size:18px;line-height:1.55;color:var(--light)">A completed acceptance record, in 60 seconds. A credit model on public data; every receipt on screen is a real public registry record.</div>
   </div>
 
-  <!-- ──── Theatre (acts unfold here) ──── -->
-  <div class="theatre">
-
-    <!-- ACT 1 (0-12%) — intro -->
-    <div class="act act-1">
-      <h1 class="headline">Lock your eval claim<br><span class="accent">before the run.</span></h1>
-      <p class="body">One YAML file. One SHA-256. No account is required, and the manifest you commit is stored and served publicly. The seal travels with you for the lifetime of the system.</p>
+  <!-- S1 plan -->
+  <div id="s1" class="abs" style="left:0;top:0;width:900px;height:720px">
+    <div class="abs step"><span class="n">1</span>The acceptance plan, signed and sealed</div>
+    <div class="abs cap">Client and supplier agree the criteria and sign the plan; it is sealed before any run is registered. The criteria become canonical records with an independent time.</div>
+    <div id="plan" class="abs doc" style="left:56px;top:210px;width:560px;padding:26px 30px 22px">
+      <h3>Acceptance plan AP-2026-001</h3>
+      <div class="sub">Credit scoring model · one system version · one acceptance round</div>
+      <div class="row"><span class="k">C1</span><span class="v">Impact ratio, female vs male</span><span class="th">&ge; 0.80</span></div>
+      <div class="row"><span class="k">C2</span><span class="v">Accuracy on the held-out split</span><span class="th">&ge; 0.70</span></div>
+      <div class="sig"><span>Client decision owner <i id="sg1"></i></span><span>Supplier delivery lead <i id="sg2"></i></span></div>
     </div>
-
-    <!-- ACT 2 (13-36%) — YAML emerges via mask-reveal -->
-    <div class="act act-2">
-      <pre class="yaml-frame"><span class="yaml-content"><span class="k">version</span>: <span class="s">"prml/0.1"</span>
-<span class="k">claim_id</span>:    <span class="s">"01911000-0000-7000-8000-000000000088"</span>
-<span class="k">created_at</span>:  <span class="s">"2026-05-18T11:00:00Z"</span>
-<span class="k">metric</span>:      <span class="s">"accuracy"</span>
-<span class="k">comparator</span>:  <span class="s">"&gt;="</span>
-<span class="k">threshold</span>:   <span class="n">0.92</span>
-<span class="k">dataset</span>:
-  <span class="k">id</span>:        <span class="s">"imagenet-val-2012"</span>
-  <span class="k">hash</span>:      <span class="s">"e3b0c442…7852b855"</span>
-<span class="k">seed</span>:        <span class="n">42</span>
-<span class="k">producer</span>:
-  <span class="k">id</span>:        <span class="s">"your-org.com"</span></span></pre>
+    <div id="seal1" class="abs stamp" style="left:56px;top:520px;width:800px;line-height:1.9">
+      <div><span class="l">plan sha-256 &nbsp;&nbsp;</span><span id="h_plan"></span></div>
+      <div><span class="l">sealed record &nbsp;</span><span id="h_seal"></span> <span class="l">&nbsp;receipted 11:50:42 UTC</span></div>
     </div>
-
-    <!-- ACT 3 (37-49%) — compute (hash protagonist enters) -->
-    <div class="act act-3">
-      <h1 class="headline" style="font-size: 28px;">Canonicalising 12 fields.</h1>
-      <p class="body">Per PRML §3 deterministic rules. Byte-equivalent across four reference implementations — Python · JavaScript · Go · Rust — verified by 21 conformance vectors.</p>
-      <div class="compute-line"><span class="spinner"></span>Computing SHA-256 over canonical bytes…</div>
-    </div>
-
-    <!-- ACT 4 (50-71%) — receipt (hash settles here) -->
-    <div class="act act-4">
-      <div class="receipt-rows">
-        <div class="lbl">Permalink</div>
-        <div class="val">registry.falsify.dev/04fa1689…</div>
-        <div class="lbl">Locked at</div>
-        <div class="val">2026-05-18T11:00:23.471Z</div>
-        <div class="lbl">Verifiable by</div>
-        <div class="val">any of 4 reference impls, offline</div>
-        <div class="lbl">Audit chain</div>
-        <div class="val">prior_hash anchored; lifetime &gt;= retention horizon</div>
-      </div>
-    </div>
-
-    <!-- ACT 5 (73-91%) — badge (hash collapses into this) -->
-    <div class="act act-5">
-      <div class="badge-box">
-        <span class="k">PRML locked</span>
-        <span class="v">04fa1689ac55</span>
-      </div>
-      <div class="snippet">
-        [![PRML locked · 04fa1689ac55](https://registry.falsify.dev/badge/04fa1689…svg)](https://registry.falsify.dev/04fa1689…)
-      </div>
-      <p class="body" style="position: absolute; top: 310px; left: 36px; right: 36px;">A reviewer who suspects the threshold was tweaked re-derives the SHA-256 from canonical bytes and either gets the same digest, or they don't.</p>
-    </div>
-
-    <!-- ACT 6 (93-100%) — tagline -->
-    <div class="act act-6">
-      <h1 class="headline">The threshold,<br><span class="accent">before the data.</span></h1>
-      <div class="links">
-        <a href="https://spec.falsify.dev/v0.1">spec.falsify.dev</a>
-        <a href="https://registry.falsify.dev">registry.falsify.dev</a>
-        <a href="https://github.com/studio-11-co/falsify">github.com/studio-11-co/falsify</a>
-      </div>
-    </div>
-
-    <!-- ──── The HASH (protagonist — lives outside all acts, persists across 3/4/5) ──── -->
-    <div class="hash-stage" id="hash-stage"></div>
-
   </div>
 
-  <!-- ──── Bottom ruler with progress + act ticks ──── -->
-  <div class="ruler">
-    <div class="progress-fill"></div>
-    <div class="tick t1"></div>
-    <div class="tick t2"></div>
-    <div class="tick t3"></div>
-    <div class="tick t4"></div>
-    <div class="steps">
-      <div class="step s1"><span class="dot"></span>1 YAML</div>
-      <div class="step s2"><span class="dot"></span>2 Compute</div>
-      <div class="step s3"><span class="dot"></span>3 Receipt</div>
-      <div class="step s4"><span class="dot"></span>4 Badge</div>
+  <!-- S2 results -->
+  <div id="s2" class="abs" style="left:0;top:0;width:900px;height:720px">
+    <div class="abs step"><span class="n">2</span>Tests run, results recorded</div>
+    <div class="abs cap">Each run is declared against its criterion record, then its result is recorded. The report is signed by both sides and sealed.</div>
+    <div class="abs tbl" style="left:56px;top:220px">
+      <div class="tr h"><span></span><span>metric</span><span>bar</span><span>observed</span><span></span></div>
+      <div class="tr" id="r1"><span>C1</span><span>impact ratio (sex)</span><span>&ge; 0.80</span><span id="o1"></span><span id="v1" class="pass"></span></div>
+      <div class="tr" id="r2"><span>C2</span><span>accuracy</span><span>&ge; 0.70</span><span id="o2"></span><span id="v2" class="pass"></span></div>
     </div>
-    <div class="end">60s loop · spec.falsify.dev/demo</div>
+    <div id="dec" class="abs" style="left:56px;top:380px;font-family:var(--display);font-size:26px;font-weight:600">Decision: <span style="color:var(--signal)">accepted</span></div>
+    <div id="seal2" class="abs stamp" style="left:56px;top:440px;line-height:1.9">
+      <div><span class="l">report sealed &nbsp;</span><span id="h_rep"></span> <span class="l">&nbsp;receipted 11:52:20 UTC</span></div>
+    </div>
   </div>
 
+  <!-- S3 tamper -->
+  <div id="s3" class="abs" style="left:0;top:0;width:900px;height:720px">
+    <div class="abs step"><span class="n">3</span>Someone moves the bar afterwards</div>
+    <div class="abs cap">The record does not stop an edit. It makes the edit visible: change one number and the criterion no longer matches what was receipted.</div>
+    <div class="abs code" style="left:56px;top:210px;width:560px"><span class="k">metric:</span>     impact_ratio
+<span class="k">comparator:</span> '&gt;='
+<span class="k">threshold:</span>  <span id="thv" class="hl"></span>
+<span class="k">dataset:</span>    uci-statlog-german-credit</div>
+    <div id="cmpbox" class="abs cmp" style="left:56px;top:410px;width:820px">
+      <div><span class="l">receipted</span><span style="color:var(--signal)">5ce3c9c3484d8db1ffbc67dc4f3958c9…</span> <span style="color:var(--muted)">11:50:23 UTC</span></div>
+      <div><span class="l">recomputed</span><span id="h_now"></span></div>
+      <div id="verdict3" style="margin-top:6px;font-family:var(--display);font-size:22px;font-weight:600"></div>
+    </div>
+  </div>
+
+  <!-- S4 gap -->
+  <div id="s4" class="abs" style="left:0;top:0;width:900px;height:720px">
+    <div class="abs step"><span class="n">4</span>A gap, stated rather than hidden</div>
+    <div class="abs cap">Falsify checks the record and signs a statement of what was checked, what was not, and what is missing.</div>
+    <div class="abs doc" style="left:56px;top:210px;width:620px;padding:24px 30px">
+      <h3>Verification statement</h3>
+      <div class="sub">Falsify OÜ · signed and sealed 11:55:31 UTC · fbec1be1aa3a</div>
+      <div style="font-size:16px;line-height:1.55;border-top:1px solid #d9d5c9;padding-top:12px"><b>Missing reference:</b> no hash of the trained model artefact is recorded; the system version is identified by the training script&rsquo;s hash and the seed.</div>
+    </div>
+  </div>
+
+  <!-- S5 verify -->
+  <div id="s5" class="abs" style="left:0;top:0;width:900px;height:720px">
+    <div class="abs step"><span class="n">5</span>Anyone can check it, offline</div>
+    <div class="abs cap" style="top:118px">No trust in the supplier, the client or Falsify: one script, no network.</div>
+    <div id="term" class="abs term" style="left:56px;top:168px;width:800px;height:470px"></div>
+  </div>
+
+  <!-- S6 end -->
+  <div id="s6" class="abs" style="left:56px;top:0;width:800px;height:720px">
+    <div class="abs big" style="left:0;top:214px;font-size:40px;line-height:1.12;width:800px">Acceptance Evidence Pack</div>
+    <div class="abs" style="left:0;top:276px;font-size:19px;line-height:1.6;color:var(--light);width:760px">One acceptance decision, documented: the signed plan, the signed results, the agreed change conditions and a verification statement, each with an independent timestamp.</div>
+    <div class="abs mono" style="left:0;top:382px;font-size:15px;color:var(--white)">&euro;3,000 fixed · one system · up to three criteria</div>
+    <div class="abs mono" style="left:0;top:410px;font-size:15px;color:var(--white)">first draft within 3 working days of receiving your documents</div>
+    <div class="abs mono" style="left:0;top:470px;font-size:17px;color:var(--signal)">falsify.dev/acceptance-record</div>
+    <div class="abs" style="left:0;top:520px;font-size:13px;color:var(--muted);width:760px;line-height:1.55">What the record does not show: that the criteria are appropriate, that the results are correct, or that the tests ran after the plan. The runner times are the supplier&rsquo;s statement.</div>
+  </div>
+
+  <div class="abs foot" id="foot">spec.falsify.dev/demo · every receipt shown is public at registry.falsify.dev</div>
+  <div id="bar" class="abs"></div>
 </div>
 
 <script>
-// ─── Build the 64-glyph hash protagonist with per-glyph snap keyframes ───
-(function buildHash() {
-  var HASH = '04fa1689ac552fb1f7c3eaf9d0f6c2c0e8c1ca9d4ab6d2fb91a5e7df2c9b62f3';
-  var HEX = '0123456789abcdef';
-  var stage = document.getElementById('hash-stage');
-  if (!stage) return;
+(function(){
+  const DUR = 60;
+  const $ = id => document.getElementById(id);
+  const clamp = (x,a,b) => Math.max(a, Math.min(b, x));
+  const seg = (t,a,b) => clamp((t-a)/(b-a), 0, 1);
+  const ease = p => 1 - Math.pow(1-p, 3);
+  const HEX = '0123456789abcdef';
 
-  // Snap window: 38% (act 3 start) to 49% (act 3 end) of the 60s cycle
-  // First glyph snaps at t=22.8s (38%), last at t=29.1s (48.5%). 100ms per glyph.
-  var SNAP_START_S = 22.8;
-  var SNAP_STEP_S  = 0.10;
-  var CYCLE_S      = 60;
-
-  // Each glyph's translation toward badge centre during money-shot collapse (act 4→5)
-  // Hash resting position: left ~36px in act-4 receipt row. Badge centre ~96px to the right & 60px down.
-  var BADGE_CX_FROM_HASH = -180;   // px relative to first glyph position (badge sits to the left of hash centre)
-  var BADGE_CY_FROM_HASH = 30;     // px below
-
-  var keyframes = '';
-  for (var i = 0; i < HASH.length; i++) {
-    var snapTime = SNAP_START_S + i * SNAP_STEP_S;
-    var snapPct  = (snapTime / CYCLE_S * 100).toFixed(3);
-    var snapPctAfter = (parseFloat(snapPct) + 0.02).toFixed(3);
-    // Generate per-glyph @keyframes that flip opacity 0→1 at the exact snap percentage
-    keyframes += '@keyframes final-' + i + ' { 0%, ' + snapPct + '% { opacity: 0; } ' + snapPctAfter + '%, 100% { opacity: 1; } } ';
-    keyframes += '.glyph[data-i="' + i + '"] .final { animation: final-' + i + ' ' + CYCLE_S + 's linear infinite; } ';
-
-    var g = document.createElement('span');
-    g.className = 'glyph';
-    g.dataset.i = i;
-
-    // Per-glyph translation for the money-shot collapse
-    // Glyphs spread across ~580px (64 chars × ~9px); they all converge toward badge centre
-    var gx = i * 9;
-    var tx = BADGE_CX_FROM_HASH - gx + i * (gx / 64);  // gentle inward pull
-    g.style.setProperty('--tx', tx + 'px');
-    g.style.setProperty('--ty', BADGE_CY_FROM_HASH + 'px');
-
-    // Cycling strip — 16 hex chars stacked vertically, each row exactly 1.4em
-    var strip = document.createElement('span');
-    strip.className = 'strip';
-    // Stagger cycle phase so glyphs aren't all on the same hex at the same instant
-    strip.style.animationDelay = '-' + (i * 0.011) + 's';
-    for (var j = 0; j < 16; j++) {
-      var c = document.createElement('span');
-      c.textContent = HEX[j];
-      strip.appendChild(c);
-    }
-    g.appendChild(strip);
-
-    // Final overlay shows the actual hash character once the per-glyph snap keyframe triggers
-    var fin = document.createElement('span');
-    fin.className = 'final';
-    fin.textContent = HASH[i];
-    g.appendChild(fin);
-
-    stage.appendChild(g);
+  // deterministic pseudo-random for the "hash settling" effect
+  function prand(i, k){ let x = Math.sin(i*127.1 + k*311.7) * 43758.5453; return x - Math.floor(x); }
+  function settle(target, p, t){
+    const n = Math.floor(ease(p) * target.length);
+    const q = Math.floor(t*24);
+    let s = target.slice(0, n);
+    for (let i = n; i < target.length; i++) s += HEX[Math.floor(prand(i, q)*16)];
+    return s;
+  }
+  function show(el, o, dy){ el.style.opacity = o; el.style.transform = dy ? `translateY(${dy}px)` : 'none'; }
+  function scene(t, a, b){ // fade in over .6s after a, out over .5s before b
+    return Math.min(ease(seg(t, a, a+.6)), 1 - seg(t, b-.5, b));
   }
 
-  // Inject the generated per-glyph keyframes
-  var style = document.createElement('style');
-  style.textContent = keyframes;
-  document.head.appendChild(style);
-})();
+  const TERM = [ // verbatim section headers and summary of ./VERIFY.sh (per-record OK lines omitted)
+    ['p','$ ./VERIFY.sh          # section headers shown, per-record OK lines omitted'],
+    ['h','1/8  criteria records: hash, dataset bytes, verdict from result.json'],
+    ['h','2/8  linkage chains: final -> start -> criteria record'],
+    ['h','3/8  signatures on the plan, report, conditions and statement (demo keys in keys/allowed_signers)'],
+    ['h','4/8  seal records list the exact bytes of each signed document'],
+    ['h','5/8  every registry record hash recomputes from the YAML on disk'],
+    ['h','6/8  registry receipts carry a valid Ed25519 signature (key and message format in anchors/registry-pubkey.json)'],
+    ['h','7/8  RFC 3161 timestamps verify against the time-stamping authority chain (OpenSSL 3.6.4)'],
+    ['h','8/8  order of the independent timestamps'],
+    ['',''],
+    ['ok','Acceptance record AP-2026-001: all checks passed'],
+    ['dim','What this does not show: that the criteria are appropriate, that the results are correct, that the run happened after the plan (the runner times are the supplier\u2019s statement), or that no other plan or run existed.']
+  ];
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 
-// ─── ?t=N freeze for headless capture ───
-(function freezeForCapture() {
-  var p = new URLSearchParams(location.search);
-  var t = p.get('t');
-  if (t === null) return;
-  var s = parseFloat(t);
-  if (isNaN(s)) return;
+  const evs = Array.from(document.querySelectorAll('#rail .ev'));
 
-  // Pause all animations and shift their delays so they appear at exactly s seconds in.
-  // For animations with existing delays, we add (-s) on top.
-  var style = document.createElement('style');
-  var rules = [];
+  function render(t){
+    t = clamp(t, 0, DUR);
+    // scenes
+    show($('s0'), scene(t, 0, 5));
+    show($('s1'), scene(t, 5, 16));
+    show($('s2'), scene(t, 16, 26));
+    show($('s3'), scene(t, 26, 37.5));
+    show($('s4'), scene(t, 37.5, 44.5));
+    show($('s5'), scene(t, 44.5, 54.5));
+    show($('s6'), ease(seg(t, 54.5, 55.3)));
+    show($('rail'), Math.min(ease(seg(t, 4.6, 5.4)), 1 - seg(t, 54, 54.6)));
 
-  // Default: all elements get animation-delay: -s, animation-play-state: paused
-  rules.push('*, *::before, *::after { animation-play-state: paused !important; }');
+    // rail events light up
+    evs.forEach(ev => {
+      const at = parseFloat(ev.dataset.at);
+      const on = t >= at;
+      const fresh = on && t < at + 1.2;
+      ev.style.color = on ? (fresh ? 'var(--signal)' : 'var(--light)') : '#3a4556';
+      ev.querySelector('.dot').style.background = on ? 'var(--signal)' : 'var(--border-light)';
+      ev.querySelector('.hx').style.color = on ? 'var(--signal-mid)' : '#2a3342';
+    });
+    show($('railnote'), ease(seg(t, 13.5, 14.5)));
 
-  // Compose new delays for each element based on existing per-element delays.
-  // For simplicity in this freeze approach, we shift everything by -s.
-  // Use `animation-delay` cumulative: original delay + (-s).
-  // For elements with no original delay, set it to -s.
+    // S1: signatures, then seal
+    $('sg1').textContent = t >= 9.4 ? '✓ signed' : '';
+    $('sg2').textContent = t >= 10.4 ? '✓ signed' : '';
+    show($('seal1'), ease(seg(t, 11.2, 11.8)));
+    $('h_plan').textContent = settle('789a86c6ba5a5b220dac68ba125f4bc0', seg(t, 11.2, 12.2), t) + '…';
+    $('h_seal').textContent = settle('da55fc4ac5cc572ce13ad2a913956414', seg(t, 12.0, 12.9), t) + '…';
 
-  // The cleanest approach: walk all elements with computed animations, read their existing delay, then set new delay = original - s
-  document.querySelectorAll('*').forEach(function(el) {
-    var cs = getComputedStyle(el);
-    var delays = cs.animationDelay;
-    if (!delays || delays === '0s' || delays === 'none' || delays.indexOf('s') === -1) {
-      // No existing delay — just shift by -s
-      el.style.animationDelay = '-' + s + 's';
-      el.style.animationPlayState = 'paused';
+    // S2: results
+    show($('r1'), ease(seg(t, 18.6, 19.2)));
+    show($('r2'), ease(seg(t, 19.4, 20.0)));
+    $('o1').textContent = t >= 19.6 ? '0.857919' : '';
+    $('v1').textContent = t >= 20.2 ? 'PASS' : '';
+    $('o2').textContent = t >= 20.4 ? '0.74' : '';
+    $('v2').textContent = t >= 21.0 ? 'PASS' : '';
+    show($('dec'), ease(seg(t, 21.8, 22.4)));
+    show($('seal2'), ease(seg(t, 22.8, 23.4)));
+    $('h_rep').textContent = settle('86f76e446db76babca94cd97e645fafc', seg(t, 22.8, 23.8), t) + '…';
+
+    // S3: tamper 0.80 -> 0.75 -> back
+    const edited = t >= 29.2 && t < 34.8;
+    const thv = $('thv');
+    if (t < 28.4) { thv.textContent = '0.8'; thv.style.background = 'transparent'; thv.style.color = 'var(--white)'; }
+    else if (t < 29.2) { thv.textContent = '0.8'; thv.style.background = '#2a3342'; thv.style.color = 'var(--white)'; }
+    else if (t < 34.8) { thv.textContent = t < 29.5 ? '0.7' : '0.75'; thv.style.background = 'var(--danger-dim)'; thv.style.color = 'var(--danger)'; }
+    else { thv.textContent = '0.8'; thv.style.background = 'var(--signal-dim)'; thv.style.color = 'var(--signal)'; }
+    show($('cmpbox'), ease(seg(t, 27.6, 28.2)));
+    const hn = $('h_now'), v3 = $('verdict3');
+    if (edited) {
+      hn.innerHTML = '<span style="color:var(--danger)">' + settle('2d871b83a5d3ec475341ebfda015be3c', seg(t, 29.6, 30.8), t) + '…</span>';
+      v3.innerHTML = t >= 31.0 ? '<span style="color:var(--danger)">TAMPERED · does not match the record receipted 11:50:23 UTC</span>' : '';
+    } else if (t >= 34.8) {
+      hn.innerHTML = '<span style="color:var(--signal)">5ce3c9c3484d8db1ffbc67dc4f3958c9…</span>';
+      v3.innerHTML = t >= 35.3 ? '<span style="color:var(--signal)">edit reverted · matches again</span>' : '';
     } else {
-      // Has existing delays (possibly comma-separated). Shift each by -s.
-      var shifted = delays.split(',').map(function(d) {
-        var n = parseFloat(d.trim());
-        return (n - s) + 's';
-      }).join(', ');
-      el.style.animationDelay = shifted;
-      el.style.animationPlayState = 'paused';
+      hn.innerHTML = '<span style="color:var(--signal)">5ce3c9c3484d8db1ffbc67dc4f3958c9…</span>';
+      v3.innerHTML = t >= 28.4 ? '<span style="color:var(--signal)">INTACT</span>' : '';
     }
+
+    // S5: terminal
+    const shown = Math.floor(seg(t, 45.4, 51.6) * TERM.length + (t >= 45.4 ? 1 : 0));
+    $('term').innerHTML = TERM.slice(0, Math.min(shown, TERM.length)).map(([c, s]) => {
+      let inner = '';
+      if (c === 'h') inner = '<span class="ok">' + esc(s.slice(0, 3)) + '</span>' + esc(s.slice(3));
+      else if (c) inner = `<span class="${c}">${esc(s)}</span>`;
+      return '<div class="ln' + (c === 'h' ? ' h' : '') + '">' + inner + '</div>';
+    }).join('');
+
+    $('bar').style.width = (t / DUR * 100) + '%';
+  }
+
+  // scale stage to viewport
+  function fit(){
+    const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+    $('stage').style.transform = `scale(${s})`;
+  }
+  window.addEventListener('resize', fit); fit();
+
+  const qs = new URLSearchParams(location.search);
+  window.__render = render;
+  if (qs.has('record')) { render(0); return; }            // frames driven by the recorder
+  if (qs.has('t')) { render(parseFloat(qs.get('t')) || 0); return; }
+
+  let paused = false, start = performance.now(), offset = 0;
+  $('stage').addEventListener('click', () => {
+    if (paused) { start = performance.now() - offset * 1000; paused = false; requestAnimationFrame(loop); }
+    else { paused = true; }
   });
-
-  document.head.appendChild(style);
-})();
-
-// ─── Beacon (skipped during capture) ───
-(function beacon() {
-  if (location.search.indexOf('t=') !== -1) return;
-  try {
-    var i = new Image();
-    i.src = 'https://registry.falsify.dev/_t?h=' + encodeURIComponent(location.host) +
-            '&p=' + encodeURIComponent(location.pathname) +
-            '&r=' + encodeURIComponent(document.referrer || '');
-  } catch (e) {}
+  function loop(now){
+    if (paused) return;
+    offset = ((now - start) / 1000) % (DUR + 2);
+    render(Math.min(offset, DUR));
+    requestAnimationFrame(loop);
+  }
+  const go = () => requestAnimationFrame(loop);
+  (document.fonts && document.fonts.ready) ? document.fonts.ready.then(go) : go();
 })();
 </script>
 </body>

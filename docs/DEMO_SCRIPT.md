@@ -1,3 +1,5 @@
+> **Superseded 26 Sep 2026.** The current 60-second demo is the acceptance-record walkthrough (`spec/demo/index.html`, rendered to `spec/demo/demo.mp4` and `demo.gif`); every value in it comes from `examples/acceptance-record/`. This storyboard describes the earlier PRML walkthrough and is kept for history.
+
 # Demo video script — 90 seconds
 
 ## Target

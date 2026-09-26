@@ -66,9 +66,9 @@ Deterministic exit codes are the API. CI gates on them. Humans read the audit tr
 
 ## 60-second demo
 
-[![60-second walkthrough — paste YAML, lock, get SHA-256, drop badge](https://spec.falsify.dev/demo/demo.gif)](https://spec.falsify.dev/demo/)
+[![60-second walkthrough: what a client receives at AI handover. A completed acceptance record, illustrative, demo signatures](https://spec.falsify.dev/demo/demo.gif)](https://spec.falsify.dev/demo/)
 
-*Click for the live looping version, or watch the [MP4](https://spec.falsify.dev/demo/demo.mp4). Full storyboard in [`docs/DEMO_SCRIPT.md`](docs/DEMO_SCRIPT.md).*
+*A completed acceptance record, in the order it was made: the signed plan, the results, an edit the record exposes, a stated gap, offline verification. Every value comes from [`examples/acceptance-record`](examples/acceptance-record); run `./VERIFY.sh` there to check it yourself. Click for the live version, or watch the [MP4](https://spec.falsify.dev/demo/demo.mp4).*
 
 ---
 
