@@ -6,16 +6,21 @@ PRML commits a claim — metric, threshold, dataset hash, seed — as a SHA-256 
 
 ```bash
 $ pip install falsify
-$ falsify lock claim.prml.yaml
-locked: claim.prml.yaml
-  sha256:          c30dba8e0f566d1beebf4f8d468e6e07c821f0c72562dfb64ddf6596796f7797
+$ cd examples/first-manifest    # reproducible: same file, same hash on any machine
+$ falsify lock accuracy.prml.yaml
+locked: accuracy.prml.yaml
+  canonical bytes: 316
+  sha256:          9cb2a71b75355dd52d56ea79212a79442eec6ed512bc93c4bb25ff897c4b1005
 
-$ falsify verify claim.prml.yaml --observed 0.934
-PASS  metric=accuracy  observed=0.934  >=  threshold=0.9
+$ falsify verify accuracy.prml.yaml --observed 0.934
+PASS  metric=accuracy  observed=0.934  >=  threshold=0.85
 
-# spec edited after locking → hash no longer matches:
-$ falsify verify claim.prml.yaml --observed 0.934
-TAMPERED  (exit 3)
+# spec edited after locking (threshold 0.85 → 0.80) → hash no longer matches:
+$ falsify verify accuracy.prml.yaml --observed 0.934
+TAMPERED
+  recorded:    9cb2a71b75355dd52d56ea79212a79442eec6ed512bc93c4bb25ff897c4b1005
+  recomputed:  77559d468d45161d5194fe37deb20649de808c9440d20ba0c616cd2a1e851af9
+# exit 3
 ```
 
 No install? Verify any manifest in-browser at [registry.falsify.dev](https://registry.falsify.dev). Byte-equivalent reference CLIs also ship for JS (`npm i -g falsify-js`), Go, and Rust.
@@ -27,9 +32,9 @@ No install? Verify any manifest in-browser at [registry.falsify.dev](https://reg
 ![CI](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml/badge.svg)
 ![Multi-lang Conformance](https://github.com/studio-11-co/falsify/actions/workflows/multi-lang-conformance.yml/badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/falsify?color=brightgreen&label=pypi)
-![coverage](https://img.shields.io/badge/tests-598%20passing-brightgreen)
+![tests](https://img.shields.io/badge/tests-643%20passing-brightgreen)
 ![impls](https://img.shields.io/badge/reference%20impls-4%20(py%20%C2%B7%20js%20%C2%B7%20go%20%C2%B7%20rs)-brightgreen)
-![honesty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/studio-11-co/falsify/main/.falsify/badge.json)
+![honesty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/studio-11-co/falsify/main/.falsify/badge.json&label=honesty)
 ![python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13539/badge)](https://www.bestpractices.dev/projects/13539)
