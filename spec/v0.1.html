@@ -205,6 +205,24 @@ footer.colophon a:hover { color: var(--ink); }
   article pre, article table { page-break-inside: avoid; }
   article a { color: var(--ink); text-decoration: none; }
 }
+/* Wide layout (2026-10-02): at 1100px and up, a sticky table of contents on the
+   left and a wider text column. The menu is built by JS from the #content
+   headings; the pre-rendered body is not touched. No change on phones or in print. */
+.spec-toc { display: none; }
+@media (min-width: 1100px) {
+  .wrap { max-width: 1180px; display: grid; grid-template-columns: 230px minmax(0, 1fr); column-gap: 56px; }
+  .wrap > * { grid-column: 2; min-width: 0; }
+  .wrap > header.masthead { grid-column: 1 / -1; }
+  .wrap > .spec-toc { display: block; grid-column: 1; grid-row: 2 / span 40; position: sticky; top: 28px; align-self: start; max-height: calc(100vh - 56px); overflow-y: auto; font-family: "Space Grotesk", system-ui, sans-serif; font-size: 13px; line-height: 1.4; }
+  .wrap > .spec-toc[hidden] { display: none; }
+  .spec-toc-h { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); margin: 0 0 12px; }
+  .spec-toc ol { list-style: none; margin: 0; padding: 0; border-left: 1px solid var(--rule); }
+  .spec-toc a { display: block; padding: 5px 0 5px 12px; margin-left: -1px; border-left: 2px solid transparent; color: var(--ink-3); text-decoration: none; }
+  .spec-toc a:hover { color: var(--ink); border-left-color: var(--rule); }
+  .spec-toc a.on { color: var(--accent-text); border-left-color: var(--accent); font-weight: 600; }
+  aside.related ul { grid-template-columns: 1fr 1fr; column-gap: 32px; }
+}
+@media print { .spec-toc { display: none !important; } .wrap { display: block !important; } }
 </style>
 </head>
 <body>
@@ -220,6 +238,8 @@ footer.colophon a:hover { color: var(--ink); }
     <a href="https://github.com/studio-11-co/falsify">GitHub</a>
   </span>
 </header>
+
+<nav class="spec-toc" aria-label="Contents" hidden><div class="spec-toc-h">Contents</div><ol></ol></nav>
 
 <aside class="livenote" style="margin: 0 0 14px; padding: 14px 18px; border-left: 3px solid var(--rule); background: #f7f7f4; font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 14px; color: var(--ink-2); line-height: 1.55;">
   <strong style="font-weight: 600; color: var(--ink);">Status: frozen 2026-05-22, not a finished standard.</strong> Published under the Community Specification License 1.0 by a single editor; no standards body has adopted it, and it carries no presumption of conformity with any regulation. <strong style="font-weight: 600; color: var(--ink);">Settled:</strong> &sect;3 canonicalization has not changed since the freeze; three defect reports accepted 2026-08-23 added rejection requirements for invalid input and changed no canonical byte sequence and no digest of any valid manifest; the four reference implementations (Python, JavaScript, Go, Rust) agree byte-for-byte on 21 conformance vectors, all four reject the 16 negative-conformance cases that are not YAML-specific, and the two that parse YAML reject all 20; the media type <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.9em;">application/vnd.prml+yaml</code> was registered with IANA on 2026-09-03 &mdash; registration is not endorsement. <strong style="font-weight: 600; color: var(--ink);">Not settled:</strong> a manifest and its digest carry no evidence of time on their own &mdash; only a time-anchored record, a digest countersigned by an independent timestamp authority or entered in a public transparency log, can establish that a criteria object existed no later than the anchored time. Even then it does not establish that the evaluation ran afterwards: this specification does not bind a criteria record to the execution it describes. Execution linkage is out of scope for v0.1 and is the main open gap. A time-anchored record is also silent on who held the criteria before the run: if the party that sets the criteria and the party whose work is assessed can communicate outside the record &mdash; the ordinary case when both sit inside one organisation &mdash; the anchor remains valid and the assessment can still be compromised. This specification binds bytes to a time; it does not establish that the criteria were withheld from the party they were meant to test. &sect;3 has had a formal grammar since 2026-09-13 (&sect;3.6, <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.9em;">spec/grammar/</code>), verified against all 21 conformance vectors by an implementation written from the grammar alone; a wider 83-input battery published the same day found 21 inputs, outside the vectors, on which three of the four reference implementations departed from the grammar; they were corrected the same day, and the one input that exposed an unstated rule rather than a bug (a v0.2 <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.9em;">threshold</code> spelled <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.9em;">1300.0</code>) was settled by a post-freeze clarification to the v0.2 RFC: <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.9em;">threshold</code> canonicalizes by value under v0.2. All of it now runs in CI as a 92-vector edge suite (<code style="font-family: 'JetBrains Mono', monospace; font-size: 0.9em;">spec/test-vectors/edge/</code>). <strong style="font-weight: 600; color: var(--ink);">Implementation status:</strong> all four reference implementations were written by the editor, and all public registry records to date originate with the editor. No independent implementation is known to the editor; independent interoperability therefore remains unproven. A manifest is interpreted under the rules identified by its <code style="font-family: 'JetBrains Mono', monospace; font-size: 0.9em;">version</code> field, so valid v0.1 manifests continue to verify under v0.1 rules as later revisions are developed. The v0.2 RFC froze on 2026-05-22 and its formal comment window is closed; general feedback and defect reports remain welcome at <a href="https://github.com/studio-11-co/falsify/discussions" style="color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px;">GitHub discussions</a> or <a href="mailto:hello@falsify.dev" style="color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px;">hello@falsify.dev</a>.
@@ -1315,5 +1335,34 @@ boring. Excitement is reserved for what gets built on top of it.</em></p>
   document.querySelectorAll('article a[href^="/Users/"]').forEach(a => a.removeAttribute('href'));
 })();
 </script>
-<script>(function(){try{var i=new Image();i.src="https://registry.falsify.dev/_t?h="+encodeURIComponent(location.host)+"&p="+encodeURIComponent(location.pathname)+"&r="+encodeURIComponent(document.referrer||"")}catch(e){}})();</script></body>
+<script>(function(){try{var i=new Image();i.src="https://registry.falsify.dev/_t?h="+encodeURIComponent(location.host)+"&p="+encodeURIComponent(location.pathname)+"&r="+encodeURIComponent(document.referrer||"")}catch(e){}})();</script><script>
+// Table of contents: built from the h2 headings in #content, rebuilt when the body is re-rendered from the fresh .md.
+(function () {
+  var nav = document.querySelector('.spec-toc'), art = document.getElementById('content');
+  if (!nav || !art) return;
+  var ol = nav.querySelector('ol'), t = null, raf = 0, heads = [], links = {};
+  function build() {
+    var hs = [].slice.call(art.querySelectorAll('h2[id]'));
+    if (!hs.length) { nav.hidden = true; return; }
+    var map = {}; ol.innerHTML = '';
+    hs.forEach(function (h) {
+      var li = document.createElement('li'), a = document.createElement('a');
+      a.href = '#' + h.id; a.textContent = h.textContent; li.appendChild(a); ol.appendChild(li); map[h.id] = a;
+    });
+    nav.hidden = false;
+    heads = hs; links = map; mark();
+  }
+  // Mark the last heading that has scrolled past the top, so the current section stays marked mid-section too.
+  function mark() {
+    var cur = null;
+    for (var i = 0; i < heads.length; i++) { if (heads[i].getBoundingClientRect().top <= 140) cur = heads[i]; else break; }
+    [].forEach.call(ol.querySelectorAll('a.on'), function (x) { x.classList.remove('on'); });
+    var a = cur && links[cur.id]; if (a) { a.classList.add('on'); }
+  }
+  window.addEventListener('scroll', function () { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; mark(); }); }, { passive: true });
+  build();
+  new MutationObserver(function () { clearTimeout(t); t = setTimeout(build, 60); }).observe(art, { childList: true });
+})();
+</script>
+</body>
 </html>
