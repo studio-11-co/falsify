@@ -76,6 +76,8 @@ No install? Verify any manifest in-browser at [registry.falsify.dev](https://reg
 
 PRML v0.2 frozen 2026-05-22. Four reference implementations (Python, JavaScript, Go, Rust), byte-equivalent on all 21 conformance vectors (13 v0.1 + 8 v0.2), 20 reject vectors and the 92-vector edge suite derived from the §3.6 formal grammar.
 
+If PRML is useful to you, starring this repository helps other people find it.
+
 > Code: MIT. Spec: [Community Specification License 1.0](spec/LICENSE.md). "FALSIFY" name and chevron logo: unregistered marks of Falsify OÜ, ™ reserved. See [TRADEMARK.md](TRADEMARK.md) · [NOTICE](NOTICE) · [docs/COMMERCIAL.md](docs/COMMERCIAL.md).
 
 ---
