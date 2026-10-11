@@ -1,8 +1,31 @@
-<img src="brand/lockup.svg" alt="falsify" width="320">
+<a href="https://falsify.dev"><img src="brand/hero.png" alt="falsify: fix the pass bar before the test runs. Anyone can check it later." width="100%"></a>
 
-**ML evaluation claims should be locked before the experiment runs, not reported after.**
+[![CI](https://img.shields.io/github/actions/workflow/status/studio-11-co/falsify/falsify.yml?branch=main&label=CI&style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml)
+[![Multi-lang Conformance](https://img.shields.io/github/actions/workflow/status/studio-11-co/falsify/multi-lang-conformance.yml?branch=main&label=conformance%20%C2%B7%204%20languages&style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/multi-lang-conformance.yml)
+[![tests](https://img.shields.io/badge/tests-646%20passing-2ea44f?style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml)
+[![vectors](https://img.shields.io/badge/vectors-21%20positive%20%C2%B7%2020%20reject%20%C2%B7%2092%20edge-2ea44f?style=flat-square)](spec/test-vectors/)
+[![OpenSSF Best Practices](https://img.shields.io/cii/level/13539?label=OpenSSF%20best%20practices&style=flat-square)](https://www.bestpractices.dev/projects/13539)
+[![honesty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/studio-11-co/falsify/main/.falsify/badge.json&label=honesty&style=flat-square)](claims/self/)
+<br>
+[![PyPI](https://img.shields.io/pypi/v/falsify?label=pypi%20falsify&color=2ea44f&style=flat-square)](https://pypi.org/project/falsify/)
+[![npm](https://img.shields.io/npm/v/falsify-js?label=npm%20falsify-js&color=2ea44f&style=flat-square)](https://www.npmjs.com/package/falsify-js)
+[![mlflow-falsify](https://img.shields.io/pypi/v/mlflow-falsify?label=mlflow-falsify&color=0194E2&style=flat-square)](https://pypi.org/project/mlflow-falsify/)
+[![falsify-inspect](https://img.shields.io/pypi/v/falsify-inspect?label=falsify-inspect&color=2ea44f&style=flat-square)](https://pypi.org/project/falsify-inspect/)
+[![GitHub Action](https://img.shields.io/badge/GitHub%20Action-prml--verify%40v2-2088FF?style=flat-square&logo=githubactions&logoColor=white)](https://github.com/marketplace/actions/prml-verify)
+[![impls](https://img.shields.io/badge/reference%20impls-4%20(py%20%C2%B7%20js%20%C2%B7%20go%20%C2%B7%20rs)-2ea44f?style=flat-square)](impl/)
+[![python](https://img.shields.io/badge/python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)](https://pypi.org/project/falsify/)
+[![license](https://img.shields.io/badge/code-MIT-blue?style=flat-square)](LICENSE)
+[![spec license](https://img.shields.io/badge/spec-CSL%201.0-blue?style=flat-square)](spec/LICENSE.md)
+<br>
+[![IANA](https://img.shields.io/badge/IANA-application%2Fvnd.prml%2Byaml-555?style=flat-square)](https://www.iana.org/assignments/media-types/application/vnd.prml+yaml)
+[![SchemaStore](https://img.shields.io/badge/schema-in%20SchemaStore-blue?style=flat-square)](https://github.com/SchemaStore/schemastore/pull/5673)
+[![CycloneDX](https://img.shields.io/badge/CycloneDX-prml%20namespace-blue?style=flat-square)](https://github.com/CycloneDX/cyclonedx-property-taxonomy/pull/193)
+[![UK AISI Inspect](https://img.shields.io/badge/listed-UK%20AISI%20Inspect%20extensions-2ea44f?style=flat-square)](https://github.com/UKGovernmentBEIS/inspect_ai/pull/4440)
+[![OECD.AI](https://img.shields.io/badge/OECD.AI-tools%20catalogue-blue?style=flat-square)](https://oecd.ai/en/catalogue/tools/prml-%E2%80%94-pre-registered-ml-manifest-specification)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20177839-blue?style=flat-square)](https://doi.org/10.5281/zenodo.20177839)
+[![live example](https://img.shields.io/badge/live%20example-SynthID--Text%20receipt-39D98A?style=flat-square)](https://falsify.dev/receipts/synthid-text-2026-10/)
 
-PRML commits a claim — metric, threshold, dataset hash, seed — as a SHA-256 manifest. Run the eval. The hash either matches or it doesn't.
+**PRML** is an open format for writing down, before a test runs, what the test has to achieve: metric, comparator, threshold, dataset hash, seed. `falsify` turns that manifest into canonical bytes and a SHA-256 hash; the public registry can add an RFC 3161 timestamp and a Rekor entry. After the run, anyone can check that the bar you report is byte-identical to the one you recorded.
 
 ```bash
 $ pip install falsify
@@ -25,22 +48,33 @@ TAMPERED
 
 No install? Verify any manifest in-browser at [registry.falsify.dev](https://registry.falsify.dev). Byte-equivalent reference CLIs also ship for JS (`npm i -g falsify-js`), Go, and Rust.
 
-4 reference implementations (Python, JavaScript, Go, Rust) byte-equivalent on all 21 conformance vectors (13 v0.1 stable + 8 v0.2). PRML v0.2 frozen 2026-05-22. The same day, Lock #2 (a public hypothesis on the spec's own distribution, target ≥3 external contributors in 14 days) resolved at 0/3. The mechanism worked, the post-mortem is at [falsify.dev/notes/lock-2-postmortem](https://falsify.dev/notes/lock-2-postmortem/). Designed for ML eval rigor. Maps to EU AI Act Article 12 evidence as a side effect. Since 2026-09-13 also on the 92-vector edge suite derived from the §3.6 formal grammar (`spec/test-vectors/edge/`).
+> **Live example.** [A pre-registered robustness evaluation of the open-source SynthID-Text watermark](https://falsify.dev/receipts/synthid-text-2026-10/): six pass bars fixed, hashed and timestamped (RFC 3161) on 11 October 2026, before the main run started. When the run finishes, the results are published on the same page against those bars, including any that are missed.
 
-> **Pre-registration + CI for AI-agent claims.** Lock the claim and threshold with SHA-256 *before* running the experiment — or the result doesn't count.
+### What a receipt shows, and what it does not
 
-![CI](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml/badge.svg)
-![Multi-lang Conformance](https://github.com/studio-11-co/falsify/actions/workflows/multi-lang-conformance.yml/badge.svg)
-![PyPI](https://img.shields.io/pypi/v/falsify?color=brightgreen&label=pypi)
-![tests](https://img.shields.io/badge/tests-643%20passing-brightgreen)
-![impls](https://img.shields.io/badge/reference%20impls-4%20(py%20%C2%B7%20js%20%C2%B7%20go%20%C2%B7%20rs)-brightgreen)
-![honesty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/studio-11-co/falsify/main/.falsify/badge.json&label=honesty)
-![python](https://img.shields.io/badge/python-3.11%2B-blue)
-![license](https://img.shields.io/badge/license-MIT-blue.svg)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13539/badge)](https://www.bestpractices.dev/projects/13539)
-[![SchemaStore](https://img.shields.io/badge/schema-in%20SchemaStore-blue.svg)](https://github.com/SchemaStore/schemastore/pull/5673)
-[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20177839-blue.svg)](https://doi.org/10.5281/zenodo.20177839)
-[![UK AISI Inspect](https://img.shields.io/badge/listed-UK%20AISI%20Inspect%20extensions-2ea44f.svg)](https://github.com/UKGovernmentBEIS/inspect_ai/pull/4440)
+| A receipt shows | A receipt does not show |
+|---|---|
+| The manifest bytes existed no later than the timestamp | That the run happened after the timestamp |
+| Whether a later copy is byte-identical to the recorded one (`TAMPERED`, exit 3, if not) | That the reported result is true: the observed value is asserted by whoever ran the test |
+| That four independent implementations agree on the bytes (21 conformance vectors, 20 reject vectors) | That the bar was the right bar. That decision stays with the people who set it |
+
+### Ways in
+
+| If you use | Start here |
+|---|---|
+| A terminal | `pip install falsify` · `npm i -g falsify-js` |
+| A browser | [registry.falsify.dev](https://registry.falsify.dev): paste a manifest, get a SHA-256 permalink |
+| GitHub Actions | [`studio-11-co/prml-verify-action@v2`](https://github.com/studio-11-co/prml-verify-action) |
+| MLflow | [`mlflow-falsify`](https://pypi.org/project/mlflow-falsify/): tags every run with the manifest hash |
+| Inspect AI | [`falsify-inspect`](https://github.com/studio-11-co/falsify-inspect) |
+| An eval harness | ten runnable bridges: [deepeval](examples/deepeval/), [lm-eval-harness](examples/lm-eval-harness/), [promptfoo](examples/promptfoo/), [opik](examples/opik/), [langfuse](examples/langfuse/), [laminar](examples/laminar/), [mastra](examples/mastra/), [hud](examples/hud/), [braintrust](examples/braintrust/), [lighteval](examples/lighteval/) |
+| CycloneDX SBOMs | [`examples/cyclonedx-attestation`](examples/cyclonedx-attestation/) |
+| Your own platform | [`docs/EMBED.md`](docs/EMBED.md): three pure functions and a five-line hook |
+| A real AI delivery | [Acceptance Evidence Pack](https://falsify.dev/pricing/#pilot), contracted through Falsify OÜ (reg. 17574308, Tallinn, Estonia) |
+
+**Current version:** falsify 0.4.0 (PRML CLI) · falsify-engine 0.4.0 — `falsify --version`.
+
+PRML v0.2 frozen 2026-05-22. Four reference implementations (Python, JavaScript, Go, Rust), byte-equivalent on all 21 conformance vectors (13 v0.1 + 8 v0.2), 20 reject vectors and the 92-vector edge suite derived from the §3.6 formal grammar.
 
 > Code: MIT. Spec: [Community Specification License 1.0](spec/LICENSE.md). "FALSIFY" name and chevron logo: unregistered marks of Falsify OÜ, ™ reserved. See [TRADEMARK.md](TRADEMARK.md) · [NOTICE](NOTICE) · [docs/COMMERCIAL.md](docs/COMMERCIAL.md).
 
@@ -72,8 +106,14 @@ Deterministic exit codes are the API. CI gates on them. Humans read the audit tr
 
 ---
 
-## Why this matters
+## More
 
+<details>
+<summary><b>Why this matters: who uses it and for what</b></summary>
+
+> **Pre-registration + CI for AI-agent claims.** Lock the claim and threshold with SHA-256 *before* running the experiment — or the result doesn't count.
+
+<a id="why-this-matters"></a>
 Every week another paper, blog post, or product launch claims an AI metric that quietly evaporates under scrutiny. It's not usually malice — it's that the claim was never structured to be falsifiable. Falsify is the smallest possible tool that forces that structure.
 
 - **ML teams** — gate deploys on pre-registered accuracy / NDCG / recall
@@ -83,10 +123,12 @@ Every week another paper, blog post, or product launch claims an AI metric that 
 
 See [docs/CASE_STUDIES.md](docs/CASE_STUDIES.md) for three concrete adoption stories.
 
----
+</details>
 
-## Integrations & ways in
+<details>
+<summary><b>Integrations in detail: IDE schema, registry, CI, MLflow, eval harnesses, SBOMs, embedding</b></summary>
 
+<a id="integrations--ways-in"></a>
 **Open `*.prml.yaml` in your IDE:** as of May 2026 the PRML JSON Schema is in the [SchemaStore](https://github.com/SchemaStore/schemastore/pull/5673) catalog. VS Code, JetBrains IDEs, Helix, Zed, and anything using `yaml-language-server` autocomplete and validate manifest files out of the box. No config.
 
 **Try it without installing:** [`registry.falsify.dev`](https://registry.falsify.dev) — paste a PRML manifest, get a SHA-256 permalink and a README badge. No account, the manifest you commit is stored and served publicly.
@@ -116,15 +158,14 @@ Each README states exactly what is real and what is not: the Langfuse and Lamina
 
 **What is PRML?** [`falsify.dev/what-is-prml`](https://falsify.dev/what-is-prml) — plain-English answer page.
 
----
+</details>
 
-**Current version:** falsify 0.4.0 (PRML CLI) · falsify-engine 0.4.0 — `falsify --version`.
-**Working with Claude Code?** See [CLAUDE.md](CLAUDE.md).
+<details>
+<summary><b>Specification, conformance suite, reference implementations and listings</b></summary>
 
----
+**Status.** 4 reference implementations (Python, JavaScript, Go, Rust) byte-equivalent on all 21 conformance vectors (13 v0.1 stable + 8 v0.2). PRML v0.2 frozen 2026-05-22. The same day, Lock #2 (a public hypothesis on the spec's own distribution, target ≥3 external contributors in 14 days) resolved at 0/3. The mechanism worked, the post-mortem is at [falsify.dev/notes/lock-2-postmortem](https://falsify.dev/notes/lock-2-postmortem/). Designed for ML eval rigor. Maps to EU AI Act Article 12 evidence as a side effect. Since 2026-09-13 also on the 92-vector edge suite derived from the §3.6 formal grammar (`spec/test-vectors/edge/`).
 
-## Specification artifacts
-
+<a id="specification-artifacts"></a>
 This repository is the home of **PRML v0.1** — Pre-Registered ML Manifest Specification. The spec, conformance suite, reference implementations (`impl/`, JS/Go/Rust + a Python reference target), and adjacent documents live under `spec/`:
 
 - **[`spec/PRML-v0.1.md`](spec/PRML-v0.1.md)** — the spec (RFC-style, [Community Specification License 1.0](spec/LICENSE.md))
@@ -197,13 +238,13 @@ Hosted spec at [spec.falsify.dev/v0.1](https://spec.falsify.dev/v0.1). Public re
 - **[leipzig/awesome-reproducible-research](https://github.com/leipzig/awesome-reproducible-research)** — Scientific Data Management
 - **[ASSERT-KTH/awesome-open-science-software](https://github.com/ASSERT-KTH/awesome-open-science-software)** — Tools (KTH research group)
 
----
+</details>
 
-## Beyond the core: the workflow engine
+<details>
+<summary><b>Install, quickstart and the workflow engine</b></summary>
 
-`falsify lock` / `falsify verify` (shown at the top) is the whole PRML core — that is all most teams need. For a managed claim *workflow*, the bundled **`falsify-engine`** CLI adds `init` / `run` / `verdict` / `guard` / `trend` (and more), a `commit-msg` guard that blocks commits contradicting a locked verdict, and optional Claude Code tooling. Full walkthrough: **[docs/ENGINE-TUTORIAL.md](docs/ENGINE-TUTORIAL.md)**.
-
-## Install
+<a id="install"></a>
+### Install
 
 ```bash
 pip install falsify
@@ -217,7 +258,7 @@ Requires Python **3.11+**.
 
 > **Two commands, one install.** `falsify` is the **PRML manifest CLI** — `lock` / `verify` / `hash` / `init` / `test-vectors` on a `*.prml.yaml` manifest (shown at the top). `falsify-engine` is the separate **pre-registration workflow engine** — the `init` → `lock` → `run` → `verdict` / `guard` loop over `.falsify/<name>/` specs. The workflow sections further down use `falsify-engine`; substitute it for `falsify` there. No install needed to verify a manifest: paste it at [registry.falsify.dev](https://registry.falsify.dev).
 
-### Development install (from the repo)
+#### Development install (from the repo)
 
 ```bash
 git clone https://github.com/studio-11-co/falsify
@@ -228,7 +269,7 @@ pip install -e .
 The `-e` editable form is for hacking on falsify itself — your
 edits to `falsify.py` take effect immediately without reinstalling.
 
-### Docker
+#### Docker
 
 ```bash
 docker build -t falsify-demo . && docker run --rm -it falsify-demo
@@ -238,7 +279,7 @@ Runs the auto-demo in a clean container. See
 [docs/DOCKER.md](docs/DOCKER.md) for interactive and repo-mount
 modes.
 
-### pre-commit integration
+#### pre-commit integration
 
 Consume falsify's hooks from your own repo:
 
@@ -255,7 +296,8 @@ Then `pre-commit install && pre-commit install --hook-type commit-msg`.
 See [docs/PRE_COMMIT.md](docs/PRE_COMMIT.md) for the full list of
 exported hooks and how this repo eats its own dog food.
 
-## Quickstart
+<a id="quickstart"></a>
+### Quickstart
 
 ```bash
 # The falsify PRML CLI — lock a manifest, run your eval, verify.
@@ -284,7 +326,7 @@ below.
 
 New to pre-registration? Walk through [TUTORIAL.md](TUTORIAL.md) — 10 minutes, zero to first locked claim (core PRML path).
 
-### Start from a template
+#### Start from a template
 
 The five templates are a feature of the **workflow engine** (`falsify-engine`):
 
@@ -308,7 +350,7 @@ Each scaffolds into `claims/<name>/` (sources) and mirrors
 without further setup. Override the default name with `--name`
 or the directory with `--dir`.
 
-### Developer commands
+#### Developer commands
 
 ```bash
 make install   # pip install pyyaml
@@ -324,7 +366,7 @@ direct answers to "why not just X?" questions.
 
 Feature matrix vs adjacent tools: [docs/COMPARISON.md](docs/COMPARISON.md).
 
-### Explain any claim
+#### Explain any claim
 
 `falsify-engine why <name>` is the human-friendly companion to `verdict`
 — it always exits `0` and tells you exactly what the next honest
@@ -344,7 +386,7 @@ next action: `falsify-engine run <name>` to produce a fresh verdict against
 Add `--json` for a scripted pipeline, `--verbose` for full hashes
 and the last five runs.
 
-### Spot drift with a sparkline
+#### Spot drift with a sparkline
 
 `falsify-engine trend <name>` draws an ASCII sparkline of the metric
 across its recorded runs, marks the threshold line, and classifies
@@ -372,7 +414,7 @@ trend: degrading
 `--ascii` swaps in `_.oO#`; `--width` resizes the sparkline;
 `--last` caps history (default 20, max 200).
 
-### Measure the CLI itself
+#### Measure the CLI itself
 
 `falsify-engine bench` spawns each subcommand under a fresh temporary
 directory and records per-command latency (min / median / p95 /
@@ -388,17 +430,20 @@ falsify-engine bench --runs 5 --json     # machine-readable output
 100); `--warmup <N>` discards the first N spawns so JIT / import
 caches stabilize before timing (default 1).
 
-## Exit codes
+<a id="beyond-the-core-the-workflow-engine"></a>
+### Beyond the core: the workflow engine
 
-| Code | Meaning                                       |
-|------|-----------------------------------------------|
-| 0    | PASS                                          |
-| 10   | FAIL                                          |
-| 2    | Bad spec / INCONCLUSIVE                       |
-| 3    | Hash mismatch (spec tampered)                 |
-| 11   | Guard violation (commit blocked)              |
+`falsify lock` / `falsify verify` (shown at the top) is the whole PRML core — that is all most teams need. For a managed claim *workflow*, the bundled **`falsify-engine`** CLI adds `init` / `run` / `verdict` / `guard` / `trend` (and more), a `commit-msg` guard that blocks commits contradicting a locked verdict, and optional Claude Code tooling. Full walkthrough: **[docs/ENGINE-TUTORIAL.md](docs/ENGINE-TUTORIAL.md)**.
 
-## Claude Code tooling
+</details>
+
+<details>
+<summary><b>Tooling: Claude Code, MCP server, git hook, demos</b></summary>
+
+**Working with Claude Code?** See [CLAUDE.md](CLAUDE.md).
+
+<a id="claude-code-tooling"></a>
+### Claude Code tooling
 
 The repo ships Claude Code **skills** (`hypothesis-author`, `claim-audit`,
 `claim-review`, `falsify-ci-doctor`, and the `falsify` orchestrator), two
@@ -407,16 +452,8 @@ forked-context **subagents** (`claim-auditor`, `verdict-refresher`), and
 falsifiable specs and audit text / PR diffs against the verdict log. See
 [CLAUDE.md](CLAUDE.md) and the `.claude/` directory.
 
-## Demo
-
-- Walk through the pipeline in 5 runnable steps: [DEMO.md](DEMO.md).
-- Second-by-second shooting script for the 3-minute video:
-  [docs/DEMO_SHOT_LIST.md](docs/DEMO_SHOT_LIST.md).
-- Four more claim types (accuracy regression, latency gate,
-  prediction calibration, LLM agreement, AB test):
-  [docs/EXAMPLES.md](docs/EXAMPLES.md).
-
-## MCP integration
+<a id="mcp-integration"></a>
+### MCP integration
 
 Expose the verdict store to Claude Desktop / Claude Code via
 Model Context Protocol with four read-only tools (`list_verdicts`,
@@ -437,7 +474,7 @@ SDK; if `mcp` isn't installed, `python -m mcp_server` exits 2 with
 a clear install hint. Full surface in
 [`mcp_server/README.md`](mcp_server/README.md).
 
-### Managed Agents (optional)
+#### Managed Agents (optional)
 
 Deploy the two subagents (`verdict-refresher`, `claim-auditor`)
 to Anthropic Console for scheduled and on-demand execution.
@@ -445,7 +482,8 @@ See [docs/MANAGED_AGENTS.md](docs/MANAGED_AGENTS.md) for the
 setup recipe and manifests under
 [`managed_agents/`](managed_agents/).
 
-## Install the git hook
+<a id="install-the-git-hook"></a>
+### Install the git hook
 
 ```bash
 cp hooks/commit-msg .git/hooks/commit-msg
@@ -458,7 +496,23 @@ Or, as a symlink so hook updates propagate automatically:
 ln -sf "$(pwd)/hooks/commit-msg" .git/hooks/commit-msg
 ```
 
-## Repository layout
+<a id="demo"></a>
+### Demo
+
+- Walk through the pipeline in 5 runnable steps: [DEMO.md](DEMO.md).
+- Second-by-second shooting script for the 3-minute video:
+  [docs/DEMO_SHOT_LIST.md](docs/DEMO_SHOT_LIST.md).
+- Four more claim types (accuracy regression, latency gate,
+  prediction calibration, LLM agreement, AB test):
+  [docs/EXAMPLES.md](docs/EXAMPLES.md).
+
+</details>
+
+<details>
+<summary><b>Repository layout and self-dogfooding</b></summary>
+
+<a id="repository-layout"></a>
+### Repository layout
 
 - `falsify_prml.py` — PRML reference implementation, single-file Python CLI, stdlib + pyyaml only (the `falsify` command).
 - `falsify.py` — the workflow **engine**, a separate tool with its own schema (the `falsify-engine` command). Not PRML; not covered by the conformance vectors.
@@ -482,7 +536,8 @@ ln -sf "$(pwd)/hooks/commit-msg" .git/hooks/commit-msg
 - `.claude/commands/` — the three slash commands.
 - `.github/workflows/` — CI + PRML manifest verification.
 
-## Self-dogfooding
+<a id="self-dogfooding"></a>
+### Self-dogfooding
 
 Falsify uses itself. Three real claims about this codebase live
 under `claims/self/`:
@@ -493,13 +548,20 @@ under `claims/self/`:
 
 Run `make dogfood` to re-verify. CI runs these on every PR.
 
-## Changelog
+</details>
+
+<details>
+<summary><b>Changelog and roadmap</b></summary>
+
+<a id="changelog"></a>
+### Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 > **Latest — 2026-08-24** · **falsify 0.4.0** on PyPI; v0.3.13 (2026-08-23) fixed three specification defects and expanded the negative-conformance suite to 20 reject vectors. The conformance suite stays at 21 positive + 20 reject vectors across the four reference implementations. Registry receipts carry an RFC 3161 countersignature and a Rekor v2 mirror.
 
-## Roadmap
+<a id="roadmap"></a>
+### Roadmap
 
 Two roadmaps run alongside each other:
 
@@ -508,16 +570,12 @@ Two roadmaps run alongside each other:
 
 The CLI is downstream of the spec: spec v0.2 frozen 2026-05-22, CLI v0.2.0 shipped to PyPI the same week. CLI v0.3 is loosely scoped for Q4 2026, tracking the v0.3 spec backlog.
 
-## Trust model
+</details>
 
-Falsify is a discipline tool, not a zero-trust system. For a full
-enumeration of attacks defended and NOT defended, with the exact
-exit code or command that catches each, see
-[docs/ADVERSARIAL.md](docs/ADVERSARIAL.md). For private disclosure
-of invariant breaks, see [.github/SECURITY.md](.github/SECURITY.md).
+<details>
+<summary><b>Use of generative AI in this codebase</b></summary>
 
-## Use of generative AI
-
+<a id="use-of-generative-ai"></a>
 This codebase was written with heavy use of AI coding assistants. Saying so
 here is the point: a project about making evaluation claims checkable should
 not be vague about how its own code was produced.
@@ -552,6 +610,28 @@ say which model and how in the pull request. We would rather know than guess.
 This statement follows the disclosure guidance in
 [NLnet's GenAI policy](https://nlnet.nl/foundation/policies/generativeAI/),
 which we consider a reasonable community norm regardless of funding.
+
+</details>
+
+---
+
+## Exit codes
+
+| Code | Meaning                                       |
+|------|-----------------------------------------------|
+| 0    | PASS                                          |
+| 10   | FAIL                                          |
+| 2    | Bad spec / INCONCLUSIVE                       |
+| 3    | Hash mismatch (spec tampered)                 |
+| 11   | Guard violation (commit blocked)              |
+
+## Trust model
+
+Falsify is a discipline tool, not a zero-trust system. For a full
+enumeration of attacks defended and NOT defended, with the exact
+exit code or command that catches each, see
+[docs/ADVERSARIAL.md](docs/ADVERSARIAL.md). For private disclosure
+of invariant breaks, see [.github/SECURITY.md](.github/SECURITY.md).
 
 ## License
 
