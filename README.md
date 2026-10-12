@@ -48,7 +48,7 @@ TAMPERED
 
 No install? Verify any manifest in-browser at [registry.falsify.dev](https://registry.falsify.dev). Byte-equivalent reference CLIs also ship for JS (`npm i -g falsify-js`), Go, and Rust.
 
-> **Live example.** [A pre-registered robustness evaluation of the open-source SynthID-Text watermark](https://falsify.dev/receipts/synthid-text-2026-10/): six pass bars fixed, hashed and timestamped (RFC 3161) on 11 October 2026, before the main run started. When the run finishes, the results are published on the same page against those bars, including any that are missed.
+> **Live example.** [A pre-registered robustness evaluation of the open-source SynthID-Text watermark](https://falsify.dev/receipts/synthid-text-2026-10/): six pass bars fixed, hashed and timestamped (RFC 3161) on 11 October 2026, before the main run started. The results are on the same page, against those bars: 8 of 12 outcomes met and 4 not, with every output published and the scoring reproducible from them.
 
 ### What a receipt shows, and what it does not
 
