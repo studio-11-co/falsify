@@ -12,7 +12,7 @@
 
 The EU AI Act (Regulation 2024/1689) entered force on 1 August 2024. The high-risk obligations apply on **2 December 2027** for Annex III systems, and on **2 August 2028** for systems embedded in Annex I regulated products (deferred from 2 August 2026 by the EU Digital Omnibus).
 
-A second date comes first. The revised Product Liability Directive (EU) 2024/2853 must be transposed by **9 December 2026** and applies to products placed on the market after that date, software included (Article 2(1)). A court may order a defendant to disclose relevant evidence (Article 9(1)); failure to disclose, or non-compliance with mandatory Union safety requirements, creates a rebuttable presumption that the product was defective (Article 10(2)(a) and (b)). Rights expire ten years after placing on the market (Article 17). PRML does not change liability; it fixes, verifiably, when an evaluation record was made.
+A second date comes first. The revised Product Liability Directive (EU) 2024/2853 must be transposed by **9 December 2026** and applies to products placed on the market or put into service after 8 December 2026, software included (Article 2(1), as corrected on 7 May 2026). A court may order a defendant to disclose relevant evidence (Article 9(1)); failure to disclose, or non-compliance with mandatory Union safety requirements, creates a rebuttable presumption that the product was defective (Article 10(2)(a) and (b)). Rights expire ten years after placing on the market (Article 17). PRML does not change liability; it fixes, verifiably, when an evaluation record was made.
 
 By that date, providers of high-risk AI systems (Annex III) must demonstrate, with documented evidence:
 

@@ -172,7 +172,7 @@ v0.1 mapped Article 50 as "indirect". Article 50 concerns disclosure to natural 
 
 **ISO/IEC 42001:2023:** 7.5.3 (control of documented information) and 9.2 (internal audit; the auditor recomputes the digest offline) are the clauses where the format is directly useful; 8.4 (operational planning and control) at the procedure level.
 
-**Harmonised standards.** CEN-CENELEC JTC 21 is drafting the standards intended to support the high-risk requirements (among them EN 18286 for quality management and the prEN 18229 series on logging, accuracy and transparency). None had been cited in the Official Journal at the date of this document; no clause-level mapping is offered until the texts are public and cited. Falsify OÜ's comment paper to JTC 21 is at spec.falsify.dev.
+**Harmonised standards.** CEN-CENELEC JTC 21 is drafting the standards intended to support the high-risk requirements (among them EN 18286 for quality management and the prEN 18229 series on logging, accuracy and transparency). None had been cited in the Official Journal at the date of this document; no clause-level mapping is offered until the texts are public and cited. *Update, 14 October 2026:* EN 18286:2026 (quality management system, Article 17) was cited by Commission Implementing Decision (EU) 2026/2274 (OJ L, 14.10.2026). No standard for the Section 2 requirements (Articles 8 to 15) has been cited yet. Falsify OÜ's comment paper to JTC 21 is at spec.falsify.dev.
 
 ---
 
