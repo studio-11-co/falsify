@@ -288,7 +288,7 @@ Consume falsify's hooks from your own repo:
 ```yaml
 repos:
   - repo: https://github.com/studio-11-co/falsify
-    rev: v0.1.4
+    rev: v0.4.0
     hooks:
       - id: falsify-guard
       - id: falsify-doctor
@@ -567,10 +567,10 @@ See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 Two roadmaps run alongside each other:
 
-- **CLI tool roadmap:** [ROADMAP.md](ROADMAP.md) — `falsify` features, integrations, dependencies. **CLI v0.2.0 shipped 2026-05-22.** v0.3 features tracked alongside the v0.3 spec backlog.
+- **CLI tool roadmap:** [ROADMAP.md](ROADMAP.md) — `falsify` features, integrations, dependencies. **Current CLI: falsify 0.4.0 on PyPI.**
 - **Specification roadmap:** [spec/v0.2/ROADMAP.md](spec/v0.2/ROADMAP.md) — PRML format evolution, canonicalization grammar, conformance. **Spec v0.2 frozen 2026-05-22.** v0.3 design backlog open under [`spec/v0.3-backlog/`](spec/v0.3-backlog/) (claim trees, suite manifests, selective-disclosure resistance via `leaves_total`).
 
-The CLI is downstream of the spec: spec v0.2 frozen 2026-05-22, CLI v0.2.0 shipped to PyPI the same week. CLI v0.3 is loosely scoped for Q4 2026, tracking the v0.3 spec backlog.
+The CLI is downstream of the spec: spec v0.2 frozen 2026-05-22; the CLI tracks it (currently falsify 0.4.0). Spec v0.3 work is in [`spec/v0.3-backlog/`](spec/v0.3-backlog/).
 
 </details>
 
