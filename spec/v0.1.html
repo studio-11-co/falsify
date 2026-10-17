@@ -260,7 +260,7 @@ footer.colophon a:hover { color: var(--ink); }
   <figcaption style="margin-top: 10px; font-size: 13px; color: var(--ink-3, #5a6677); font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: 0.02em;">60-second walkthrough: what a client receives at AI handover. A completed acceptance record (illustrative, demo signatures); every receipt shown is public at registry.falsify.dev. Live at <a href="https://spec.falsify.dev/demo/" style="color: var(--ink-2);">/demo</a>.</figcaption>
 </figure>
 
-<article id="content" data-prerendered="sha256:80380a1f643dbd54b954619f6f16cb79176856a58756792ec946604fec48faef">
+<article id="content" data-prerendered="sha256:fb04ce85c87a5c1372fd2cac6fc91a67af9db049a345028c5a6f533d26d8720f">
 <!-- prerender: PRML-v0.1.md · marked 12.0.2 · scripts/spec-prerender.mjs — ÜRETİLMİŞ, elle düzeltme; .md düzelt ve --write koş -->
 <h1 id="prml-pre-registered-ml-manifest-specification">PRML — Pre-Registered ML Manifest Specification</h1>
 <p><strong>Version:</strong> 0.1 (Draft)
@@ -614,7 +614,8 @@ and as corroboration, but it <strong>SHOULD NOT</strong> be relied on as the sol
 audit-grade anchor for high-risk or regulatory use; select at least one
 additional independent mechanism from the list above. In every case a
 registry receipt evidences that a specific criteria object existed no later
-than the anchored time and is unchanged since. It does <strong>not</strong> evidence that
+than the anchored time, and lets a verifier check that a copy presented later
+matches it. It does <strong>not</strong> evidence that
 the evaluation ran afterwards — establishing that order requires a separate
 execution-side record, dated independently of this one — and it never proves
 the result.</p>
@@ -625,7 +626,9 @@ the producer <strong>back-dating</strong> a manifest that was authored after the
 The two are different and require different mechanisms.</p>
 <p>There is a third limit, and it is the boundary of what any receipt can carry.
 Anchoring establishes that the committed bytes existed <strong>no later than</strong> the
-anchor time and have not changed since. That the evaluation ran <em>after</em> that
+anchor time, and that a copy presented later can be checked against them. It
+cannot show that no other version was created or used in the meantime. That
+the evaluation ran <em>after</em> that
 point — and therefore that the bar preceded the result — follows from using the
 mechanism as intended: anchor first, then run. A receipt encountered in
 isolation, with no independent evidence of when the run began, bounds the
@@ -1233,6 +1236,17 @@ Anchoring (option 3) is a deployment obligation in compliance contexts,
 already stated in §2.3.4.</p>
 </li>
 </ol>
+</blockquote>
+<blockquote>
+<p><strong>v0.1 erratum (2026-10-17): evidence wording narrowed, EDITORIAL.</strong> Two
+informative sentences in §2.3.4 said a receipt shows the committed object
+&quot;is unchanged since&quot; / &quot;have not changed since&quot; the anchor time. That is
+broader than what a timestamp establishes. A validated anchor supports
+checking that a disclosed copy matches the version committed no later than
+the anchor time; it cannot show that no other version was created or used in
+the meantime, when testing began, or whether that version was followed. Both
+sentences now say so. No normative text, canonical byte, digest or validation
+rule changes.</p>
 </blockquote>
 <hr>
 <p><em>Editor&#39;s note: This document is intended to be readable, implementable, and

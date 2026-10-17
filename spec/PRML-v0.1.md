@@ -317,7 +317,8 @@ and as corroboration, but it **SHOULD NOT** be relied on as the sole
 audit-grade anchor for high-risk or regulatory use; select at least one
 additional independent mechanism from the list above. In every case a
 registry receipt evidences that a specific criteria object existed no later
-than the anchored time and is unchanged since. It does **not** evidence that
+than the anchored time, and lets a verifier check that a copy presented later
+matches it. It does **not** evidence that
 the evaluation ran afterwards — establishing that order requires a separate
 execution-side record, dated independently of this one — and it never proves
 the result.
@@ -330,7 +331,9 @@ The two are different and require different mechanisms.
 
 There is a third limit, and it is the boundary of what any receipt can carry.
 Anchoring establishes that the committed bytes existed **no later than** the
-anchor time and have not changed since. That the evaluation ran *after* that
+anchor time, and that a copy presented later can be checked against them. It
+cannot show that no other version was created or used in the meantime. That
+the evaluation ran *after* that
 point — and therefore that the bar preceded the result — follows from using the
 mechanism as intended: anchor first, then run. A receipt encountered in
 isolation, with no independent evidence of when the run began, bounds the
@@ -908,6 +911,16 @@ Conformance is enforceable via the falsify reference test suite
 >    and `additionalProperties: false` makes any new field a MAJOR change.
 >    Anchoring (option 3) is a deployment obligation in compliance contexts,
 >    already stated in §2.3.4.
+
+> **v0.1 erratum (2026-10-17): evidence wording narrowed, EDITORIAL.** Two
+> informative sentences in §2.3.4 said a receipt shows the committed object
+> "is unchanged since" / "have not changed since" the anchor time. That is
+> broader than what a timestamp establishes. A validated anchor supports
+> checking that a disclosed copy matches the version committed no later than
+> the anchor time; it cannot show that no other version was created or used in
+> the meantime, when testing began, or whether that version was followed. Both
+> sentences now say so. No normative text, canonical byte, digest or validation
+> rule changes.
 
 ---
 
