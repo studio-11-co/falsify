@@ -38,7 +38,7 @@ Arranging a document is not vouching for its content.
 
 ## What this shows, and what it does not
 
-- The criteria and the signed plan existed no later than 11:50:42 UTC and have not changed since. The run-start records were anchored after that, and the report after the run-final records.
+- The criteria and the signed plan existed no later than 11:50:42 UTC, and the copies here match what was committed then. The run-start records were anchored after that, and the report after the run-final records.
 - It does not show that the criteria are appropriate, that the results are correct, or that the tests ran after the plan. The runner times inside the linkage records are the supplier's statement.
 - It does not show that no other plan or run existed. A reviewer should ask for the producer id (`acceptance-record-example.falsify`) and look at its other records.
 - Missing reference, listed in the statement: no hash of the trained model artefact is recorded; the system version is identified by the training script's hash and the seed.

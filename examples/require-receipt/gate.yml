@@ -4,7 +4,7 @@
 # benchmark, model marketplace, or review process). Every PR must carry a
 # PRML manifest whose bar was locked — and publicly receipted — at a stated
 # time T, before the entry is accepted: the receipt shows this exact bar
-# existed no later than T and has not changed since. It does not by itself
+# existed no later than T and that this copy matches it. It does not by itself
 # show that the run happened after T (that ordering is prml-linkage/0).
 # Post-hoc goalpost edits exit 3 and block merge.
 #

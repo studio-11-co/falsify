@@ -33,7 +33,7 @@ So the appendix has everything a pre-registration needs except the registration.
 |---|---|---|
 | 1.2 technical objectives, success criteria | `metric`, `comparator`, `threshold` in the manifest | the exact bar, byte for byte |
 | 2.3 analysis specification (data, estimator) | `dataset.id`, `dataset.hash`, `seed` | the test items and seed the bar referred to |
-| 3.2 pre-register evaluation | `preregistration-v1.prml.yaml` + `.sha256` sidecar + public receipt | this manifest existed no later than the receipt time and has not changed |
+| 3.2 pre-register evaluation | `preregistration-v1.prml.yaml` + `.sha256` sidecar + public receipt | this manifest existed no later than the receipt time, and a copy shown later can be checked against it |
 | 4.1 pilot → "document all changes" | `preregistration-v2.prml.yaml` + `deviation-2026-09-22.md` | what changed (dataset bytes), what did not (the threshold) |
 | 4.2 full data collection | `linkage-start.yaml` (prml-linkage/0) + public receipt | a run was declared against manifest v2, on the public record, before it finished |
 | 5.2 planned analysis | `linkage-final.yaml`, `result.json` | observed value, result digest, verdict, chained to the start record |
@@ -92,7 +92,7 @@ curl -X POST https://registry.falsify.dev/commit -H "content-type: text/yaml" --
 
 ## What this shows, and what it does not
 
-- A PRML receipt shows that **this exact bar existed no later than time T and has not changed since**. It does not, by itself, show that the run happened after T.
+- A PRML receipt shows that **this exact bar existed no later than time T**, and lets anyone check that a copy shown later matches it. It does not show that no other version was created or used, and it does not, by itself, show that the run happened after T.
 - The linkage records add an **ordering claim** (lock → run → result) at a stated tier. Without trusted execution hardware, a runner's start time is process evidence, not cryptographic proof. The specification says so; this example does too.
 - Nothing here shows the **result is correct**. Score verification stays with the evaluator and the reader.
 
