@@ -1,0 +1,16 @@
+version: prml/0.1
+claim_id: 01a02d25-9f34-7cf4-9a75-1bdb11ea0da9
+created_at: '2026-08-23T05:43:55Z'
+metric: mastra_eval_verdict
+metric_args:
+  scorer: location-accuracy
+  gates: [answered-in-english]
+  tracked_thresholds: 1
+comparator: '>='
+threshold: 0.9
+dataset:
+  id: mastra/criteria.json
+  hash: fae800c04e7b9c58522111ce07b85e8154d6ae3d0e15be3c1712bf65d0b25627
+seed: 0
+producer:
+  id: bridge-test.local

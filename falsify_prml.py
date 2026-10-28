@@ -19,6 +19,8 @@ Commands:
     falsify verify <spec> [--observed <v>]        verify hash; if --observed, evaluate
     falsify hash <spec>                           print the canonical SHA-256 only
     falsify attest <spec>                         emit an in-toto (ITE-6) Statement
+    falsify anchor <spec> [--sealed]              post to the registry, save the receipt files
+    falsify receipt verify <spec> [--fetch]       verify the RFC 3161 token and Rekor entry offline
     falsify init <name>                           write a skeleton manifest
     falsify test-vectors <vectors.json>           run the conformance suite
     falsify --version
@@ -621,6 +623,121 @@ def cmd_attest(args) -> int:
     return EXIT_PASS
 
 
+def cmd_anchor(args) -> int:
+    import falsify_receipt as fr
+    try:
+        m = load_manifest(args.spec)
+    except (OSError, ValueError) as e:
+        sys.stderr.write(f"anchor: cannot read {args.spec}: {e}\n")
+        return EXIT_BAD
+    errors = validate_manifest(m)
+    if errors:
+        sys.stderr.write("anchor: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
+        return EXIT_BAD
+    h = manifest_hash(m)
+    if args.sealed:
+        print(f"anchoring {args.spec} sealed: the hash and timestamps become public, the text stays withheld")
+    else:
+        print(f"anchoring {args.spec}: the manifest text becomes public at {args.registry.rstrip('/')}/{h}")
+    try:
+        resp = fr.anchor(args.spec, h, registry=args.registry, handle=args.handle, sealed=args.sealed)
+    except (fr.ReceiptError, OSError) as e:
+        sys.stderr.write(f"anchor: {e}\n")
+        return EXIT_BAD
+    print(f"  sha256:     {h}")
+    print(f"  permalink:  {resp.get('permalink')}")
+    print(f"  timestamp:  {resp.get('timestamp')}" + ("  (already in the registry)" if resp.get("existing") else ""))
+    tsa = resp.get("tsa") or {}
+    rek = resp.get("rekor") or {}
+    print(f"  RFC 3161:   {tsa.get('gen_time') or 'not issued (the registry retries; run `falsify receipt verify --fetch` later)'}")
+    print(f"  Rekor:      {('log index ' + str(rek.get('log_index'))) if rek else 'not issued'}")
+    for k, path in resp.get("_saved", {}).items():
+        print(f"  saved {k + ':':10} {path}")
+    print("next: falsify receipt verify " + args.spec)
+    return EXIT_PASS
+
+
+def cmd_receipt_verify(args) -> int:
+    import falsify_receipt as fr
+    try:
+        m = load_manifest(args.spec)
+    except (OSError, ValueError) as e:
+        sys.stderr.write(f"receipt verify: cannot read {args.spec}: {e}\n")
+        return EXIT_BAD
+    errors = validate_manifest(m)
+    if errors:
+        sys.stderr.write("receipt verify: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
+        return EXIT_BAD
+    h = manifest_hash(m)
+    paths = fr.receipt_paths(args.spec)
+    if args.fetch:
+        try:
+            fr.fetch_receipt(args.spec, h, registry=args.registry)
+        except fr.ReceiptError as e:
+            sys.stderr.write(f"receipt verify: {e}\n")
+            return EXIT_BAD
+    tsr_path = args.tsr or paths["tsr"]
+    rekor_path = args.rekor or paths["rekor"]
+    have_tsr, have_rekor = os.path.exists(tsr_path), os.path.exists(rekor_path)
+    if not (have_tsr or have_rekor):
+        sys.stderr.write(f"receipt verify: no receipt files ({tsr_path}, {rekor_path}); "
+                         "run `falsify anchor` or add --fetch\n")
+        return EXIT_BAD
+    try:
+        trust = fr.load_trust(args.trusted_root)
+        result = {"manifest_sha256": h}
+        if have_tsr:
+            with open(tsr_path, "rb") as fh:
+                result["rfc3161"] = fr.verify_tsr(fh.read(), h, trust)
+        if have_rekor:
+            with open(rekor_path, "rb") as fh:
+                result["rekor"] = fr.verify_rekor(fh.read(), h, trust)
+    except ImportError:
+        sys.stderr.write('receipt verify needs the receipt extra: pip install "falsify[receipt]"\n')
+        return EXIT_GUARD
+    def _state(part):
+        if part["ok"]:
+            return "ok"
+        # Inclusion proof checked but no pinned key for that log: not a failure, not a pass.
+        if part.get("inclusion_ok") and part.get("checkpoint_signed") is None:
+            return "partial"
+        return "fail"
+
+    states = [_state(result[k]) for k in ("rfc3161", "rekor") if k in result]
+    if "fail" in states:
+        status = "INVALID"
+    elif "partial" in states:
+        status = "PARTIAL"
+    else:
+        status = "VERIFIED"
+    result["status"] = status
+    if args.json:
+        print(json.dumps(result, indent=2, sort_keys=True, default=str))
+    else:
+        print(f"manifest sha256: {h}")
+        if "rfc3161" in result:
+            r = result["rfc3161"]
+            print(f"  RFC 3161: {'OK' if r['ok'] else 'FAILED'}  " + (f"time {r['gen_time']}" if r["ok"] else str(r["error"])))
+        if "rekor" in result:
+            r = result["rekor"]
+            if r["ok"]:
+                print(f"  Rekor:    OK  {r['origin']} index {r['log_index']} (inclusion proof + signed checkpoint)")
+            else:
+                print(f"  Rekor:    {'PARTIAL' if r.get('inclusion_ok') and r.get('checkpoint_signed') is None else 'FAILED'}  {r['error']}")
+        if status == "VERIFIED":
+            t = (result.get("rfc3161") or {}).get("gen_time")
+            print(f"RECEIPT VERIFIED: these manifest bytes existed no later than {t}." if t
+                  else "RECEIPT VERIFIED: these manifest bytes are in the transparency log.")
+            print("It does not show that the run happened after that time, or that any reported result is true.")
+        else:
+            print(f"RECEIPT {status}")
+    if status == "VERIFIED":
+        return EXIT_PASS
+    if status == "PARTIAL":
+        return EXIT_GUARD
+    return EXIT_TAMPERED
+
+
 def main(argv=None) -> int:
     p = argparse.ArgumentParser(prog="falsify", description="PRML reference CLI — pre-register ML eval claims.")
     p.add_argument("--version", action="version", version=f"falsify {__version__} (PRML v0.1/v0.2)")
@@ -646,6 +763,27 @@ def main(argv=None) -> int:
     sp = sub.add_parser("attest", help="emit an in-toto (ITE-6) Statement for the manifest")
     sp.add_argument("spec")
     sp.set_defaults(func=cmd_attest)
+
+    sp = sub.add_parser("anchor", help="post the manifest to a PRML registry and save the receipt files")
+    sp.add_argument("spec")
+    sp.add_argument("--registry", default="https://registry.falsify.dev")
+    sp.add_argument("--handle", default=None, help="submitter handle shown on the registry")
+    sp.add_argument("--sealed", action="store_true",
+                    help="publish only the hash and timestamps; the manifest text stays withheld")
+    sp.set_defaults(func=cmd_anchor)
+
+    sp = sub.add_parser("receipt", help="work with registry receipts")
+    rsub = sp.add_subparsers(dest="receipt_cmd")
+    rp = rsub.add_parser("verify", help="verify the RFC 3161 token and Rekor entry for a manifest, offline")
+    rp.add_argument("spec")
+    rp.add_argument("--tsr", default=None, help="RFC 3161 token (default: <stem>.prml.tsr)")
+    rp.add_argument("--rekor", default=None, help="Rekor entry JSON (default: <stem>.prml.rekor.json)")
+    rp.add_argument("--fetch", action="store_true", help="download the token and log entry from the registry first")
+    rp.add_argument("--registry", default="https://registry.falsify.dev")
+    rp.add_argument("--trusted-root", dest="trusted_root", default=None,
+                    help="Sigstore trusted_root.json to use instead of the pinned TSA root and log key")
+    rp.add_argument("--json", action="store_true", help="machine-readable output")
+    rp.set_defaults(func=cmd_receipt_verify)
 
     sp = sub.add_parser("init", help="write a skeleton manifest")
     sp.add_argument("name")

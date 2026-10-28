@@ -41,11 +41,13 @@ Changelog = "https://github.com/studio-11-co/falsify/blob/main/CHANGELOG.md"
 # silently for a week. Migrating to the new MCPServer class is tracked
 # separately; until then this pin is what keeps the surface working.
 mcp = ["mcp>=1.0.0,<2"]
+# `falsify receipt verify`: RFC 3161 token and Rekor checks without OpenSSL.
+receipt = ["rfc3161-client>=1.0", "cryptography>=43"]
 
 [project.scripts]
 falsify = "falsify_prml:main"
 falsify-engine = "falsify:main"
 
 [tool.setuptools]
-py-modules = ["falsify", "falsify_prml"]
+py-modules = ["falsify", "falsify_prml", "falsify_receipt"]
 packages = ["mcp_server"]

@@ -47,6 +47,19 @@ TAMPERED
 # exit 3
 ```
 
+**Timestamped receipt from the terminal.** `falsify anchor` posts the manifest to the public registry and saves the receipt next to it; `falsify receipt verify` checks it offline, without trusting the registry and without OpenSSL: the RFC 3161 token is checked against Sigstore's timestamp authority root, and the Rekor v2 entry by its inclusion proof and signed checkpoint.
+
+```bash
+$ pip install "falsify[receipt]"
+$ falsify anchor accuracy.prml.yaml          # the manifest becomes public at registry.falsify.dev/<hash>; --sealed publishes only hash + timestamps
+$ falsify receipt verify accuracy.prml.yaml  # add --fetch to download the token and log entry for an existing record
+manifest sha256: af0bfb6d39b17e3ba8520b743043ff3d7cd303a14b02d526d9a5de9ed04b2375
+  RFC 3161: OK  time 2026-08-23T05:43:56+00:00
+  Rekor:    OK  log2025-1.rekor.sigstore.dev index 76716892 (inclusion proof + signed checkpoint)
+RECEIPT VERIFIED: these manifest bytes existed no later than 2026-08-23T05:43:56+00:00.
+It does not show that the run happened after that time, or that any reported result is true.
+```
+
 No install? Verify any manifest in-browser at [registry.falsify.dev](https://registry.falsify.dev). Byte-equivalent reference CLIs also ship for JS (`npm i -g falsify-js`), Go, and Rust.
 
 > **Live example.** [A pre-registered robustness evaluation of the open-source SynthID-Text watermark](https://falsify.dev/receipts/synthid-text-2026-10/): six pass bars fixed, hashed and timestamped (RFC 3161) on 11 October 2026, before the main run started. The results are on the same page, against those bars: 8 of 12 outcomes met and 4 not, with every output published and the scoring reproducible from them.

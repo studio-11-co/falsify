@@ -31,7 +31,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install pyyaml
+        # rfc3161-client + cryptography = the `receipt` extra (tests/test_receipt.py)
+        run: pip install pyyaml "rfc3161-client>=1.0" "cryptography>=43"
 
       - name: Run unittest suite
         run: python -m unittest discover tests -v

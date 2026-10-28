@@ -6,6 +6,25 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+- **`falsify anchor <spec> [--sealed] [--registry URL] [--handle H]`.** Posts the
+  manifest to a PRML registry (default registry.falsify.dev), refuses the answer
+  unless the registry's hash equals the local canonical hash, and saves
+  `<stem>.prml.receipt.json`, `<stem>.prml.tsr` (RFC 3161) and
+  `<stem>.prml.rekor.json` (Rekor v2) next to the manifest. `--sealed` publishes
+  only the hash and timestamps. Standard library only.
+- **`falsify receipt verify <spec> [--fetch] [--trusted-root FILE] [--json]`.**
+  Offline receipt check without OpenSSL: the RFC 3161 token's messageImprint must
+  equal the manifest hash and its signature must chain to Sigstore's TSA root;
+  the Rekor entry's digest must equal the manifest hash, its RFC 9162 inclusion
+  proof must reach the checkpoint root, and the checkpoint must be signed by the
+  log key. Trust anchors are pinned from Sigstore's trusted_root.json (sha256
+  6494e21e…, 28 Oct 2026); `--trusted-root` overrides them. Exit 0 VERIFIED,
+  3 INVALID, 11 PARTIAL (log key unknown), 2 bad input. Needs the new optional
+  extra `pip install "falsify[receipt]"` (rfc3161-client, cryptography).
+  Tests: `tests/test_receipt.py` (offline fixtures from a real registry record,
+  mock registry for `anchor`).
+
 ## [0.4.1] — 2026-10-28
 
 ### Added
