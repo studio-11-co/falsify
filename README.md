@@ -2,7 +2,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/studio-11-co/falsify/falsify.yml?branch=main&label=CI&style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml)
 [![Multi-lang Conformance](https://img.shields.io/github/actions/workflow/status/studio-11-co/falsify/multi-lang-conformance.yml?branch=main&label=conformance%20%C2%B7%204%20languages&style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/multi-lang-conformance.yml)
-[![tests](https://img.shields.io/badge/tests-646%20passing-2ea44f?style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml)
+[![tests](https://img.shields.io/badge/tests-649%20passing-2ea44f?style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml)
 [![vectors](https://img.shields.io/badge/vectors-21%20positive%20%C2%B7%2020%20reject%20%C2%B7%2092%20edge-2ea44f?style=flat-square)](spec/test-vectors/)
 [![OpenSSF Best Practices](https://img.shields.io/cii/level/13539?label=OpenSSF%20best%20practices&style=flat-square)](https://www.bestpractices.dev/projects/13539)
 [![honesty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/studio-11-co/falsify/main/.falsify/badge.json&label=honesty&style=flat-square)](claims/self/)
@@ -28,8 +28,9 @@
 **PRML** is an open format for writing down, before a test runs, what the test has to achieve: metric, comparator, threshold, dataset hash, seed. `falsify` turns that manifest into canonical bytes and a SHA-256 hash; the public registry can add an RFC 3161 timestamp and a Rekor entry. After the run, anyone can check that the bar you report is byte-identical to the one you recorded.
 
 ```bash
-$ pip install falsify
-$ cd examples/first-manifest    # reproducible: same file, same hash on any machine
+$ pip install falsify    # needs Python 3.11+; with an older system Python: pipx install falsify (or uvx falsify)
+$ git clone https://github.com/studio-11-co/falsify && cd falsify/examples/first-manifest
+                          # reproducible: same file, same hash on any machine
 $ falsify lock accuracy.prml.yaml
 locked: accuracy.prml.yaml
   canonical bytes: 316

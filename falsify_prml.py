@@ -531,6 +531,11 @@ def cmd_verify(args) -> int:
     except ValueError:
         sys.stderr.write("verify: --observed must be a finite number\n")
         return EXIT_BAD
+    if not math.isfinite(observed):
+        # float() accepts "inf"/"nan"; `inf >= threshold` would PASS every bar.
+        # Reject like the JS and Rust reference CLIs (exit 2).
+        sys.stderr.write("verify: --observed must be a finite number\n")
+        return EXIT_BAD
     _tol = 1e-9
     _ma = m.get("metric_args")
     if isinstance(_ma, dict) and isinstance(_ma.get("tolerance"), (int, float)):

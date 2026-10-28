@@ -16,6 +16,18 @@ numbers follow [Semantic Versioning](https://semver.org).
   registry withdrawn; signature sidecar re-scoped to `spec/v0.3-backlog/06-signature-sidecar.md`
   with an Ed25519 test vector; no `producer.tier` field, ever.
 
+### Fixed
+- **`falsify verify --observed inf` no longer passes.** `float()` accepts
+  `inf`/`nan`, and an infinite observation satisfied every `>=` bar (exit 0).
+  The Python CLI and the Go reference CLI now reject non-finite observations
+  with exit 2, as the JS and Rust CLIs already did. Regression test:
+  `tests/test_prml_verify_observed.py`. Reported by the 28 Oct 2026 code audit.
+
+### Changed
+- README quick start: states the Python 3.11+ requirement (with `pipx` /
+  `uvx` for older system Pythons) and adds the missing `git clone` step before
+  `cd examples/first-manifest`.
+
 ## [0.4.0] — 2026-09-13
 
 Canonical output changes for some inputs (v0.2 integral-float thresholds), hence a

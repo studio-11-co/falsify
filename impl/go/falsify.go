@@ -833,6 +833,12 @@ func cmdVerify(specPath, observedStr string) int {
 		fmt.Fprintf(os.Stderr, "verify: --observed must be a finite number: %v\n", err)
 		return exitBad
 	}
+	// ParseFloat accepts "inf"/"NaN"; an infinite observation would pass every
+	// ">=" bar. Reject like the JS and Rust reference CLIs (exit 2).
+	if math.IsInf(observed, 0) || math.IsNaN(observed) {
+		fmt.Fprintln(os.Stderr, "verify: --observed must be a finite number")
+		return exitBad
+	}
 	comparator, _ := m["comparator"].(string)
 	thresholdRaw, _ := m["threshold"].(json.Number)
 	threshold, err := thresholdRaw.Float64()
