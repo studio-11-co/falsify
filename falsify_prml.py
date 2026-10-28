@@ -42,7 +42,7 @@ import re
 import sys
 import unicodedata
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 
 EXIT_PASS = 0
 EXIT_BAD = 2
@@ -429,16 +429,21 @@ def _sidecar_path(spec_path: str) -> str:
 # Commands
 # ─────────────────────────────────────────────────────────────────────────
 
+def _json_fail(args, code: int, message: str) -> int:
+    """Error exit: text on stderr; with --json also an ERROR object on stdout."""
+    sys.stderr.write(message)
+    _json_out(args, {"spec": args.spec, "status": "ERROR", "exit_code": code, "error": message.strip()})
+    return code
+
+
 def cmd_lock(args) -> int:
     try:
         m = load_manifest(args.spec)
     except (OSError, ValueError) as e:
-        sys.stderr.write(f"lock: cannot read {args.spec}: {e}\n")
-        return EXIT_BAD
+        return _json_fail(args, EXIT_BAD, f"lock: cannot read {args.spec}: {e}\n")
     errors = validate_manifest(m)
     if errors:
-        sys.stderr.write("lock: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
-        return EXIT_BAD
+        return _json_fail(args, EXIT_BAD, "lock: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
     h = manifest_hash(m)
     sidecar = _sidecar_path(args.spec)
     with open(sidecar, "w", encoding="utf-8") as fh:
@@ -458,18 +463,16 @@ def cmd_hash(args) -> int:
     try:
         m = load_manifest(args.spec)
     except (OSError, ValueError) as e:
-        sys.stderr.write(f"hash: cannot read {args.spec}: {e}\n")
-        return EXIT_BAD
+        return _json_fail(args, EXIT_BAD, f"hash: cannot read {args.spec}: {e}\n")
     # Validate before hashing: an invalid or non-portable manifest (e.g. one
     # carrying forbidden control characters) would otherwise yield a hash that
     # the other reference impls reject — a silent, non-portable commitment.
     # This matches `lock`/`verify` here and `hash` in the Go/Rust impls.
     errors = validate_manifest(m)
     if errors:
-        sys.stderr.write("hash: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
-        return EXIT_BAD
+        return _json_fail(args, EXIT_BAD, "hash: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
     if getattr(args, "json", False):
-        _json_out(args, {"spec": args.spec, "sha256": manifest_hash(m)})
+        _json_out(args, {"spec": args.spec, "status": "OK", "exit_code": EXIT_PASS, "sha256": manifest_hash(m)})
         return EXIT_PASS
     print(manifest_hash(m))
     return EXIT_PASS

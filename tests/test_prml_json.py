@@ -58,7 +58,23 @@ class JsonOutput(unittest.TestCase):
     def test_lock_and_hash(self):
         code, d = run("lock", "accuracy.prml.yaml", "--json", cwd=self.tmp)
         self.assertEqual((code, d["status"]), (0, "LOCKED"))
-        self.assertEqual(d["sha256"], run("hash", "accuracy.prml.yaml", "--json", cwd=self.tmp)[1]["sha256"])
+        code, h = run("hash", "accuracy.prml.yaml", "--json", cwd=self.tmp)
+        self.assertEqual((code, h["status"], h["exit_code"]), (0, "OK", 0))
+        self.assertEqual(d["sha256"], h["sha256"])
+
+    def test_errors_are_json_on_every_command(self):
+        # An invalid or unreadable manifest must still give one ERROR object on
+        # stdout under --json (lock and hash printed only stderr text before).
+        f = Path(self.tmp) / "accuracy.prml.yaml"
+        f.write_text(f.read_text().replace("threshold: 0.85", "threshold: high"))
+        for cmd in ("lock", "hash", "verify"):
+            code, d = run(cmd, "accuracy.prml.yaml", "--json", cwd=self.tmp)
+            self.assertEqual((code, d["status"], d["exit_code"]), (2, "ERROR", 2), cmd)
+            self.assertIn("invalid manifest", d["error"])
+        for cmd in ("lock", "hash", "verify"):
+            code, d = run(cmd, "missing.prml.yaml", "--json", cwd=self.tmp)
+            self.assertEqual((code, d["status"]), (2, "ERROR"), cmd)
+            self.assertIn("cannot read", d["error"])
 
 
 if __name__ == "__main__":

@@ -6,6 +6,8 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-10-28
+
 ### Added
 - **`--json` on `falsify verify`, `lock` and `hash`.** One JSON object on stdout
   with stable keys (`status`, `exit_code`, `sha256`, `recorded`, `metric`,
@@ -13,6 +15,9 @@ numbers follow [Semantic Versioning](https://semver.org).
   `status` separates the two cases that share exit 11: `NO_LOCK` (no sidecar or
   `--expected-hash`) and `DATASET_MISMATCH`. For CI steps and coding agents
   that should not parse text. Tests: `tests/test_prml_json.py`.
+  Every error path (unreadable or invalid manifest) also returns one object,
+  `{"status": "ERROR", "exit_code": 2, "error": ...}`, on all three commands;
+  `hash --json` carries `status` and `exit_code` like the others.
 
 ## [0.5.0] — 2026-10-28
 
@@ -229,10 +234,6 @@ accept. No canonical rendering changes and no already-published hash changes.
   corrected. Go's floor stays at 1.21.
 
 ## [Unreleased]
-
-## [0.5.0] — 2026-10-28
-
-## [0.4.1] — 2026-10-28
 
 ### Added (2026-08-13)
 - **`falsify linkage start|finish|verify` CLI** wrapping the linkage
@@ -542,10 +543,6 @@ hash-equivalence is preserved. See `spec/MIGRATION-v0.1-to-v0.2.md`.
 ---
 
 ## [Unreleased]
-
-## [0.5.0] — 2026-10-28
-
-## [0.4.1] — 2026-10-28
 
 Specification-track changes after 0.2.0 will accumulate here. No
 behaviour changes in the installed `falsify` Python package between
