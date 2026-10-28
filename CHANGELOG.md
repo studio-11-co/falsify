@@ -6,6 +6,8 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-10-28
+
 ### Added
 - **`falsify anchor <spec> [--sealed] [--registry URL] [--handle H]`.** Posts the
   manifest to a PRML registry (default registry.falsify.dev), refuses the answer
@@ -219,6 +221,8 @@ accept. No canonical rendering changes and no already-published hash changes.
   corrected. Go's floor stays at 1.21.
 
 ## [Unreleased]
+
+## [0.5.0] — 2026-10-28
 
 ## [0.4.1] — 2026-10-28
 
@@ -530,6 +534,8 @@ hash-equivalence is preserved. See `spec/MIGRATION-v0.1-to-v0.2.md`.
 ---
 
 ## [Unreleased]
+
+## [0.5.0] — 2026-10-28
 
 ## [0.4.1] — 2026-10-28
 

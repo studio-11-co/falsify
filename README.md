@@ -2,7 +2,7 @@
 
 [![CI](https://img.shields.io/github/actions/workflow/status/studio-11-co/falsify/falsify.yml?branch=main&label=CI&style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml)
 [![Multi-lang Conformance](https://img.shields.io/github/actions/workflow/status/studio-11-co/falsify/multi-lang-conformance.yml?branch=main&label=conformance%20%C2%B7%204%20languages&style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/multi-lang-conformance.yml)
-[![tests](https://img.shields.io/badge/tests-649%20passing-2ea44f?style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml)
+[![tests](https://img.shields.io/badge/tests-666%20passing-2ea44f?style=flat-square)](https://github.com/studio-11-co/falsify/actions/workflows/falsify.yml)
 [![vectors](https://img.shields.io/badge/vectors-21%20positive%20%C2%B7%2020%20reject%20%C2%B7%2092%20edge-2ea44f?style=flat-square)](spec/test-vectors/)
 [![OpenSSF Best Practices](https://img.shields.io/cii/level/13539?label=OpenSSF%20best%20practices&style=flat-square)](https://www.bestpractices.dev/projects/13539)
 [![honesty](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/studio-11-co/falsify/main/.falsify/badge.json&label=honesty&style=flat-square)](claims/self/)
@@ -88,7 +88,7 @@ No install? Verify any manifest in-browser at [registry.falsify.dev](https://reg
 | Your own platform | [`docs/EMBED.md`](docs/EMBED.md): three pure functions and a five-line hook |
 | A real AI delivery | [Acceptance Evidence Pack](https://falsify.dev/pricing/#pilot), contracted through Falsify OÜ (reg. 17574308, Tallinn, Estonia) |
 
-**Current version:** falsify 0.4.1 (PRML CLI) · falsify-engine 0.4.1 — `falsify --version`.
+**Current version:** falsify 0.5.0 (PRML CLI) · falsify-engine 0.5.0 — `falsify --version`.
 
 PRML v0.2 frozen 2026-05-22. Four reference implementations (Python, JavaScript, Go, Rust), byte-equivalent on all 21 conformance vectors (13 v0.1 + 8 v0.2), 20 reject vectors and the 92-vector edge suite derived from the §3.6 formal grammar.
 
@@ -304,7 +304,7 @@ Consume falsify's hooks from your own repo:
 ```yaml
 repos:
   - repo: https://github.com/studio-11-co/falsify
-    rev: v0.4.1
+    rev: v0.5.0
     hooks:
       - id: falsify-guard
       - id: falsify-doctor
@@ -576,17 +576,17 @@ Run `make dogfood` to re-verify. CI runs these on every PR.
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
-> **Latest — 2026-10-28** · **falsify 0.4.1** on PyPI (`verify` rejects a non-finite `--observed`); v0.3.13 (2026-08-23) fixed three specification defects and expanded the negative-conformance suite to 20 reject vectors. The conformance suite stays at 21 positive + 20 reject vectors across the four reference implementations. Registry receipts carry an RFC 3161 countersignature and a Rekor v2 mirror.
+> **Latest — 2026-10-28** · **falsify 0.5.0** on PyPI: `falsify anchor` and `falsify receipt verify` (RFC 3161 + Rekor, offline), `init` writes a lockable manifest, `attest --as test-result`; v0.3.13 (2026-08-23) fixed three specification defects and expanded the negative-conformance suite to 20 reject vectors. The conformance suite stays at 21 positive + 20 reject vectors across the four reference implementations. Registry receipts carry an RFC 3161 countersignature and a Rekor v2 mirror.
 
 <a id="roadmap"></a>
 ### Roadmap
 
 Two roadmaps run alongside each other:
 
-- **CLI tool roadmap:** [ROADMAP.md](ROADMAP.md) — `falsify` features, integrations, dependencies. **Current CLI: falsify 0.4.1 on PyPI.**
+- **CLI tool roadmap:** [ROADMAP.md](ROADMAP.md) — `falsify` features, integrations, dependencies. **Current CLI: falsify 0.5.0 on PyPI.**
 - **Specification roadmap:** [spec/v0.2/ROADMAP.md](spec/v0.2/ROADMAP.md) — PRML format evolution, canonicalization grammar, conformance. **Spec v0.2 frozen 2026-05-22.** v0.3 design backlog open under [`spec/v0.3-backlog/`](spec/v0.3-backlog/) (claim trees, suite manifests, selective-disclosure resistance via `leaves_total`).
 
-The CLI is downstream of the spec: spec v0.2 frozen 2026-05-22; the CLI tracks it (currently falsify 0.4.1). Spec v0.3 work is in [`spec/v0.3-backlog/`](spec/v0.3-backlog/).
+The CLI is downstream of the spec: spec v0.2 frozen 2026-05-22; the CLI tracks it (currently falsify 0.5.0). Spec v0.3 work is in [`spec/v0.3-backlog/`](spec/v0.3-backlog/).
 
 </details>
 

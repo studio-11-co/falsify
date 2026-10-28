@@ -25,7 +25,7 @@ from typing import Any, Callable
 
 import yaml
 
-__version__ = "0.4.1"
+__version__ = "0.5.0"
 
 EXIT_PASS = 0
 EXIT_FAIL = 10
