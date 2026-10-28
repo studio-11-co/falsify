@@ -7,7 +7,7 @@ and adapt the `experiment.command` to your codebase.
 
 ## Example 1 — Model accuracy regression
 
-> Scaffold this with `falsify init --template accuracy`.
+> Scaffold this with `falsify-engine init --template accuracy`.
 
 Claim (plain): *"Our classifier maintains at least 92% accuracy on
 the holdout set."*
@@ -36,7 +36,7 @@ current state. Behavior:
 
 ## Example 2 — Latency regression gate
 
-> Scaffold this with `falsify init --template latency`.
+> Scaffold this with `falsify-engine init --template latency`.
 
 Claim: *"P95 request latency stays under 200ms after this
 refactor."*
@@ -58,11 +58,11 @@ Spec sketch:
 Run `falsify why <name>` for a plain-English explanation of the
 current state. Behavior: PASS = latency stays within the budget; FAIL = a
 regression merged in. Useful as a pre-release gate — CI blocks
-the release tag when `falsify verdict` exits 10.
+the release tag when `falsify-engine verdict` exits 10.
 
 ## Example 3 — Prediction market calibration
 
-> Scaffold this with `falsify init --template brier`.
+> Scaffold this with `falsify-engine init --template brier`.
 
 Claim: *"Our market prices are well-calibrated: Brier score below
 0.25 across last-30-day closed markets."*
@@ -88,7 +88,7 @@ FAIL = re-train or re-price.
 
 ## Example 4 — Code review LLM agreement
 
-> Scaffold this with `falsify init --template llm-judge`.
+> Scaffold this with `falsify-engine init --template llm-judge`.
 
 Claim: *"When our LLM code reviewer flags a line as critical, a
 human reviewer agrees at least 80% of the time."*
@@ -114,7 +114,7 @@ without human-in-the-loop for every flag.
 
 ## Example 5 — AB test preregistration (bonus)
 
-> Scaffold this with `falsify init --template ab`.
+> Scaffold this with `falsify-engine init --template ab`.
 
 Claim: *"Variant B has higher click-through rate than A, at p<0.05
 with a minimum detectable effect of 2 percentage points."*

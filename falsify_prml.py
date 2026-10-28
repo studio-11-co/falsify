@@ -21,7 +21,7 @@ Commands:
     falsify attest <spec>                         emit an in-toto (ITE-6) Statement
     falsify anchor <spec> [--sealed]              post to the registry, save the receipt files
     falsify receipt verify <spec> [--fetch]       verify the RFC 3161 token and Rekor entry offline
-    falsify init <name>                           write a skeleton manifest
+    falsify init <name> [--dataset FILE]          write a new manifest (UUIDv7, current time)
     falsify test-vectors <vectors.json>           run the conformance suite
     falsify --version
 
@@ -549,20 +549,30 @@ def cmd_verify(args) -> int:
     return EXIT_FAIL
 
 
-_SKELETON = """\
-version: prml/0.1
-claim_id: REPLACE_WITH_UUIDv7
-created_at: "2026-01-01T00:00:00Z"
-metric: accuracy
-comparator: ">="
-threshold: 0.90
-dataset:
-  id: your-dataset-id
-  hash: REPLACE_WITH_64_LOWERCASE_HEX
-seed: 42
-producer:
-  id: your-org-or-domain
-"""
+def new_uuid7() -> str:
+    """RFC 9562 UUIDv7: 48-bit Unix time in ms, version 7, variant 10, random rest.
+
+    (``uuid.uuid7`` exists only from Python 3.14; this package supports 3.11+.)
+    """
+    import secrets
+    import time
+    ms = time.time_ns() // 1_000_000
+    b = bytearray(ms.to_bytes(6, "big") + secrets.token_bytes(10))
+    b[6] = 0x70 | (b[6] & 0x0F)
+    b[8] = 0x80 | (b[8] & 0x3F)
+    h = b.hex()
+    return f"{h[:8]}-{h[8:12]}-{h[12:16]}-{h[16:20]}-{h[20:]}"
+
+
+def _file_sha256(path: str) -> str:
+    d = hashlib.sha256()
+    with open(path, "rb") as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b""):
+            d.update(chunk)
+    return d.hexdigest()
+
+
+_PLACEHOLDER_HASH = "REPLACE_WITH_64_LOWERCASE_HEX"
 
 
 def cmd_init(args) -> int:
@@ -570,9 +580,61 @@ def cmd_init(args) -> int:
     if os.path.exists(out):
         sys.stderr.write(f"init: {out} already exists\n")
         return EXIT_BAD
+    parent = os.path.dirname(out)
+    if parent and not os.path.isdir(parent):
+        sys.stderr.write(f"init: directory {parent} does not exist\n")
+        return EXIT_BAD
+    ds_id, ds_hash = args.dataset_id or "your-dataset-id", _PLACEHOLDER_HASH
+    if args.dataset:
+        try:
+            ds_hash = _file_sha256(args.dataset)
+        except OSError as e:
+            sys.stderr.write(f"init: cannot read dataset {args.dataset}: {e}\n")
+            return EXIT_BAD
+        ds_id = args.dataset_id or os.path.basename(args.dataset)
+    from datetime import datetime, timezone
+    created = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    m = {
+        "version": "prml/0.1",
+        "claim_id": new_uuid7(),
+        "created_at": created,
+        "metric": args.metric,
+        "comparator": args.comparator,
+        "threshold": args.threshold,
+        "dataset": {"id": ds_id, "hash": ds_hash},
+        "seed": args.seed,
+        "producer": {"id": args.producer},
+    }
+    if out.endswith(".json"):
+        text = json.dumps(m, indent=2, ensure_ascii=False) + "\n"
+    else:
+        text = (
+            "version: prml/0.1\n"
+            f"claim_id: {m['claim_id']}\n"
+            f'created_at: "{created}"\n'
+            f"metric: {json.dumps(args.metric, ensure_ascii=False)}\n"
+            f'comparator: "{args.comparator}"\n'
+            f"threshold: {args.threshold!r}\n"
+            "dataset:\n"
+            f"  id: {json.dumps(ds_id, ensure_ascii=False)}\n"
+            f"  hash: {ds_hash}\n"
+            f"seed: {args.seed}\n"
+            "producer:\n"
+            f"  id: {json.dumps(args.producer, ensure_ascii=False)}\n"
+        )
     with open(out, "w", encoding="utf-8") as fh:
-        fh.write(_SKELETON)
-    print(f"wrote {out} — fill in the placeholders, then `falsify lock {out}`")
+        fh.write(text)
+    print(f"wrote {out}")
+    print(f"  claim_id:    {m['claim_id']} (UUIDv7)")
+    print(f"  created_at:  {created}")
+    print(f"  bar:         {args.metric} {args.comparator} {args.threshold!r}")
+    if ds_hash == _PLACEHOLDER_HASH:
+        print("  dataset.hash is a placeholder: rerun with --dataset <file>, or paste the 64-hex SHA-256")
+    else:
+        print(f"  dataset:     {ds_id}  sha256:{ds_hash}")
+    if args.producer == "your-org-or-domain":
+        print("  producer.id is a placeholder: set --producer <your-org-or-domain>")
+    print(f"check the bar, then: falsify lock {out}")
     return EXIT_PASS
 
 
@@ -785,8 +847,15 @@ def main(argv=None) -> int:
     rp.add_argument("--json", action="store_true", help="machine-readable output")
     rp.set_defaults(func=cmd_receipt_verify)
 
-    sp = sub.add_parser("init", help="write a skeleton manifest")
-    sp.add_argument("name")
+    sp = sub.add_parser("init", help="write a new manifest (UUIDv7 claim_id, current created_at)")
+    sp.add_argument("name", help="output path; .prml.yaml is added unless it ends in .yaml/.yml/.json")
+    sp.add_argument("--dataset", default=None, help="dataset file: its SHA-256 becomes dataset.hash")
+    sp.add_argument("--dataset-id", dest="dataset_id", default=None, help="dataset.id (default: the file name)")
+    sp.add_argument("--metric", default="accuracy")
+    sp.add_argument("--comparator", default=">=", choices=[">=", "<=", ">", "<", "=="])
+    sp.add_argument("--threshold", type=float, default=0.90)
+    sp.add_argument("--seed", type=int, default=42)
+    sp.add_argument("--producer", default="your-org-or-domain", help="producer.id")
     sp.set_defaults(func=cmd_init)
 
     sp = sub.add_parser("test-vectors", help="run the conformance suite against a vectors.json")

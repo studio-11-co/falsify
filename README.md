@@ -317,8 +317,8 @@ exported hooks and how this repo eats its own dog food.
 
 ```bash
 # The falsify PRML CLI — lock a manifest, run your eval, verify.
-falsify init accuracy.prml.yaml          # writes a skeleton manifest
-# edit accuracy.prml.yaml: metric, comparator, threshold, dataset.hash, seed, producer
+falsify init accuracy --dataset eval_set.jsonl --producer your-org --threshold 0.85
+                                         # writes accuracy.prml.yaml: UUIDv7 claim_id, current created_at, dataset SHA-256
 falsify lock accuracy.prml.yaml          # canonicalize + SHA-256 + write sidecar
 # ... run your eval, get the observed value ...
 falsify verify accuracy.prml.yaml --observed 0.934

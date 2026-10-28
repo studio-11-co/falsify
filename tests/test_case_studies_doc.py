@@ -116,7 +116,7 @@ class CaseStudiesDocTests(unittest.TestCase):
         for heading in ("### Case 1", "### Case 2", "### Case 3"):
             body = _section(self.text, heading)
             self.assertRegex(
-                body, r"(?m)^(?:    |\t)falsify ",
+                body, r"(?m)^(?:    |\t)falsify(?:-engine)? ",
                 f"{heading} has no indented `falsify ` command",
             )
 

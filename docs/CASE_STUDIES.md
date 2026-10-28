@@ -22,27 +22,27 @@ relock](GLOSSARY.md#honest-relock) fails CI with exit code `3`.
 
 **Workflow.**
 
-    falsify init --template accuracy --name ranking_ndcg
+    falsify-engine init --template accuracy --name ranking_ndcg
     # edit claims/ranking_ndcg/spec.yaml to point metric_fn at the
     # team's NDCG implementation and set threshold = 0.42
-    falsify lock ranking_ndcg
+    falsify-engine lock ranking_ndcg
     git add .falsify/ranking_ndcg/spec.lock.json \
             claims/ranking_ndcg/
     git commit -m "Lock NDCG@10 >= 0.42 claim"
 
     # CI step on every PR:
-    falsify run ranking_ndcg && falsify verdict ranking_ndcg
+    falsify-engine run ranking_ndcg && falsify-engine verdict ranking_ndcg
 
 **What they get.** A PR that edits `spec.yaml` to lower the
 threshold without `--force` produces exit code `3` and a clear
 "spec modified after lock" message. Model promotions are gated on
-`falsify verdict` exit `0`. Weekly `make dogfood` keeps the three
+`falsify-engine verdict` exit `0`. Weekly `make dogfood` keeps the three
 self-claims green so the team knows the tool itself has not
 regressed.
 
 **Operational rhythm.** Quarterly, the team runs
-`falsify export --output q2_audit.jsonl` followed by
-`falsify verify q2_audit.jsonl` — a single command chain that
+`falsify-engine export --output q2_audit.jsonl` followed by
+`falsify-engine verify q2_audit.jsonl` — a single command chain that
 hands their audit committee a replayable, tamper-evident record of
 every threshold ever shipped.
 
@@ -63,15 +63,15 @@ story into a CI exit code the merge queue can read.
 
 **Workflow.**
 
-    falsify init --template latency --name api_p95
+    falsify-engine init --template latency --name api_p95
     # edit claims/api_p95/metric.py to query the Prometheus export
     # for the last hour and return (p95_ms, sample_count)
-    falsify lock api_p95
+    falsify-engine lock api_p95
     git add .falsify/api_p95/spec.lock.json claims/api_p95/
     git commit -m "Lock public-API p95 latency claim (< 200ms)"
 
     # CI step on every PR that touches api/* paths:
-    falsify run api_p95 && falsify verdict api_p95
+    falsify-engine run api_p95 && falsify-engine verdict api_p95
 
 **PR-review integration.** The team wires the
 [`claim-review`](../.claude/skills/claim-review/SKILL.md) Claude
@@ -81,7 +81,7 @@ skill into their PR automation. Any diff that touches
 sees it.
 
 **What they get.** The next time a retry tweak lands, the
-`api_p95` run returns `p95_ms = 380` and `falsify verdict` exits
+`api_p95` run returns `p95_ms = 380` and `falsify-engine verdict` exits
 `10`. The merge queue refuses the PR within minutes — instead of
 silent drift over days. If somebody tries to "fix" CI by editing
 the threshold, the commit that does it is the commit that runs
@@ -107,10 +107,10 @@ pre-registration artifact, and the git tag *is* the proof-of-time.
 
 **Workflow.**
 
-    falsify init --template llm-judge --name reasoning_bench_v1
+    falsify-engine init --template llm-judge --name reasoning_bench_v1
     # edit claims/reasoning_bench_v1/metric.py to invoke the team's
     # judge harness; set threshold = 0.75 agreement
-    falsify lock reasoning_bench_v1
+    falsify-engine lock reasoning_bench_v1
 
     # commit the lock BEFORE the test set is ever touched:
     git add claims/reasoning_bench_v1/ \
@@ -120,13 +120,13 @@ pre-registration artifact, and the git tag *is* the proof-of-time.
 
 Later, once the test set is ready:
 
-    falsify run reasoning_bench_v1
-    falsify verdict reasoning_bench_v1     # PASS or FAIL is on record
-    falsify export --output reasoning_v1_audit.jsonl
+    falsify-engine run reasoning_bench_v1
+    falsify-engine verdict reasoning_bench_v1     # PASS or FAIL is on record
+    falsify-engine export --output reasoning_v1_audit.jsonl
 
 **What reviewers see.** The git tag proves the claim was locked
 before the evaluation ran. The audit JSONL is replayable
-end-to-end via `falsify replay <run_id>`, so a skeptical reviewer
+end-to-end via `falsify-engine replay <run_id>`, so a skeptical reviewer
 can reproduce the verdict on their own machine using only the
 repo and the private test set.
 

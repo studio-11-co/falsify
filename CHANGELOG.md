@@ -25,6 +25,19 @@ numbers follow [Semantic Versioning](https://semver.org).
   Tests: `tests/test_receipt.py` (offline fixtures from a real registry record,
   mock registry for `anchor`).
 
+### Changed
+- **`falsify init` writes a manifest that can be locked as written.** It now
+  generates a real UUIDv7 `claim_id` (RFC 9562; `uuid.uuid7` is 3.14+ only) and
+  the current UTC `created_at`, and `--dataset FILE` sets `dataset.hash` to the
+  file's SHA-256 (`dataset.id` defaults to the file name). New flags `--metric`,
+  `--comparator`, `--threshold`, `--seed`, `--producer`, `--dataset-id`. A
+  missing output directory is a clean error (exit 2) instead of a traceback; a
+  `.json` name writes JSON. Placeholders that remain are listed. Tests:
+  `tests/test_prml_init.py`.
+- Docs: `docs/CASE_STUDIES.md`, `docs/EXAMPLES.md` and `docs/DEMO_SCRIPT.md` used
+  the old command name for the workflow engine (`falsify init --template`,
+  `falsify run`, `falsify verdict`, ...); they now say `falsify-engine`.
+
 ## [0.4.1] — 2026-10-28
 
 ### Added
