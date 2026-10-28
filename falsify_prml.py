@@ -18,7 +18,7 @@ Commands:
     falsify lock <spec.yaml|spec.json>            canonicalize, hash, write sidecar
     falsify verify <spec> [--observed <v>]        verify hash; if --observed, evaluate
     falsify hash <spec>                           print the canonical SHA-256 only
-    falsify attest <spec>                         emit an in-toto (ITE-6) Statement
+    falsify attest <spec> [--as test-result]      emit an in-toto Statement (PRML or Test Result)
     falsify anchor <spec> [--sealed]              post to the registry, save the receipt files
     falsify receipt verify <spec> [--fetch]       verify the RFC 3161 token and Rekor entry offline
     falsify init <name> [--dataset FILE]          write a new manifest (UUIDv7, current time)
@@ -670,19 +670,118 @@ def cmd_test_vectors(args) -> int:
     return EXIT_PASS if failed == 0 else EXIT_FAIL
 
 
+TEST_RESULT_TYPE = "https://in-toto.io/attestation/test-result/v0.1"
+
+
+def to_test_result_statement(manifest: dict, observed: float, subjects: list[dict],
+                             url: str | None = None, config_name: str | None = None) -> dict:
+    """in-toto Test Result (v0.1) Statement for one run against a locked PRML bar.
+
+    ``configuration`` is the PRML manifest (digest = the PRML hash, media type
+    application/vnd.prml+yaml), so a policy can require that the test ran
+    against the exact bar that was locked. ``subjects`` are the artifacts tested
+    (for example the model); the caller supplies them.
+    """
+    errors = validate_manifest(manifest)
+    if errors:
+        raise ValueError("invalid manifest: " + "; ".join(errors))
+    if not math.isfinite(observed):
+        raise ValueError("observed must be a finite number")
+    h = manifest_hash(manifest)
+    ma = manifest.get("metric_args")
+    tol = float(ma["tolerance"]) if isinstance(ma, dict) and isinstance(ma.get("tolerance"), (int, float)) else 1e-9
+    passed = evaluate_predicate(observed, manifest["comparator"], manifest["threshold"], tol)
+    test = f"{manifest['metric']} {manifest['comparator']} {manifest['threshold']}"
+    pred: dict = {
+        "result": "PASSED" if passed else "FAILED",
+        "configuration": [{
+            "name": config_name or str(manifest["claim_id"]),
+            "digest": {"sha256": h},
+            "mediaType": "application/vnd.prml+yaml",
+        }],
+        "passedTests": [test] if passed else [],
+        "failedTests": [] if passed else [test],
+    }
+    if url:
+        pred["url"] = url
+    return {
+        "_type": "https://in-toto.io/Statement/v1",
+        "subject": subjects,
+        "predicateType": TEST_RESULT_TYPE,
+        "predicate": pred,
+    }
+
+
+def _parse_subject(text: str) -> dict:
+    name, sep, digest = text.rpartition("=")
+    algo, _, hexd = digest.partition(":")
+    if not sep or not name or algo != "sha256" or not re.fullmatch(r"[0-9a-f]{64}", hexd):
+        raise ValueError(f"--subject must look like NAME=sha256:<64 hex>, got {text!r}")
+    return {"name": name, "digest": {"sha256": hexd}}
+
+
 def cmd_attest(args) -> int:
     try:
         m = load_manifest(args.spec)
     except (OSError, ValueError) as e:
         sys.stderr.write(f"attest: cannot read {args.spec}: {e}\n")
         return EXIT_BAD
+    if args.as_ != "test-result":
+        try:
+            stmt = to_intoto_statement(m)
+        except ValueError as e:
+            sys.stderr.write(f"attest: {e}\n")
+            return EXIT_BAD
+        print(json.dumps(stmt, indent=2, ensure_ascii=False, sort_keys=True))
+        return EXIT_PASS
+
+    # --as test-result: one run against the locked bar.
+    if args.observed is None:
+        sys.stderr.write("attest --as test-result needs --observed <value>\n")
+        return EXIT_BAD
     try:
-        stmt = to_intoto_statement(m)
+        observed = float(args.observed)
+    except ValueError:
+        observed = math.nan
+    if not math.isfinite(observed):
+        sys.stderr.write("attest: --observed must be a finite number\n")
+        return EXIT_BAD
+    errors = validate_manifest(m)
+    if errors:
+        sys.stderr.write("attest: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
+        return EXIT_BAD
+    h = manifest_hash(m)
+    # Only attest a run against the bar that was locked: the hash must match
+    # --expected-hash or the sidecar written by `falsify lock`.
+    expected = args.expected_hash
+    if expected is None:
+        sidecar = _sidecar_path(args.spec)
+        if not os.path.exists(sidecar):
+            sys.stderr.write(f"attest: no --expected-hash and sidecar not found: {sidecar}\n"
+                             f"        run `falsify lock {args.spec}` before the run.\n")
+            return EXIT_GUARD
+        with open(sidecar, "r", encoding="utf-8") as fh:
+            expected = fh.read().strip()
+    if expected != h:
+        sys.stderr.write(f"attest: TAMPERED, recorded {expected}, recomputed {h}; no attestation written\n")
+        return EXIT_TAMPERED
+    try:
+        subjects = [_parse_subject(x) for x in (args.subject or [])]
     except ValueError as e:
         sys.stderr.write(f"attest: {e}\n")
         return EXIT_BAD
+    if not subjects:
+        ds = m["dataset"]
+        subjects = [{"name": str(ds["id"]), "digest": {"sha256": str(ds["hash"])}}]
+        sys.stderr.write("attest: no --subject given; using the dataset as subject "
+                         "(pass --subject model=sha256:<hex> for the model you tested)\n")
+    url = args.url
+    if url is None and os.environ.get("GITHUB_RUN_ID") and os.environ.get("GITHUB_REPOSITORY"):
+        url = (f"{os.environ.get('GITHUB_SERVER_URL', 'https://github.com')}/"
+               f"{os.environ['GITHUB_REPOSITORY']}/actions/runs/{os.environ['GITHUB_RUN_ID']}")
+    stmt = to_test_result_statement(m, observed, subjects, url=url, config_name=os.path.basename(args.spec))
     print(json.dumps(stmt, indent=2, ensure_ascii=False, sort_keys=True))
-    return EXIT_PASS
+    return EXIT_PASS if stmt["predicate"]["result"] == "PASSED" else EXIT_FAIL
 
 
 def cmd_anchor(args) -> int:
@@ -822,8 +921,17 @@ def main(argv=None) -> int:
     sp.add_argument("spec")
     sp.set_defaults(func=cmd_hash)
 
-    sp = sub.add_parser("attest", help="emit an in-toto (ITE-6) Statement for the manifest")
+    sp = sub.add_parser("attest", help="emit an in-toto Statement: the PRML predicate, or a Test Result for one run")
     sp.add_argument("spec")
+    sp.add_argument("--as", dest="as_", choices=["prml", "test-result"], default="prml",
+                    help="prml (default): the locked bar as predicate; test-result: in-toto Test Result "
+                         "v0.1 for one run, with the manifest as configuration")
+    sp.add_argument("--observed", default=None, help="test-result: the observed metric value")
+    sp.add_argument("--subject", action="append", default=None,
+                    help="test-result: tested artifact as NAME=sha256:<hex> (repeatable; default: the dataset)")
+    sp.add_argument("--url", default=None, help="test-result: link to the run (default in GitHub Actions: the run URL)")
+    sp.add_argument("--expected-hash", dest="expected_hash", default=None,
+                    help="test-result: locked hash to check against (default: the sidecar)")
     sp.set_defaults(func=cmd_attest)
 
     sp = sub.add_parser("anchor", help="post the manifest to a PRML registry and save the receipt files")

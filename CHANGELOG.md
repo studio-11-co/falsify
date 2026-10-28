@@ -25,6 +25,17 @@ numbers follow [Semantic Versioning](https://semver.org).
   Tests: `tests/test_receipt.py` (offline fixtures from a real registry record,
   mock registry for `anchor`).
 
+- **`falsify attest <spec> --as test-result --observed <v> [--subject NAME=sha256:HEX] [--url URL]`.**
+  Emits an in-toto Test Result v0.1 Statement for one run: `configuration` is the
+  PRML manifest (digest = PRML hash, media type `application/vnd.prml+yaml`),
+  `result` is PASSED or FAILED from the locked predicate, `subject` is the
+  tested artifact (default: the dataset). It refuses to attest when the manifest
+  no longer matches its lock (sidecar or `--expected-hash`; exit 3) and exits 10
+  on FAILED so CI can gate. In GitHub Actions `url` defaults to the run URL.
+  Hosts that already consume in-toto test results can require "ran against this
+  locked bar" without learning a new predicate type. Tests:
+  `tests/test_attest_test_result.py`.
+
 ### Changed
 - **`falsify init` writes a manifest that can be locked as written.** It now
   generates a real UUIDv7 `claim_id` (RFC 9562; `uuid.uuid7` is 3.14+ only) and

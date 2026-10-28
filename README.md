@@ -60,6 +60,8 @@ RECEIPT VERIFIED: these manifest bytes existed no later than 2026-08-23T05:43:56
 It does not show that the run happened after that time, or that any reported result is true.
 ```
 
+**In an in-toto / SLSA pipeline.** `falsify attest accuracy.prml.yaml --as test-result --observed 0.934 --subject model=sha256:<hex>` emits an in-toto Test Result whose `configuration` is the locked manifest (digest = PRML hash); it refuses to attest if the manifest changed after `falsify lock`. Without `--as`, `falsify attest` emits the PRML predicate itself. The GitHub Action can sign the manifest with `attest: 'true'` ([prml-verify-action](https://github.com/studio-11-co/prml-verify-action)).
+
 No install? Verify any manifest in-browser at [registry.falsify.dev](https://registry.falsify.dev). Byte-equivalent reference CLIs also ship for JS (`npm i -g falsify-js`), Go, and Rust.
 
 > **Live example.** [A pre-registered robustness evaluation of the open-source SynthID-Text watermark](https://falsify.dev/receipts/synthid-text-2026-10/): six pass bars fixed, hashed and timestamped (RFC 3161) on 11 October 2026, before the main run started. The results are on the same page, against those bars: 8 of 12 outcomes met and 4 not, with every output published and the scoring reproducible from them.
