@@ -6,6 +6,8 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.4.1] — 2026-10-28
+
 ### Added
 - **`spec/COMPATIBILITY.md`** — compatibility and deprecation policy, adopted
   2026-09-13 and linked from the specification's Status section: what a
@@ -174,6 +176,8 @@ accept. No canonical rendering changes and no already-published hash changes.
   corrected. Go's floor stays at 1.21.
 
 ## [Unreleased]
+
+## [0.4.1] — 2026-10-28
 
 ### Added (2026-08-13)
 - **`falsify linkage start|finish|verify` CLI** wrapping the linkage
@@ -483,6 +487,8 @@ hash-equivalence is preserved. See `spec/MIGRATION-v0.1-to-v0.2.md`.
 ---
 
 ## [Unreleased]
+
+## [0.4.1] — 2026-10-28
 
 Specification-track changes after 0.2.0 will accumulate here. No
 behaviour changes in the installed `falsify` Python package between
