@@ -443,6 +443,10 @@ def cmd_lock(args) -> int:
     sidecar = _sidecar_path(args.spec)
     with open(sidecar, "w", encoding="utf-8") as fh:
         fh.write(h + "\n")
+    if getattr(args, "json", False):
+        _json_out(args, {"status": "LOCKED", "exit_code": EXIT_PASS, "spec": args.spec, "sha256": h,
+                         "canonical_bytes": len(canonicalize(m).encode("utf-8")), "sidecar": sidecar})
+        return EXIT_PASS
     print(f"locked: {args.spec}")
     print(f"  canonical bytes: {len(canonicalize(m).encode('utf-8'))}")
     print(f"  sha256:          {h}")
@@ -464,38 +468,58 @@ def cmd_hash(args) -> int:
     if errors:
         sys.stderr.write("hash: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
         return EXIT_BAD
+    if getattr(args, "json", False):
+        _json_out(args, {"spec": args.spec, "sha256": manifest_hash(m)})
+        return EXIT_PASS
     print(manifest_hash(m))
     return EXIT_PASS
 
 
+def _json_out(args, payload: dict) -> None:
+    """With --json, print one JSON object (stable keys) on stdout."""
+    if getattr(args, "json", False):
+        print(json.dumps(payload, sort_keys=True, ensure_ascii=False))
+
+
 def cmd_verify(args) -> int:
+    js = getattr(args, "json", False)
+    res: dict = {"spec": args.spec}
+
+    def fail(code: int, status: str, message: str) -> int:
+        sys.stderr.write(message)
+        res.update(status=status, exit_code=code, error=message.strip())
+        _json_out(args, res)
+        return code
+
     try:
         m = load_manifest(args.spec)
     except (OSError, ValueError) as e:
-        sys.stderr.write(f"verify: cannot read {args.spec}: {e}\n")
-        return EXIT_BAD
+        return fail(EXIT_BAD, "ERROR", f"verify: cannot read {args.spec}: {e}\n")
     errors = validate_manifest(m)
     if errors:
-        sys.stderr.write("verify: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
-        return EXIT_BAD
+        return fail(EXIT_BAD, "ERROR", "verify: invalid manifest:\n  - " + "\n  - ".join(errors) + "\n")
 
     recomputed = manifest_hash(m)
+    res.update(sha256=recomputed, metric=m["metric"], comparator=m["comparator"], threshold=m["threshold"])
     expected = args.expected_hash
     if not expected:
         sidecar = _sidecar_path(args.spec)
         if not os.path.exists(sidecar):
-            sys.stderr.write(
-                f"verify: no --expected-hash and sidecar not found: {sidecar}\n"
-                f"        run `falsify lock {args.spec}` first.\n"
-            )
-            return EXIT_GUARD
+            return fail(EXIT_GUARD, "NO_LOCK",
+                        f"verify: no --expected-hash and sidecar not found: {sidecar}\n"
+                        f"        run `falsify lock {args.spec}` first.\n")
         with open(sidecar, "r", encoding="utf-8") as fh:
             expected = fh.read().strip()
+    res["recorded"] = expected
 
     if recomputed != expected:
-        print("TAMPERED")
-        print(f"  recorded:    {expected}")
-        print(f"  recomputed:  {recomputed}")
+        res.update(status="TAMPERED", exit_code=EXIT_TAMPERED)
+        if js:
+            _json_out(args, res)
+        else:
+            print("TAMPERED")
+            print(f"  recorded:    {expected}")
+            print(f"  recomputed:  {recomputed}")
         return EXIT_TAMPERED
 
     # Optional dataset-content check (spec §5.2 step 2). PRML does not
@@ -507,45 +531,61 @@ def cmd_verify(args) -> int:
     dpath = getattr(args, "dataset", None)
     if dpath:
         if not os.path.isfile(dpath):
-            sys.stderr.write(f"verify: --dataset not a file: {dpath}\n")
-            return EXIT_GUARD
+            return fail(EXIT_GUARD, "ERROR", f"verify: --dataset not a file: {dpath}\n")
         h = hashlib.sha256()
         with open(dpath, "rb") as fh:
             for chunk in iter(lambda: fh.read(1 << 20), b""):
                 h.update(chunk)
         got = h.hexdigest()
         declared = m.get("dataset", {}).get("hash", "")
+        res["dataset_sha256"] = got
         if got != declared:
-            print("DATASET MISMATCH")
-            print(f"  declared:    {declared}")
-            print(f"  recomputed:  {got}")
-            print(f"  file:        {dpath}")
+            res.update(status="DATASET_MISMATCH", exit_code=EXIT_GUARD, dataset_declared=declared)
+            if js:
+                _json_out(args, res)
+            else:
+                print("DATASET MISMATCH")
+                print(f"  declared:    {declared}")
+                print(f"  recomputed:  {got}")
+                print(f"  file:        {dpath}")
             return EXIT_GUARD
-        print(f"dataset content verified: sha256:{got}")
+        if not js:
+            print(f"dataset content verified: sha256:{got}")
 
     if args.observed is None:
-        print(f"OK  hash verified  sha256:{recomputed}")
-        print("(no --observed value given; predicate not evaluated)")
+        res.update(status="OK", exit_code=EXIT_PASS, observed=None)
+        if js:
+            _json_out(args, res)
+        else:
+            print(f"OK  hash verified  sha256:{recomputed}")
+            print("(no --observed value given; predicate not evaluated)")
         return EXIT_PASS
 
     try:
         observed = float(args.observed)
     except ValueError:
-        sys.stderr.write("verify: --observed must be a finite number\n")
-        return EXIT_BAD
+        return fail(EXIT_BAD, "ERROR", "verify: --observed must be a finite number\n")
     if not math.isfinite(observed):
         # float() accepts "inf"/"nan"; `inf >= threshold` would PASS every bar.
         # Reject like the JS and Rust reference CLIs (exit 2).
-        sys.stderr.write("verify: --observed must be a finite number\n")
-        return EXIT_BAD
+        return fail(EXIT_BAD, "ERROR", "verify: --observed must be a finite number\n")
     _tol = 1e-9
     _ma = m.get("metric_args")
     if isinstance(_ma, dict) and isinstance(_ma.get("tolerance"), (int, float)):
         _tol = float(_ma["tolerance"])
+    res["observed"] = observed
     if evaluate_predicate(observed, m["comparator"], m["threshold"], _tol):
-        print(f"PASS  metric={m['metric']}  observed={observed}  {m['comparator']}  threshold={m['threshold']}")
+        res.update(status="PASS", exit_code=EXIT_PASS)
+        if js:
+            _json_out(args, res)
+        else:
+            print(f"PASS  metric={m['metric']}  observed={observed}  {m['comparator']}  threshold={m['threshold']}")
         return EXIT_PASS
-    print(f"FAIL  metric={m['metric']}  observed={observed}  NOT {m['comparator']}  threshold={m['threshold']}")
+    res.update(status="FAIL", exit_code=EXIT_FAIL)
+    if js:
+        _json_out(args, res)
+    else:
+        print(f"FAIL  metric={m['metric']}  observed={observed}  NOT {m['comparator']}  threshold={m['threshold']}")
     return EXIT_FAIL
 
 
@@ -906,6 +946,7 @@ def main(argv=None) -> int:
 
     sp = sub.add_parser("lock", help="canonicalize, hash, write sidecar")
     sp.add_argument("spec")
+    sp.add_argument("--json", action="store_true", help="print one JSON object instead of text")
     sp.set_defaults(func=cmd_lock)
 
     sp = sub.add_parser("verify", help="verify hash; if --observed, evaluate the predicate")
@@ -915,10 +956,12 @@ def main(argv=None) -> int:
     sp.add_argument("--dataset", default=None,
                     help="path to the single-file dataset; recompute its SHA-256 and check it "
                          "matches dataset.hash (spec §5.2 step 2). Exit 11 on mismatch.")
+    sp.add_argument("--json", action="store_true", help="print one JSON object instead of text")
     sp.set_defaults(func=cmd_verify)
 
     sp = sub.add_parser("hash", help="print the canonical SHA-256 only")
     sp.add_argument("spec")
+    sp.add_argument("--json", action="store_true", help="print one JSON object instead of text")
     sp.set_defaults(func=cmd_hash)
 
     sp = sub.add_parser("attest", help="emit an in-toto Statement: the PRML predicate, or a Test Result for one run")

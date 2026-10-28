@@ -6,6 +6,14 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Added
+- **`--json` on `falsify verify`, `lock` and `hash`.** One JSON object on stdout
+  with stable keys (`status`, `exit_code`, `sha256`, `recorded`, `metric`,
+  `comparator`, `threshold`, `observed`, ...); exit codes are unchanged.
+  `status` separates the two cases that share exit 11: `NO_LOCK` (no sidecar or
+  `--expected-hash`) and `DATASET_MISMATCH`. For CI steps and coding agents
+  that should not parse text. Tests: `tests/test_prml_json.py`.
+
 ## [0.5.0] — 2026-10-28
 
 ### Added
