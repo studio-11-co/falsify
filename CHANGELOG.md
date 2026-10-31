@@ -6,6 +6,25 @@ numbers follow [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [0.5.2] — 2026-10-31
+
+### Fixed
+- **The wheel ships `falsify_linkage.py`.** It was missing from `py-modules`, so
+  in 0.5.1 `falsify-engine linkage ...` failed with `ModuleNotFoundError` and
+  `falsify linkage` was not a subcommand, although the CHANGELOG (2026-08-13)
+  and `spec/linkage/prml-linkage-0.md` name the Python reference module.
+- **`falsify linkage start|finish|verify`** now works from the `falsify`
+  command: arguments are forwarded unchanged to the engine CLI, so both
+  entry points behave identically.
+
+### Added
+- `tests/test_packaging.py`: every repo-root module imported by a shipped
+  module must be in `py-modules`; `falsify linkage` round trip (start, finish,
+  verify) through the `falsify` command.
+- Release workflow installs the built wheel in a fresh venv outside the
+  source tree and runs `falsify --version`, `falsify linkage --help` and
+  `falsify-engine linkage verify --help` before publishing.
+
 ## [0.5.1] — 2026-10-28
 
 ### Added

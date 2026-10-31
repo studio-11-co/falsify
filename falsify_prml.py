@@ -42,7 +42,7 @@ import re
 import sys
 import unicodedata
 
-__version__ = "0.5.1"
+__version__ = "0.5.2"
 
 EXIT_PASS = 0
 EXIT_BAD = 2
@@ -681,6 +681,14 @@ def cmd_init(args) -> int:
     return EXIT_PASS
 
 
+def cmd_linkage(argv) -> int:
+    # prml-linkage/0 lives in the engine CLI (falsify.py + falsify_linkage.py);
+    # forward the arguments unchanged so `falsify linkage ...` and
+    # `falsify-engine linkage ...` behave identically.
+    import falsify as engine
+    return engine.main(["linkage", *argv])
+
+
 def cmd_test_vectors(args) -> int:
     try:
         with open(args.vectors, "r", encoding="utf-8") as fh:
@@ -1012,10 +1020,18 @@ def main(argv=None) -> int:
     sp.add_argument("--producer", default="your-org-or-domain", help="producer.id")
     sp.set_defaults(func=cmd_init)
 
+    # Listed for --help only; main() forwards `linkage` before parsing.
+    sub.add_parser("linkage", add_help=False,
+                   help="prml-linkage/0 execution-linkage records: start, finish, verify")
+
     sp = sub.add_parser("test-vectors", help="run the conformance suite against a vectors.json")
     sp.add_argument("vectors")
     sp.set_defaults(func=cmd_test_vectors)
 
+    argv = sys.argv[1:] if argv is None else list(argv)
+    if argv[:1] == ["linkage"]:
+        # Forwarded before parsing so options such as --help reach the engine parser.
+        return cmd_linkage(argv[1:])
     args = p.parse_args(argv)
     if not getattr(args, "func", None):
         p.print_help()

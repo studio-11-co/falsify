@@ -54,6 +54,17 @@ jobs:
       - name: Build sdist and wheel
         run: python -m build
 
+      - name: Smoke-test the built wheel outside the source tree
+        # The unittest suite imports from the repo root, so it cannot see a module
+        # missing from the wheel (0.5.1 shipped without falsify_linkage.py).
+        run: |
+          python -m venv /tmp/wheel-venv
+          /tmp/wheel-venv/bin/pip install dist/*.whl
+          cd /tmp
+          /tmp/wheel-venv/bin/falsify --version
+          /tmp/wheel-venv/bin/falsify linkage --help
+          /tmp/wheel-venv/bin/falsify-engine linkage verify --help
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v7
         with:
